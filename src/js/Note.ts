@@ -1,4 +1,3 @@
-import {Range} from "./objectUtils";
 import {MetadataCache, parseFrontMatterAliases, Vault} from "obsidian";
 import IgnoreRange from "./IgnoreRange";
 
@@ -9,7 +8,7 @@ export default class Note {
     aliases: string[] = [];
     ignore: IgnoreRange[] = [];
 
-    constructor(title: string, path: string, content: string, aliases: string[] = [], ignore: Range<number>[] = []) {
+    constructor(title: string, path: string, content: string, aliases: string[] = [], ignore: IgnoreRange[] = []) {
         this.title = title;
         this.path = path;
         this.content = content;
