@@ -4,7 +4,6 @@ use crate::rs::text::text_util::{
     get_file_content, is_markdown_file, trim_file_extension,
 };
 use fancy_regex::{escape, Captures, Regex};
-use jwalk::WalkDirGeneric;
 use std::path::Path;
 
 /// A note is a file with a md extension.
@@ -79,26 +78,4 @@ impl Note {
     }
 }
 
-/// Function to get all notes in a directory.
-pub fn get_notes_in_dir_recursively(dir: &String) -> Result<Vec<Note>, jwalk::Error> {
-    check_if_dir_exists(&dir);
-    let mut notes: Vec<Note> = Vec::new();
-    // filter out all errors
-    let entries = WalkDirGeneric::<(usize, bool)>::new(dir)
-        .into_iter()
-        .filter_map(|e| e.ok());
-    for entry in entries {
-        if let Some(filename) = &entry.file_name().to_str() {
-            if is_markdown_file(&filename.to_string()) {
-                let path = entry.path().into_boxed_path();
-                let name = trim_file_extension(&filename.to_string());
-                let content = match get_file_content(&path) {
-                    Ok(c) => c,
-                    Err(_) => continue,
-                };
-                notes.push(Note::new(path, name, content));
-            }
-        }
-    }
-    Ok(notes)
-}
+

@@ -4,3 +4,9 @@ main.*
 *.log
 /target
 package-lock.json
+.idea
+Cargo.lock
+.vscode
+.vscode-test
+.vscode-launch.json
+.vscode-tasks.json

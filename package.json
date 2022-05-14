@@ -12,7 +12,11 @@
   "devDependencies": {
     "@rollup/plugin-commonjs": "^15.1.0",
     "@rollup/plugin-node-resolve": "^9.0.0",
-    "rollup-plugin-base64": "^1.0.1",
-    "rollup": "^2.32.1"
+    "rollup": "^2.32.1",
+    "rollup-plugin-base64": "^1.0.1"
+  },
+  "dependencies": {
+    "@rollup/plugin-typescript": "^8.3.2",
+    "obsidian": "^0.14.8"
   }
 }
