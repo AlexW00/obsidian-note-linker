@@ -1,0 +1,9 @@
+{
+  "id": "rust-plugin",
+  "name": "Rust Plugin",
+  "version": "0.1.0",
+  "description": "Prototype plugin written in rust",
+  "author": "Stephen Solka",
+  "authorUrl": "https://github.com/trashhalo",
+  "isDesktopOnly": false
+}

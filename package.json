@@ -1,0 +1,18 @@
+{
+  "name": "obsidian-extract-url",
+  "version": "0.1.0",
+  "description": "Extract url converting content into markdown",
+  "main": "main.js",
+  "scripts": {
+    "build": "wasm-pack build --target web && rollup --config rollup.config.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^15.1.0",
+    "@rollup/plugin-node-resolve": "^9.0.0",
+    "rollup-plugin-base64": "^1.0.1",
+    "rollup": "^2.32.1"
+  }
+}
