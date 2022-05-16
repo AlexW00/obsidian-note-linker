@@ -1,16 +1,16 @@
-use crate::rs::text::note::Note;
 use crate::rs::text::text_context::TextContext;
 use std::ops::Range;
+use crate::rs::text::rs_note::RsNote;
 
 pub struct NoteMatch<'n> {
-    pub note: &'n Note,
+    pub note: &'n RsNote,
     pub position: Range<usize>,
     pub matched_text: String,
     pub context: TextContext,
 }
 
 impl<'n> NoteMatch<'n> {
-    pub fn new(note: &'n Note, position: Range<usize>, matched_text: &String) -> Self {
+    pub fn new(note: &'n RsNote, position: Range<usize>, matched_text: &String) -> Self {
         NoteMatch {
             note,
             position: position.clone(),
@@ -27,7 +27,7 @@ impl<'n> NoteMatch<'n> {
             self.context.text(),
             self.position.start,
             self.position.end,
-            self.note.name()
+            self.note.title()
         );
     }
 }

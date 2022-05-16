@@ -14,6 +14,8 @@ export default class RustPlugin extends Plugin {
 			new Notice('This is a notice!');
 			const notes = Note.getNotesFromVault(this.app.vault, this.app.metadataCache).then(notes => {
 				console.log(notes);
+				const titles = wasm.find(notes);
+				console.log(titles);
 			});
 		});
 

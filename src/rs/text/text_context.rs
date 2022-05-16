@@ -1,5 +1,5 @@
-use crate::rs::text::note::Note;
 use std::ops::Range;
+use crate::rs::text::rs_note::RsNote;
 
 struct ContextTail {
     text: String,
@@ -15,7 +15,7 @@ pub struct TextContext {
 impl TextContext {
     const CONTEXT_SIZE: usize = 20;
 
-    pub fn new(note: &Note, match_position: Range<usize>, match_text: String) -> TextContext {
+    pub fn new(note: &RsNote, match_position: Range<usize>, match_text: String) -> TextContext {
         let context_tails = TextContext::get_context_tails(note, &match_position);
         TextContext {
             left_context_tail: context_tails.0,
@@ -24,7 +24,7 @@ impl TextContext {
         }
     }
 
-    fn get_context_tails(note: &Note, match_position: &Range<usize>) -> (ContextTail, ContextTail) {
+    fn get_context_tails(note: &RsNote, match_position: &Range<usize>) -> (ContextTail, ContextTail) {
         let left_tail_end = match_position.start;
         let left_tail_start = if match_position.start >= TextContext::CONTEXT_SIZE {
             match_position.start - &TextContext::CONTEXT_SIZE

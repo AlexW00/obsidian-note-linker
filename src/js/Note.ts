@@ -1,19 +1,12 @@
 import {MetadataCache, parseFrontMatterAliases, Vault} from "obsidian";
 import IgnoreRange from "./IgnoreRange";
+import {JsNote} from "../../pkg";
 
-export default class Note {
-    title = '';
-    path = '';
-    content = '';
-    aliases: string[] = [];
-    ignore: IgnoreRange[] = [];
+export default class Note extends  JsNote{
+
 
     constructor(title: string, path: string, content: string, aliases: string[] = [], ignore: IgnoreRange[] = []) {
-        this.title = title;
-        this.path = path;
-        this.content = content;
-        this.aliases = aliases;
-        this.ignore = ignore;
+        super(title, path, content, aliases, ignore);
     }
 
     static async getNotesFromVault(vault: Vault, cache: MetadataCache): Promise<Note[]> {

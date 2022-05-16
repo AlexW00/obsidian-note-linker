@@ -1,25 +1,13 @@
 import {CachedMetadata} from "obsidian";
+import {JsRange} from "../../pkg";
 
-export class Range <T> {
-    start: T;
-    end: T;
-
-    constructor(start: T, end: T) {
-        this.start = start;
-        this.end = end;
-    }
-
-    contains(value: T): boolean {
-        return value >= this.start && value <= this.end;
-    }
-}
 
 export interface IgnoreRangeConfig {
     doIgnoreInternalLinks?: boolean;
     doIgnoreCodeBlocks?: boolean;
 }
 
-export default class IgnoreRange extends Range<number> {
+export default class IgnoreRange extends JsRange {
     constructor(start: number, end: number) {
         super(start, end);
     }
