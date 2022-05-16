@@ -1,5 +1,5 @@
 import {CachedMetadata} from "obsidian";
-import {JsRange} from "../../pkg";
+import {Range} from "../../pkg";
 
 
 export interface IgnoreRangeConfig {
@@ -7,7 +7,7 @@ export interface IgnoreRangeConfig {
     doIgnoreCodeBlocks?: boolean;
 }
 
-export default class IgnoreRange extends JsRange {
+export default class IgnoreRange extends Range {
     constructor(start: number, end: number) {
         super(start, end);
     }

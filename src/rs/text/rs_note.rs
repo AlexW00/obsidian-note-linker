@@ -1,25 +1,29 @@
+use std::convert::TryFrom;
 use fancy_regex::{escape, Regex};
-use crate::rs::text::js_note::{JsNote, ToRsNote};
+use crate::rs::text::range::{Range, RangeArray};
+use crate::rs::text::note::{Note, StringArray};
 use crate::rs::text::note_match::NoteMatch;
-use crate::rs::text::rs_range::RsRange;
 use crate::rs::text::text_util::create_string_with_n_characters;
+use js_sys::{Array, Object};
+use wasm_bindgen::{JsCast, JsValue};
+
 
 pub struct RsNote {
-    title: String,
-    path: String,
-    content: String,
-    aliases: Vec<String>,
-    ignore: Vec<RsRange>,
+    pub title: String,
+    pub path: String,
+    pub content: String,
+    pub aliases: Vec<String>,
+    pub ignore: Vec<Range>,
 }
 
 impl RsNote {
-    pub(crate) fn new (js_note: &JsNote) -> Self {
+    pub fn new(title: String, path: String, content: String, aliases: Vec<String>, ignore: Vec<Range>) -> RsNote {
         RsNote {
-            title: js_note.title(),
-            path: js_note.path(),
-            content: js_note.content(),
-            aliases: js_note.aliases(),
-            ignore: js_note.ignore(),
+            title,
+            path,
+            content,
+            aliases,
+            ignore,
         }
     }
 
@@ -39,7 +43,7 @@ impl RsNote {
         &self.aliases
     }
 
-    pub fn ignore(&self) -> &Vec<RsRange> {
+    pub fn ignore(&self) -> &Vec<Range> {
         &self.ignore
     }
 
@@ -70,5 +74,36 @@ impl RsNote {
             sanitized_content.replace_range(range, replacement);
         }
         sanitized_content
+    }
+}
+
+impl From<Note> for RsNote {
+    fn from(note: Note) -> Self {
+        RsNote {
+            title: note.title().as_string().unwrap(),
+            path: note.path().as_string().unwrap(),
+            content: note.content().as_string().unwrap(),
+            aliases: {
+                let arr: Result<Array, StringArray> = note.aliases().dyn_into::<Array>();
+                match arr {
+                    Ok(arr) => arr.iter()
+                        .filter_map(|a: JsValue| a.as_string())
+                        .collect(),
+                    Err(_) => vec![],
+                }
+
+            },
+            ignore: {
+                let arr : Result<Array, RangeArray>= note.ignore().dyn_into::<Array>();
+                match arr {
+                    Ok(arr) => {
+                        arr.iter()
+                            .filter_map(|js_val_range: JsValue| Range::try_from(js_val_range).ok())
+                            .collect()
+                    },
+                    Err(_) => vec![]
+                }
+            },
+        }
     }
 }

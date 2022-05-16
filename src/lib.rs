@@ -1,10 +1,10 @@
 mod rs;
 
 use std::convert::TryFrom;
-use js_sys::{Array, Object};
-use wasm_bindgen::{JsCast, JsObject};
+use js_sys::{Array};
+use wasm_bindgen::{JsCast};
 use wasm_bindgen::prelude::*;
-use crate::rs::text::js_note::{JsNote, JsNoteArray, ToRsNote};
+use crate::rs::text::note::{Note, NoteArray};
 use crate::rs::text::rs_note::RsNote;
 
 
@@ -14,14 +14,15 @@ pub fn add (a: i32, b: i32) -> i32 {
 }
 
 #[wasm_bindgen]
-pub fn find (notes: JsNoteArray) -> String {
+pub fn find (notes: NoteArray) -> String {
     let arr = notes.unchecked_into::<Array>();
-    arr.iter().filter_map(|note| {
-        let note = JsNote::try_from(note);
+    let notes: Vec<RsNote> = arr.iter().filter_map(|note: JsValue| {
+        let note = Note::try_from(note);
         if let Ok(note) = note {
-            Some(note.title())
+            Some(RsNote::from(note))
         } else {
             None
         }
-    }).collect::<Vec<String>>().join("\n")
+    }).collect();
+    notes.get(0).unwrap().title().to_string()
 }
