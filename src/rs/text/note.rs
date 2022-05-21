@@ -14,6 +14,12 @@ pub struct Note {
     content: js_sys::JsString,
     aliases: util::StringArray,
     ignore: RangeArray,
+
+    _title: String,
+    _path: String,
+    _content: String,
+    _aliases: Vec<String>,
+    _ignore: Vec<Range>,
 }
 
 #[wasm_bindgen]
@@ -21,49 +27,68 @@ impl Note {
     #[wasm_bindgen(constructor)]
     pub fn new(title: js_sys::JsString, path: js_sys::JsString, content: js_sys::JsString, aliases: util::StringArray, ignore: RangeArray) -> Note {
         Note {
-            title,
-            path,
-            content,
-            aliases,
-            ignore
+            title: title.clone(),
+            path: path.clone(),
+            content: content.clone(),
+            aliases: aliases.clone(),
+            ignore: ignore.clone(),
+
+            _title: title.as_string().expect("title is not a string"),
+            _path: path.as_string().expect("path is not a string"),
+            _content: content.as_string().expect("content is not a string"),
+            _aliases: aliases.into(),
+            _ignore: Vec::from(ignore),
         }
     }
 
+    #[wasm_bindgen(getter)]
     pub fn title(&self) -> js_sys::JsString {
         self.title.clone()
     }
+    #[wasm_bindgen(getter)]
     pub fn path(&self) -> js_sys::JsString {
         self.path.clone()
     }
+    #[wasm_bindgen(getter)]
     pub fn content(&self) -> js_sys::JsString {
         self.content.clone()
     }
+    #[wasm_bindgen(getter)]
     pub fn aliases(&self) -> util::StringArray {
         self.aliases.clone()
     }
+    #[wasm_bindgen(getter)]
     pub fn ignore(&self) -> RangeArray {
         self.ignore.clone()
     }
 }
 
 impl Note {
-    pub fn title_string (&self) -> String { self.title().as_string().expect("title is not a string") }
-    pub fn path_string (&self) -> String {
-        self.path().as_string().expect("path is not a string")
+    pub fn title_string(&self) -> &String {
+        &self._title
     }
-    pub fn content_string (&self) -> String { self.content().as_string().expect("content is not a string") }
-    pub fn aliases_vec (&self) -> Vec<String> { self.aliases().into() }
-    pub fn ignore_vec (&self) -> Vec<Range> { self.ignore().into() }
+    pub fn path_string(&self) -> &String {
+        &self._path
+    }
+    pub fn content_string(&self) -> &String {
+        &self._content
+    }
+    pub fn aliases_vec(&self) -> &Vec<String> {
+        &self._aliases
+    }
+    pub fn ignore_vec (&self) -> &Vec<Range> {
+        &self._ignore
+    }
 
-    pub fn sanitized_content(&self) -> String {
-        let mut sanitized_content = self.content_string();
-        return sanitized_content;
-        for ignore in &self.ignore_vec() {
-            let range = ignore.to_range();
-            let replacement = &*create_string_with_n_characters(range.len(), ' ');
-            sanitized_content.replace_range(range, replacement);
+    pub fn sanitize_content(mut content: String, ignores: &Vec<Range>) -> String {
+        for ignore in ignores {
+            let start = ignore.start_usize();
+            let end = ignore.end_usize();
+            let from = util::get_nearest_char_boundary(&content, start, true);
+            let to = util::get_nearest_char_boundary(&content, end, false);
+            content = content.replace(&content[from..to], &create_string_with_n_characters(end - start, ' '));
         }
-        sanitized_content
+        content
     }
 }
 
@@ -84,6 +109,10 @@ pub fn note_from_js_value(js: JsValue) -> Option<Note> {
 extern "C" {
     #[wasm_bindgen(typescript_type = "Array<Note>")]
     pub type NoteArray;
+
+    // import console log
+    #[wasm_bindgen(js_namespace = console)]
+    pub fn log(s: &str);
 }
 
 

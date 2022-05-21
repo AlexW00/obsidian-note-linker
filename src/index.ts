@@ -16,7 +16,7 @@ export default class RustPlugin extends Plugin {
 			const notes = JsNote.getNotesFromVault(this.app.vault, this.app.metadataCache).then(jsNotes => {
 				console.log(jsNotes);
 				const notes = jsNotes.map(jsNote => {
-					console.log(jsNote.aliases());
+					console.log(jsNote.aliases);
 					return jsNote as Note
 				});
 				console.log(notes);

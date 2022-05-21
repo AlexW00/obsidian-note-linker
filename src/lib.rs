@@ -1,12 +1,13 @@
-mod rs;
-
 use std::convert::TryFrom;
-use js_sys::{Array, JsString};
-use wasm_bindgen::{JsCast};
-use wasm_bindgen::prelude::*;
-use crate::rs::text::note::{Note, NoteArray};
-use crate::rs::text::note_match::{NoteMatch, NoteMatchArray};
 
+use js_sys::{Array};
+use wasm_bindgen::JsCast;
+use wasm_bindgen::prelude::*;
+
+use crate::rs::text::note::{Note, NoteArray};
+use crate::rs::text::note_match::{note_match_vec_to_array, NoteMatch};
+
+mod rs;
 
 #[wasm_bindgen]
 pub fn add (a: i32, b: i32) -> i32 {
@@ -14,7 +15,7 @@ pub fn add (a: i32, b: i32) -> i32 {
 }
 
 #[wasm_bindgen]
-pub fn find (notes: NoteArray) -> String {
+pub fn find (notes: NoteArray) -> js_sys::Array {
     let arr = notes.unchecked_into::<Array>();
     let notes: Vec<Note> = arr.iter()
         .filter_map(|note: JsValue| Note::try_from(note).ok())
@@ -25,8 +26,5 @@ pub fn find (notes: NoteArray) -> String {
     })
     .collect();
 
-    // reduce to concat string
-    res.into_iter().fold(String::new(), |acc, note_match| {
-        format!("{} {}", acc, note_match.matched_text_string())
-    })
+    note_match_vec_to_array(res)
 }
