@@ -2,7 +2,7 @@ import { Plugin, Notice, App, Vault} from "obsidian";
 import rustPlugin from "../pkg/obsidian_rust_plugin_bg.wasm";
 import * as wasm from "../pkg";
 import JsNote from "./js/JsNote";
-import {Note} from "../pkg";
+import {LinkMatch, Note} from "../pkg";
 
 export default class RustPlugin extends Plugin {
 	async onload() {
@@ -21,7 +21,9 @@ export default class RustPlugin extends Plugin {
 				});
 				console.log(notes);
 				const titles = wasm.find(notes);
-				console.log(titles);
+				titles.forEach((linkMatch: LinkMatch) => {
+					console.log("Found text match: " + linkMatch.matched_text + " at " + linkMatch.position.start + "-" + linkMatch.position.end + " in " + linkMatch.note.title);
+				})
 			});
 		});
 

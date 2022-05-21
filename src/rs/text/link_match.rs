@@ -19,7 +19,7 @@ pub struct LinkMatch {
 #[wasm_bindgen]
 impl LinkMatch {
     #[wasm_bindgen(getter)]
-    pub fn title(&self) -> Note {
+    pub fn note(&self) -> Note {
         self.note.clone()
     }
     #[wasm_bindgen(getter)]
@@ -38,6 +38,12 @@ impl LinkMatch {
             matched_text: matched_text.clone(),
             context: TextContext::new(note, position, matched_text),
         }
+    }
+
+    pub fn new_from_match <'m> (match_: &fancy_regex::Match<'m>, note: &Note) -> Self {
+        let matched_text = match_.as_str();
+        let position = Range::new_with_usize(match_.start(), match_.end());
+        LinkMatch::new(note, position, js_sys::JsString::from(matched_text))
     }
 
     pub fn note_ref(&self) -> &Note { &self.note }
