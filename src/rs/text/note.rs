@@ -80,8 +80,9 @@ impl Note {
         &self._ignore
     }
 
-    pub fn sanitize_content(mut content: String, ignores: &Vec<Range>) -> String {
-        for ignore in ignores {
+    pub fn sanitized_content(&self) -> String {
+        let mut content = self.content_string().clone();
+        for ignore in self.ignore_vec() {
             let start = ignore.start_usize();
             let end = ignore.end_usize();
             let from = util::get_nearest_char_boundary(&content, start, true);
