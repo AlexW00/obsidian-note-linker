@@ -2,7 +2,7 @@ import { Plugin, Notice, App, Vault} from "obsidian";
 import rustPlugin from "../pkg/obsidian_rust_plugin_bg.wasm";
 import * as wasm from "../pkg";
 import JsNote from "./js/JsNote";
-import {LinkMatch, Note} from "../pkg";
+import {LinkMatch, Note, set_timeout} from "../pkg";
 
 export default class RustPlugin extends Plugin {
 	async onload() {
@@ -13,6 +13,7 @@ export default class RustPlugin extends Plugin {
 		const ribbonIconEl = this.addRibbonIcon('dice', 'Sample Plugin', (evt) => {
 			// Called when the user clicks the icon.
 			new Notice('This is a notice!');
+
 			const notes = JsNote.getNotesFromVault(this.app.vault, this.app.metadataCache).then(jsNotes => {
 				console.log(jsNotes);
 				const notes = jsNotes.map(jsNote => {
@@ -20,12 +21,11 @@ export default class RustPlugin extends Plugin {
 					return jsNote as Note
 				});
 				console.log(notes);
-				const titles = wasm.find(notes);
+				const titles = wasm.find(this, notes, (noteTitle: string) => console.log("checking: " + noteTitle));
 				titles.forEach((linkMatch: LinkMatch) => {
 					console.log("Found text match: " + linkMatch.matched_text + " at " + linkMatch.position.start + "-" + linkMatch.position.end + " in " + linkMatch.note.title);
 				})
 			});
 		});
-
 	}
 }
