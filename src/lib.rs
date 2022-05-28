@@ -1,12 +1,13 @@
 use std::convert::TryFrom;
 
 use js_sys::{Array};
-use wasm_bindgen::JsCast;
+use wasm_bindgen::{JsCast, JsValue};
 use wasm_bindgen::prelude::*;
 use crate::rs::text::link_matcher;
 
 use crate::rs::text::note::{log, Note, NoteArray};
 use crate::rs::text::link_match::{note_match_vec_to_array, LinkMatch};
+use crate::rs::text::note_scanned_event::NoteScannedEvent;
 
 mod rs;
 
@@ -24,7 +25,9 @@ pub fn find (context: &JsValue, notes: NoteArray, callback: &js_sys::Function) -
 
     let res: Vec<LinkMatch> = notes.clone().into_iter().flat_map(|note| {
         let args = js_sys::Array::new();
-        args.push(&note.title_string().into());
+        let noteScannedEvent = NoteScannedEvent::new(&note);
+        let js: JsValue = noteScannedEvent.into();
+        args.push(&js);
         callback.apply(context, &args).unwrap();
         link_matcher::search_note_for_links(&note, &notes)
     })

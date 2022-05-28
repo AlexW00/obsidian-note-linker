@@ -8,6 +8,10 @@ export default class JsNote extends Note{
     constructor(title: string, path: string, content: string, aliases: string[] = [], ignore: IgnoreRange[] = []) {
         super(title, path, content, aliases, ignore);
     }
+    
+    static getNumberOfNotes(vault: Vault, cache: MetadataCache): number {
+        return vault.getMarkdownFiles().length;
+    }
 
     static async getNotesFromVault(vault: Vault, cache: MetadataCache): Promise<JsNote[]> {
         const notes = vault.getMarkdownFiles().map(async file => {

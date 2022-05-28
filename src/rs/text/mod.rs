@@ -5,3 +5,4 @@ pub mod range;
 pub mod note;
 pub mod context_tail;
 pub mod link_matcher;
+pub mod note_scanned_event;

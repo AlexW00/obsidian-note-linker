@@ -7,6 +7,7 @@ use crate::Note;
 use crate::rs::text::note::log;
 use crate::rs::text::range::Range;
 use crate::rs::text::text_context::TextContext;
+use crate::rs::util::StringArray;
 
 #[wasm_bindgen]
 pub struct LinkMatch {
@@ -14,6 +15,10 @@ pub struct LinkMatch {
     position: Range,
     matched_text: js_sys::JsString,
     context: TextContext,
+
+    link_target_title: js_sys::JsString,
+    link_target_path: js_sys::JsString,
+    link_target_aliases: StringArray,
 }
 
 #[wasm_bindgen]
@@ -28,22 +33,41 @@ impl LinkMatch {
     pub fn matched_text(&self) -> js_sys::JsString { self.matched_text.clone() }
     #[wasm_bindgen(getter)]
     pub fn context(&self) -> TextContext { self.context.clone() }
+    #[wasm_bindgen(getter)]
+    pub fn link_target_title(&self) -> js_sys::JsString { self.link_target_title.clone() }
+    #[wasm_bindgen(getter)]
+    pub fn link_target_path(&self) -> js_sys::JsString { self.link_target_path.clone() }
+    #[wasm_bindgen(getter)]
+    pub fn link_target_aliases(&self) -> StringArray { self.link_target_aliases.clone() }
 }
 
 impl LinkMatch {
-    pub fn new(note: &Note, position: Range, matched_text: js_sys::JsString) -> Self {
+    pub fn new(
+        note: &Note,
+        position: Range,
+        matched_text: js_sys::JsString,
+        target_note: &Note
+    ) -> Self {
         LinkMatch {
             note: note.clone(),
             position: position.clone(),
             matched_text: matched_text.clone(),
             context: TextContext::new(note, position, matched_text),
+            link_target_title: target_note.title(),
+            link_target_path: target_note.path(),
+            link_target_aliases: target_note.aliases(),
         }
     }
 
-    pub fn new_from_match <'m> (match_: &fancy_regex::Match<'m>, note: &Note) -> Self {
+    pub fn new_from_match <'m> (match_: &fancy_regex::Match<'m>, note: &Note, target_note: &Note) -> Self {
         let matched_text = match_.as_str();
         let position = Range::new_with_usize(match_.start(), match_.end());
-        LinkMatch::new(note, position, js_sys::JsString::from(matched_text))
+        LinkMatch::new(
+            note,
+            position,
+            js_sys::JsString::from(matched_text),
+            target_note
+        )
     }
 
     pub fn note_ref(&self) -> &Note { &self.note }
