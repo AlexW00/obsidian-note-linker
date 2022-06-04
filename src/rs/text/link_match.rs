@@ -4,29 +4,23 @@ use wasm_bindgen::{JsCast, JsValue};
 use wasm_bindgen::prelude::*;
 
 use crate::Note;
+use crate::rs::text::link_match_target::{LinkTarget, LinkTargetArray};
 use crate::rs::text::note::log;
 use crate::rs::text::range::Range;
 use crate::rs::text::text_context::TextContext;
 use crate::rs::util::StringArray;
 
 #[wasm_bindgen]
+#[derive(Clone)]
 pub struct LinkMatch {
-    note: Note,
     position: Range,
     matched_text: js_sys::JsString,
     context: TextContext,
-
-    link_target_title: js_sys::JsString,
-    link_target_path: js_sys::JsString,
-    link_target_aliases: StringArray,
+    link_target_candidates: LinkTargetArray,
 }
 
 #[wasm_bindgen]
 impl LinkMatch {
-    #[wasm_bindgen(getter)]
-    pub fn note(&self) -> Note {
-        self.note.clone()
-    }
     #[wasm_bindgen(getter)]
     pub fn position(&self) -> Range { self.position.clone() }
     #[wasm_bindgen(getter)]
@@ -34,11 +28,7 @@ impl LinkMatch {
     #[wasm_bindgen(getter)]
     pub fn context(&self) -> TextContext { self.context.clone() }
     #[wasm_bindgen(getter)]
-    pub fn link_target_title(&self) -> js_sys::JsString { self.link_target_title.clone() }
-    #[wasm_bindgen(getter)]
-    pub fn link_target_path(&self) -> js_sys::JsString { self.link_target_path.clone() }
-    #[wasm_bindgen(getter)]
-    pub fn link_target_aliases(&self) -> StringArray { self.link_target_aliases.clone() }
+    pub fn link_target_candidates(&self) -> LinkTargetArray { self.link_target_candidates.clone() }
 }
 
 impl LinkMatch {
@@ -46,49 +36,33 @@ impl LinkMatch {
         note: &Note,
         position: Range,
         matched_text: js_sys::JsString,
-        target_note: &Note
+        link_target_candidates: &LinkTargetArray
     ) -> Self {
         LinkMatch {
-            note: note.clone(),
             position: position.clone(),
             matched_text: matched_text.clone(),
             context: TextContext::new(note, position, matched_text),
-            link_target_title: target_note.title(),
-            link_target_path: target_note.path(),
-            link_target_aliases: target_note.aliases(),
+            link_target_candidates: link_target_candidates.clone(),
         }
     }
 
-    pub fn new_from_match <'m> (match_: &fancy_regex::Match<'m>, note: &Note, target_note: &Note) -> Self {
+    pub fn new_from_match <'m> (match_: &fancy_regex::Match<'m>, note: &Note, link_target_candidates: &LinkTargetArray) -> Self {
         let matched_text = match_.as_str();
         let position = Range::new_with_usize(match_.start(), match_.end());
         LinkMatch::new(
             note,
             position,
             js_sys::JsString::from(matched_text),
-            target_note
+            link_target_candidates
         )
     }
 
-    pub fn note_ref(&self) -> &Note { &self.note }
     pub fn position_ref(&self) -> &Range { &self.position }
     pub fn matched_text_ref(&self) -> &js_sys::JsString { &self.matched_text }
     pub fn context_ref(&self) -> &TextContext { &self.context }
 
     pub fn matched_text_string(&self) -> String { self.matched_text.as_string().expect("matched text is not a string") }
 
-
-    /// Prints all the important info in one line
-    pub fn print(&self) {
-        println!(
-            "Match [{}] (context: {}) at position: {}-{}, in note: {}",
-            self.matched_text,
-            self.context.text(),
-            self.position.start(),
-            self.position.end(),
-            self.note.title_string()
-        );
-    }
 }
 
 
@@ -96,6 +70,10 @@ impl LinkMatch {
 extern "C" {
     #[wasm_bindgen(typescript_type = "Array<LinkMatch>")]
     pub type LinkMatchArray;
+
+    // push method
+    #[wasm_bindgen(method, js_name = "push")]
+    pub fn push(this: &LinkMatchArray, value: LinkMatch);
 }
 
 impl From<LinkMatchArray> for js_sys::Array {
@@ -107,9 +85,9 @@ impl From<LinkMatchArray> for js_sys::Array {
     }
 }
 
-pub fn note_match_vec_to_array (note_matches: Vec<LinkMatch>) -> js_sys::Array {
+pub fn link_match_vec_to_array(link_matches: Vec<LinkMatch>) -> js_sys::Array {
     let note_array = js_sys::Array::new();
-    for note_match in note_matches {
+    for note_match in link_matches {
         note_array.push(&note_match.into());
     }
     note_array

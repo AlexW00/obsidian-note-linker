@@ -1,5 +1,6 @@
 use fancy_regex::{Match, Matches, Regex};
-use crate::{Note, LinkMatch};
+use crate::{Note, LinkMatch, NoteMatchResult};
+use crate::rs::text::link_match_target::{LinkTarget, LinkTargetArray};
 
 type LinkMatcher = Regex;
 
@@ -28,12 +29,16 @@ fn handle_link_matcher_result (link_matcher_result: LinkMatcherResult) -> Vec<Li
     let matches: Vec<Match> = link_matcher_result.regex_matches.filter_map(|m| m.ok()).collect();
     let note = link_matcher_result.note;
     let target_note = link_matcher_result.target_note;
-    matches.iter().map(|m| LinkMatch::new_from_match(m, note, target_note))
+    let link_target = LinkTarget::new_from_note(target_note);
+    let link_target_array = LinkTargetArray::from(vec![link_target]);
+    matches.iter().map(|m|
+        LinkMatch::new_from_match(m, note, &link_target_array)
+    )
         .collect()
 }
 
-pub fn search_note_for_links(note_to_check: &Note, notes: &[Note]) -> Vec<LinkMatch> {
-    notes
+pub fn search_note_for_links(note_to_check: &Note, notes: &[Note]) -> NoteMatchResult {
+    let link_matches : Vec<LinkMatch> = notes
         .iter()
         .filter_map(|note: &Note| {
             if !&note.title_string().eq(note_to_check.title_string()) {
@@ -48,5 +53,6 @@ pub fn search_note_for_links(note_to_check: &Note, notes: &[Note]) -> Vec<LinkMa
             } else { None }
         })
         .flatten()
-        .collect()
+        .collect();
+    NoteMatchResult::new(note_to_check, link_matches)
 }

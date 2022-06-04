@@ -6,3 +6,5 @@ pub mod note;
 pub mod context_tail;
 pub mod link_matcher;
 pub mod note_scanned_event;
+pub mod link_match_target;
+pub mod note_match_result;
