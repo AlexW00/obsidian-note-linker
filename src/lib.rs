@@ -6,9 +6,9 @@ use wasm_bindgen::prelude::*;
 use crate::rs::text::link_matcher;
 
 use crate::rs::text::note::{log, Note, NoteArray};
-use crate::rs::text::link_match::{link_match_vec_to_array, LinkMatch};
+use crate::rs::text::link_match::{note_match_vec_to_array, LinkMatch};
+use crate::rs::text::note_link_match_result::NoteLinkMatchResult;
 use crate::rs::text::note_scanned_event::NoteScannedEvent;
-use crate::rs::text::note_match_result::NoteMatchResult;
 
 mod rs;
 
@@ -24,16 +24,21 @@ pub fn find (context: &JsValue, notes: NoteArray, callback: &js_sys::Function) -
         .filter_map(|note: JsValue| Note::try_from(note).ok())
         .collect();
 
-    let res: Vec<NoteMatchResult> = notes.clone().into_iter().map(|note| {
+    let res: Vec<NoteLinkMatchResult> = notes.clone().into_iter().flat_map(|note| {
         let args = js_sys::Array::new();
         let noteScannedEvent = NoteScannedEvent::new(&note);
         let js: JsValue = noteScannedEvent.into();
         args.push(&js);
         callback.apply(context, &args).unwrap();
-        link_matcher::search_note_for_links(&note, &notes)
+        link_matcher::get_link_matches(&note, &notes)
     })
     .collect();
-    NoteMatchResult::into_array(res)
+
+    let arr2 = Array::new();
+    for note_link_match_result in res {
+        arr2.push(&note_link_match_result.into());
+    }
+    arr2
 }
 
 // receives callback and calls it after 5 sec

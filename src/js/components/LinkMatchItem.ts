@@ -6,7 +6,7 @@ export default class LinkMatchItem implements Renderable {
     private linkMatch: LinkMatch;
 
     constructor(linkMatch: LinkMatch) {
-        this.linkMatch = linkMatch;
+        this.linkMatch = linklMatch;
     }
 
     $title(): HTMLElement {
