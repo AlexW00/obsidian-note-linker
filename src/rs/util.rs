@@ -1,6 +1,7 @@
 use wasm_bindgen::convert::FromWasmAbi;
-use wasm_bindgen::JsValue;
 use wasm_bindgen::prelude::*;
+use wasm_bindgen::{JsCast, JsValue};
+use js_sys::Array;
 
 pub fn generic_of_jsval<T: FromWasmAbi<Abi=u32>>(js: JsValue, classname: &str) -> Result<T, JsValue> {
     use js_sys::{Object, Reflect};
@@ -21,6 +22,28 @@ extern "C" {
     #[wasm_bindgen(typescript_type = "Array<string>")]
     #[derive(Clone, Debug)]
     pub type StringArray;
+}
+
+impl From<StringArray> for Array {
+    fn from(string_array: StringArray) -> Self {
+        match string_array.dyn_into::<Array>() {
+            Ok(array) => array,
+            Err(_) => js_sys::Array::new(),
+        }
+    }
+}
+
+impl From<Vec<String>> for StringArray {
+    fn from(string_vec: Vec<String>) -> Self {
+        let arr: Array = js_sys::Array::new();
+        string_vec.iter().for_each(
+            |string| {
+                let js: JsValue = JsValue::from_str(string.as_str());
+                arr.push(&js);
+            }
+        );
+        arr.unchecked_into::<StringArray>()
+    }
 }
 
 /// returns the nearest char boundary that is not an emoji
