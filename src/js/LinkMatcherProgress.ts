@@ -1,4 +1,4 @@
-import {LinkMatch, NoteScannedEvent} from "../../pkg";
+import {NoteScannedEvent} from "../../pkg";
 
 export default class LinkMatcherProgress {
 

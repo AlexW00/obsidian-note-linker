@@ -2,7 +2,7 @@ use js_sys::JsString;
 use crate::rs::text::range;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::{JsValue};
-use crate::Note;
+use crate::{log, Note};
 use crate::rs::util;
 
 #[wasm_bindgen]

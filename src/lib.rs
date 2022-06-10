@@ -4,9 +4,7 @@ use js_sys::{Array};
 use wasm_bindgen::{JsCast, JsValue};
 use wasm_bindgen::prelude::*;
 use crate::rs::text::link_matcher;
-
 use crate::rs::text::note::{log, Note, NoteArray};
-use crate::rs::text::link_match::{note_match_vec_to_array, LinkMatch};
 use crate::rs::text::note_link_match_result::NoteLinkMatchResult;
 use crate::rs::text::note_scanned_event::NoteScannedEvent;
 

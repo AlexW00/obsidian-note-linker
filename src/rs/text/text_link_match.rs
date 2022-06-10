@@ -6,7 +6,7 @@ use wasm_bindgen::{JsCast, JsValue};
 use js_sys::{Array, JsString};
 use wasm_bindgen::prelude::*;
 use crate::link_matcher::RegexMatch;
-use crate::Note;
+use crate::{log, Note};
 
 #[wasm_bindgen]
 pub struct TextLinkMatch {
@@ -44,11 +44,12 @@ impl TextLinkMatch {
 
     pub fn new_from_match(regex_match: &RegexMatch, note: &Note, target_note: &Note) -> Self {
         let link_target_candidates: Vec<LinkTarget> = vec![target_note.into()];
-        Self::new(
+        let textLinkMatch = Self::new(
             regex_match.position.clone(),
             regex_match.matched_text.clone(),
-            TextContext::new(note, regex_match.position.clone(), JsString::from(regex_match.matched_text.clone())),
+            TextContext::new(note, regex_match.position.clone(), regex_match.matched_text.clone()),
             link_target_candidates
-        )
+        );
+        textLinkMatch
     }
 }

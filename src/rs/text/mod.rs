@@ -1,4 +1,3 @@
-pub mod link_match;
 mod text_context;
 mod text_util;
 pub mod range;

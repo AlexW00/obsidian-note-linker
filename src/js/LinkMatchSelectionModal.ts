@@ -1,5 +1,5 @@
 import * as wasm from "../../pkg";
-import {LinkMatch, Note, NoteScannedEvent} from "../../pkg";
+import {Note, NoteLinkMatchResult, NoteScannedEvent} from "../../pkg";
 import {App, Modal} from "obsidian";
 import JsNote from "./JsNote";
 import LinkMatcherProgress from "./LinkMatcherProgress";
@@ -14,24 +14,20 @@ export default class LinkMatchSelectionModal extends Modal {
     onOpen() {
         const progress = new LinkMatcherProgress(JsNote.getNumberOfNotes(this.app.vault, this.app.metadataCache));
         this.contentEl.appendChild(progress.render());
-        const linkMatches = this.getLinkMatches((noteScannedEvent: NoteScannedEvent) => progress.update(noteScannedEvent)).then((linkMatches: LinkMatch[]) => {
-            const linkMatchSelectionList = new LinkMatchSelectionList(linkMatches);
-            this.contentEl.appendChild(linkMatchSelectionList.$html());
-        })
+        const linkMatches = this.getLinkMatches((noteScannedEvent: NoteScannedEvent) => progress.update(noteScannedEvent))
     }
 
-    getLinkMatches(onNoteScanned: (noteScannedEvent: NoteScannedEvent) => void): Promise<LinkMatch[]> {
+    getLinkMatches(onNoteScanned: (noteScannedEvent: NoteScannedEvent) => void): Promise<NoteLinkMatchResult[]> {
         return JsNote.getNotesFromVault(this.app.vault, this.app.metadataCache).then((jsNotes: JsNote[]) => {
             const linkMatches = wasm.find(this, jsNotes as Note[], onNoteScanned);
-            linkMatches.forEach((linkMatch: LinkMatch) => {
-                // Logging for testing
-                console.log("Found text match: " + linkMatch.matched_text + " at " + linkMatch.position.start + "-" + linkMatch.position.end + " in " + linkMatch.note.title);
+            linkMatches.forEach((linkMatch: NoteLinkMatchResult) => {
+                console.log(linkMatch)
             })
-            return linkMatches as LinkMatch[];
+            return linkMatches as NoteLinkMatchResult[];
         });
     }
 
-    public render (linkMatches: LinkMatch[]): HTMLElement {
+    public render (linkMatches: NoteLinkMatchResult[]): HTMLElement {
         const root = document.createElement("div");
         root.innerText= "Link Matches: " + linkMatches.length;
         return root;
