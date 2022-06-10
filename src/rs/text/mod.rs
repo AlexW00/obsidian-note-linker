@@ -1,10 +1,4 @@
-mod text_context;
-mod text_util;
-pub mod range;
-pub mod note;
-pub mod context_tail;
-pub mod link_matcher;
-pub mod note_scanned_event;
-pub mod link_target;
-pub mod text_link_match;
-pub mod note_link_match_result;
+pub mod text_context;
+pub mod text_util;
+pub mod text_context_tail;
+

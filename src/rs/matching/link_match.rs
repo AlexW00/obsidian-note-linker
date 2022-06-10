@@ -1,15 +1,15 @@
-use fancy_regex::Match;
-use crate::rs::text::link_target::LinkTarget;
-use crate::rs::text::range::Range;
-use crate::rs::text::text_context::TextContext;
-use wasm_bindgen::{JsCast, JsValue};
-use js_sys::{Array, JsString};
+use js_sys::{Array};
 use wasm_bindgen::prelude::*;
-use crate::link_matcher::RegexMatch;
-use crate::{log, Note};
 
+use crate::rs::matching::link_match_target_candidate::LinkMatchTargetCandidate;
+use crate::rs::matching::link_matcher::RegexMatch;
+use crate::rs::note::note::Note;
+use crate::rs::text::text_context::TextContext;
+use crate::rs::util::range::Range;
+
+/// A text passage, that has been identified as a possible matching
 #[wasm_bindgen]
-pub struct TextLinkMatch {
+pub struct LinkMatch {
     position: Range,
     matched_text: String,
     context: TextContext,
@@ -17,7 +17,7 @@ pub struct TextLinkMatch {
 }
 
 #[wasm_bindgen]
-impl TextLinkMatch {
+impl LinkMatch {
     #[wasm_bindgen(getter)]
     pub fn position(&self) -> Range { self.position.clone() }
     #[wasm_bindgen(getter)]
@@ -28,13 +28,13 @@ impl TextLinkMatch {
     pub fn link_target_candidates(&self) -> Array { self.link_target_candidates.clone() }
 }
 
-impl TextLinkMatch {
-    pub fn new(position: Range, matched_text: String, context: TextContext, link_target_candidates_vec: Vec<LinkTarget>) -> Self {
+impl LinkMatch {
+    pub fn new(position: Range, matched_text: String, context: TextContext, link_target_candidates_vec: Vec<LinkMatchTargetCandidate>) -> Self {
         let link_target_candidates: Array = js_sys::Array::new();
         for link_target in link_target_candidates_vec {
                 link_target_candidates.push(&link_target.into());
         }
-        TextLinkMatch {
+        LinkMatch {
             position,
             matched_text,
             context,
@@ -43,13 +43,12 @@ impl TextLinkMatch {
     }
 
     pub fn new_from_match(regex_match: &RegexMatch, note: &Note, target_note: &Note) -> Self {
-        let link_target_candidates: Vec<LinkTarget> = vec![target_note.into()];
-        let textLinkMatch = Self::new(
+        let link_target_candidates: Vec<LinkMatchTargetCandidate> = vec![target_note.into()];
+        Self::new(
             regex_match.position.clone(),
             regex_match.matched_text.clone(),
             TextContext::new(note, regex_match.position.clone(), regex_match.matched_text.clone()),
             link_target_candidates
-        );
-        textLinkMatch
+        )
     }
 }

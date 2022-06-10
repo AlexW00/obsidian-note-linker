@@ -1,2 +1,4 @@
 pub mod text;
-mod util;
+pub mod matching;
+pub mod note;
+pub mod util;

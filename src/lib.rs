@@ -1,12 +1,14 @@
 use std::convert::TryFrom;
 
-use js_sys::{Array};
+use js_sys::Array;
 use wasm_bindgen::{JsCast, JsValue};
 use wasm_bindgen::prelude::*;
-use crate::rs::text::link_matcher;
-use crate::rs::text::note::{log, Note, NoteArray};
-use crate::rs::text::note_link_match_result::NoteLinkMatchResult;
-use crate::rs::text::note_scanned_event::NoteScannedEvent;
+
+use crate::rs::matching::link_matcher;
+use crate::rs::matching::link_matching_result::LinkMatchingResult;
+use crate::rs::note::note::{Note, NoteArray};
+use crate::rs::note::note_scanned_event::NoteScannedEvent;
+use crate::rs::util::wasm_util::log;
 
 mod rs;
 
@@ -16,16 +18,16 @@ pub fn add (a: i32, b: i32) -> i32 {
 }
 
 #[wasm_bindgen]
-pub fn find (context: &JsValue, notes: NoteArray, callback: &js_sys::Function) -> js_sys::Array {
+pub fn find (context: &JsValue, notes: NoteArray, callback: &js_sys::Function) -> Array {
     let arr = notes.unchecked_into::<Array>();
     let notes: Vec<Note> = arr.iter()
         .filter_map(|note: JsValue| Note::try_from(note).ok())
         .collect();
 
-    let res: Vec<NoteLinkMatchResult> = notes.clone().into_iter().flat_map(|note| {
+    let res: Vec<LinkMatchingResult> = notes.clone().into_iter().flat_map(|note| {
         let args = js_sys::Array::new();
-        let noteScannedEvent = NoteScannedEvent::new(&note);
-        let js: JsValue = noteScannedEvent.into();
+        let note_scanned_event = NoteScannedEvent::new(&note);
+        let js: JsValue = note_scanned_event.into();
         args.push(&js);
         callback.apply(context, &args).unwrap();
         link_matcher::get_link_matches(&note, &notes)

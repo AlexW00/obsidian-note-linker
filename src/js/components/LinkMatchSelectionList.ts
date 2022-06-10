@@ -18,7 +18,7 @@ export default class LinkMatchSelectionList implements Renderable{
 
     $list(): HTMLElement {
         const list = document.createElement("ul");
-        list.classList.add("link-match-list");
+        list.classList.add("matching-match-list");
         this.linkMatches.forEach(linkMatch => {
             const item = new LinkMatchItem(linkMatch);
             list.appendChild(item.$html());

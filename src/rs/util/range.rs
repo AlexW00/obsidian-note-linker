@@ -1,10 +1,11 @@
 use std::convert::TryFrom;
-use js_sys::{Array, Error, Object};
-use wasm_bindgen::prelude::*;
-use crate::rs::util::{generic_of_jsval};
-use wasm_bindgen::{JsCast, JsValue};
-use crate::rs::text::note::log;
+
+use js_sys::{Array};
 use thiserror::Error;
+use wasm_bindgen::{JsCast, JsValue};
+use wasm_bindgen::prelude::*;
+
+use crate::rs::util::wasm_util::generic_of_jsval;
 
 #[wasm_bindgen]
 #[derive(Clone)]

@@ -1,6 +1,7 @@
 use std::error::Error;
 use std::fs;
 use std::path::Path;
+
 use fancy_regex::Regex;
 
 pub fn trim_file_extension (filename: &String) -> String {
@@ -9,30 +10,6 @@ pub fn trim_file_extension (filename: &String) -> String {
         filename_without_extension.truncate(pos);
     }
     filename_without_extension
-}
-
-/// Returns the file content as a String
-pub fn get_file_content (path: &Path) -> Result<String, Box<dyn Error>> {
-    let content: String = fs::read_to_string(path)?.parse()?;
-    Ok(content)
-}
-
-/// Function to check if a file is a markdown file.
-pub fn is_markdown_file(filename: &String) -> bool {
-    let md_extension = ".md";
-    let len = filename.len();
-    if len > 3 {
-        let file_type = filename.chars().rev().take(3).fold(String::from(""), |p: String, n : char| {
-            format!("{}{}", n, p)
-        } );
-        return file_type.eq(&md_extension)
-    }
-    false
-}
-
-/// Function to check if a directory exists, if not, throw an error.
-pub fn check_if_dir_exists(dir: &String) {
-    assert!(Path::new(dir).exists(), "Directory does not exist");
 }
 
 /// Creates a string with n times character c.
@@ -44,13 +21,19 @@ pub fn create_string_with_n_characters(n: usize, c: char) -> String {
     s
 }
 
-pub fn combine_regular_expressions(regexes: [&str; 4]) -> Regex {
-    let mut regex = String::new();
-    regex.push_str("(");
-    for r in regexes {
-        regex.push_str(r);
-        regex.push_str("|");
+/// returns the nearest char boundary that is not an emoji
+pub fn get_nearest_char_boundary(text: &str, position: usize, do_expand_left: bool) -> usize {
+    let mut i = position;
+    let mut direction = do_expand_left;
+    while i > 0 && !text.is_char_boundary(i) {
+        if text.len() == i || i == 0 {
+            direction = !direction;
+        }
+        if direction {
+            i -= 1;
+        } else {
+            i += 1;
+        }
     }
-    regex.push_str(")");
-    Regex::new(&regex).unwrap()
+    i
 }

@@ -1,9 +1,9 @@
-use fancy_regex::{Match, Matches, Regex};
-use js_sys::Boolean;
-use crate::{log, Note};
-use crate::rs::text::note_link_match_result::NoteLinkMatchResult;
-use crate::rs::text::text_link_match::TextLinkMatch;
-use crate::rs::text::range::Range;
+use fancy_regex::{Match, Regex};
+
+use crate::rs::matching::link_match::LinkMatch;
+use crate::rs::matching::link_matching_result::LinkMatchingResult;
+use crate::rs::note::note::Note;
+use crate::rs::util::range::Range;
 
 type LinkMatcher = Regex;
 
@@ -47,14 +47,14 @@ impl <'m> LinkMatcherResult <'m> {
     }*/
 }
 
-impl <'m> Into<Vec<TextLinkMatch>> for LinkMatcherResult <'m> {
-    fn into(self) -> Vec<TextLinkMatch> {
+impl <'m> Into<Vec<LinkMatch>> for LinkMatcherResult <'m> {
+    fn into(self) -> Vec<LinkMatch> {
         let note: &Note = self.note;
         let target_note: &Note = self.target_note;
-        let text_link_matches: Vec<TextLinkMatch> = self.regex_matches
+        let text_link_matches: Vec<LinkMatch> = self.regex_matches
             .into_iter()
             .map(|regex_match: RegexMatch| {
-                TextLinkMatch::new_from_match(&regex_match, note, target_note)
+                LinkMatch::new_from_match(&regex_match, note, target_note)
             })
             .collect();
         text_link_matches
@@ -63,11 +63,11 @@ impl <'m> Into<Vec<TextLinkMatch>> for LinkMatcherResult <'m> {
 
 fn get_link_matcher(title_string: &String) -> LinkMatcher {
     let escaped_name = fancy_regex::escape(title_string);
-    fancy_regex::Regex::new(&*format!(r"\b{}\b", escaped_name)).unwrap()
+    Regex::new(&*format!(r"\b{}\b", escaped_name)).unwrap()
 }
 
-pub fn get_link_matches(note_to_check: &Note, target_note_candidates: &[Note]) -> Option<NoteLinkMatchResult> {
-    let text_link_matches: Vec<TextLinkMatch> =
+pub fn get_link_matches(note_to_check: &Note, target_note_candidates: &[Note]) -> Option<LinkMatchingResult> {
+    let text_link_matches: Vec<LinkMatch> =
         target_note_candidates
         .iter()
         .filter_map(|target_note: &Note| {
@@ -84,7 +84,7 @@ pub fn get_link_matches(note_to_check: &Note, target_note_candidates: &[Note]) -
         .map(
             |link_matcher_result: LinkMatcherResult| {
                 // TODO: is there a mapping function for casting?
-                let text_link_match: Vec<TextLinkMatch> = link_matcher_result.into();
+                let text_link_match: Vec<LinkMatch> = link_matcher_result.into();
                 text_link_match
             }
         )
@@ -92,7 +92,7 @@ pub fn get_link_matches(note_to_check: &Note, target_note_candidates: &[Note]) -
         .collect();
     if *&!text_link_matches.is_empty() {
         return Some(
-            NoteLinkMatchResult::new(
+            LinkMatchingResult::new(
                 note_to_check.clone(),
                 text_link_matches
             )

@@ -1,5 +1,7 @@
-use crate::Note;
 use wasm_bindgen::prelude::*;
+
+use crate::rs::note::note::Note;
+
 #[wasm_bindgen]
 pub struct NoteScannedEvent {
     note_title: js_sys::JsString,

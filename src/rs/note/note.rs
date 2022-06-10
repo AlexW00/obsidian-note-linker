@@ -1,10 +1,12 @@
 use std::convert::TryFrom;
+
 use js_sys::Array;
-use wasm_bindgen::prelude::*;
-use crate::rs::text::range::{Range, RangeArray};
-use crate::rs::util;
 use wasm_bindgen::{JsCast, JsValue};
-use crate::rs::text::text_util::create_string_with_n_characters;
+use wasm_bindgen::prelude::*;
+
+use crate::rs::text::text_util::{create_string_with_n_characters, get_nearest_char_boundary};
+use crate::rs::util::range::{Range, RangeArray};
+use crate::rs::util::wasm_util::{generic_of_jsval, StringArray};
 
 #[wasm_bindgen]
 #[derive(Clone)]
@@ -12,7 +14,7 @@ pub struct Note {
     title: js_sys::JsString,
     path: js_sys::JsString,
     content: js_sys::JsString,
-    aliases: util::StringArray,
+    aliases: StringArray,
     ignore: RangeArray,
 
     _title: String,
@@ -25,7 +27,7 @@ pub struct Note {
 #[wasm_bindgen]
 impl Note {
     #[wasm_bindgen(constructor)]
-    pub fn new(title: js_sys::JsString, path: js_sys::JsString, content: js_sys::JsString, aliases: util::StringArray, ignore: RangeArray) -> Note {
+    pub fn new(title: js_sys::JsString, path: js_sys::JsString, content: js_sys::JsString, aliases: StringArray, ignore: RangeArray) -> Note {
         Note {
             title: title.clone(),
             path: path.clone(),
@@ -54,7 +56,7 @@ impl Note {
         self.content.clone()
     }
     #[wasm_bindgen(getter)]
-    pub fn aliases(&self) -> util::StringArray {
+    pub fn aliases(&self) -> StringArray {
         self.aliases.clone()
     }
     #[wasm_bindgen(getter)]
@@ -85,8 +87,8 @@ impl Note {
         for ignore in self.ignore_vec() {
             let start = ignore.start_usize();
             let end = ignore.end_usize();
-            let from = util::get_nearest_char_boundary(&content, start, true);
-            let to = util::get_nearest_char_boundary(&content, end, false);
+            let from = get_nearest_char_boundary(&content, start, true);
+            let to = get_nearest_char_boundary(&content, end, false);
             content = content.replace(&content[from..to], &create_string_with_n_characters(end - start, ' '));
         }
         content
@@ -102,24 +104,18 @@ impl TryFrom<JsValue> for Note {
 
 #[wasm_bindgen]
 pub fn note_from_js_value(js: JsValue) -> Option<Note> {
-    util::generic_of_jsval(js, "Note").unwrap_or(None)
+    generic_of_jsval(js, "Note").unwrap_or(None)
 }
-
 
 #[wasm_bindgen]
 extern "C" {
     #[wasm_bindgen(typescript_type = "Array<Note>")]
     pub type NoteArray;
-
-    // import console log
-    #[wasm_bindgen(js_namespace = console)]
-    pub fn log(s: &str);
 }
 
-
-impl Into<Vec<String>> for util::StringArray {
+impl Into<Vec<String>> for StringArray {
     fn into(self) -> Vec<String> {
-        let arr: Result<Array, util::StringArray> = self.dyn_into::<Array>();
+        let arr: Result<Array, StringArray> = self.dyn_into::<Array>();
         match arr {
             Ok(arr) => arr.iter()
                 .filter_map(|a: JsValue| a.as_string())

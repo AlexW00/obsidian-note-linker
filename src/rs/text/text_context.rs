@@ -1,26 +1,25 @@
-use js_sys::JsString;
-use crate::{log, Note};
-use crate::rs::text::range::Range;
-use wasm_bindgen::{JsCast, JsValue};
 use wasm_bindgen::prelude::*;
-use crate::rs::text::context_tail::ContextTail;
+
+use crate::rs::note::note::Note;
+use crate::rs::text::text_context_tail::TextContextTail;
+use crate::rs::util::range::Range;
 
 #[wasm_bindgen]
 #[derive(Clone)]
 pub struct TextContext {
-    left_context_tail: ContextTail,
-    right_context_tail: ContextTail,
+    left_context_tail: TextContextTail,
+    right_context_tail: TextContextTail,
     match_text: String,
 }
 
 #[wasm_bindgen]
 impl TextContext {
     #[wasm_bindgen(getter)]
-    pub fn left_context_tail(&self) -> ContextTail {
+    pub fn left_context_tail(&self) -> TextContextTail {
         self.left_context_tail.clone()
     }
     #[wasm_bindgen(getter)]
-    pub fn right_context_tail(&self) -> ContextTail {
+    pub fn right_context_tail(&self) -> TextContextTail {
         self.right_context_tail.clone()
     }
     #[wasm_bindgen(getter)]
@@ -32,17 +31,17 @@ impl TextContext {
 impl TextContext {
     pub fn new(note: &Note, match_position: Range, match_text: String) -> TextContext {
         TextContext {
-            left_context_tail: ContextTail::new(note, &match_position, true),
-            right_context_tail: ContextTail::new(note, &match_position, false),
+            left_context_tail: TextContextTail::new(note, &match_position, true),
+            right_context_tail: TextContextTail::new(note, &match_position, false),
             match_text,
         }
     }
 
-    pub fn left_context_tail_ref(&self) -> &ContextTail {
+    pub fn left_context_tail_ref(&self) -> &TextContextTail {
         &self.left_context_tail
     }
 
-    pub fn right_context_tail_ref(&self) -> &ContextTail {
+    pub fn right_context_tail_ref(&self) -> &TextContextTail {
         &self.right_context_tail
     }
 

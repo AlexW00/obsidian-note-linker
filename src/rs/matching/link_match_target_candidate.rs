@@ -1,18 +1,18 @@
-use wasm_bindgen::{JsCast, JsValue};
 use wasm_bindgen::prelude::*;
-use crate::rs::util::StringArray;
-use js_sys::Array;
-use crate::Note;
 
+use crate::rs::note::note::Note;
+use crate::rs::util::wasm_util::StringArray;
+
+/// A candidate note for a matching to matching to
 #[wasm_bindgen]
-pub struct LinkTarget {
+pub struct LinkMatchTargetCandidate {
     title: String,
     path: String,
     aliases: StringArray
 }
 
 #[wasm_bindgen]
-impl LinkTarget {
+impl LinkMatchTargetCandidate {
     #[wasm_bindgen(getter)]
     pub fn title(&self) -> String { self.title.clone() }
     #[wasm_bindgen(getter)]
@@ -21,9 +21,9 @@ impl LinkTarget {
     pub fn aliases(&self) -> StringArray { self.aliases.clone() }
 }
 
-impl LinkTarget {
+impl LinkMatchTargetCandidate {
     pub fn new (title: String, path: String, aliases: Vec<String>) -> Self {
-        LinkTarget {
+        LinkMatchTargetCandidate {
             title,
             path,
             aliases: aliases.into()
@@ -31,9 +31,9 @@ impl LinkTarget {
     }
 }
 
-impl From<&Note> for LinkTarget {
+impl From<&Note> for LinkMatchTargetCandidate {
     fn from(note: &Note) -> Self {
-        LinkTarget {
+        LinkMatchTargetCandidate {
             title: note.title_string().clone(),
             path: note.path_string().clone(),
             aliases: note.aliases()
