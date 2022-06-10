@@ -11,15 +11,12 @@ use crate::rs::util::wasm_util::{generic_of_jsval, StringArray};
 #[wasm_bindgen]
 #[derive(Clone)]
 pub struct Note {
-    title: js_sys::JsString,
-    path: js_sys::JsString,
-    content: js_sys::JsString,
+    title: String,
+    path: String,
+    content: String,
     aliases: StringArray,
     ignore: RangeArray,
 
-    _title: String,
-    _path: String,
-    _content: String,
     _aliases: Vec<String>,
     _ignore: Vec<Range>,
 }
@@ -27,7 +24,7 @@ pub struct Note {
 #[wasm_bindgen]
 impl Note {
     #[wasm_bindgen(constructor)]
-    pub fn new(title: js_sys::JsString, path: js_sys::JsString, content: js_sys::JsString, aliases: StringArray, ignore: RangeArray) -> Note {
+    pub fn new(title: String, path: String, content: String, aliases: StringArray, ignore: RangeArray) -> Note {
         Note {
             title: title.clone(),
             path: path.clone(),
@@ -35,24 +32,17 @@ impl Note {
             aliases: aliases.clone(),
             ignore: ignore.clone(),
 
-            _title: title.as_string().expect("title is not a string"),
-            _path: path.as_string().expect("path is not a string"),
-            _content: content.as_string().expect("content is not a string"),
             _aliases: aliases.into(),
             _ignore: Vec::from(ignore),
         }
     }
 
     #[wasm_bindgen(getter)]
-    pub fn title(&self) -> js_sys::JsString {
-        self.title.clone()
-    }
+    pub fn title(&self) -> String { self.title.clone() }
     #[wasm_bindgen(getter)]
-    pub fn path(&self) -> js_sys::JsString {
-        self.path.clone()
-    }
+    pub fn path(&self) -> String { self.path.clone() }
     #[wasm_bindgen(getter)]
-    pub fn content(&self) -> js_sys::JsString {
+    pub fn content(&self) -> String {
         self.content.clone()
     }
     #[wasm_bindgen(getter)]
@@ -66,15 +56,6 @@ impl Note {
 }
 
 impl Note {
-    pub fn title_string(&self) -> &String {
-        &self._title
-    }
-    pub fn path_string(&self) -> &String {
-        &self._path
-    }
-    pub fn content_string(&self) -> &String {
-        &self._content
-    }
     pub fn aliases_vec(&self) -> &Vec<String> {
         &self._aliases
     }
@@ -83,7 +64,7 @@ impl Note {
     }
 
     pub fn sanitized_content(&self) -> String {
-        let mut content = self.content_string().clone();
+        let mut content = self.content().clone();
         for ignore in self.ignore_vec() {
             let start = ignore.start_usize();
             let end = ignore.end_usize();

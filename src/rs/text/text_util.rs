@@ -1,17 +1,3 @@
-use std::error::Error;
-use std::fs;
-use std::path::Path;
-
-use fancy_regex::Regex;
-
-pub fn trim_file_extension (filename: &String) -> String {
-    let mut filename_without_extension = filename.clone();
-    if let Some(pos) = filename_without_extension.rfind('.') {
-        filename_without_extension.truncate(pos);
-    }
-    filename_without_extension
-}
-
 /// Creates a string with n times character c.
 pub fn create_string_with_n_characters(n: usize, c: char) -> String {
     let mut s = String::new();

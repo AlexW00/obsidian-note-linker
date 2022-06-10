@@ -34,8 +34,8 @@ impl LinkMatchTargetCandidate {
 impl From<&Note> for LinkMatchTargetCandidate {
     fn from(note: &Note) -> Self {
         LinkMatchTargetCandidate {
-            title: note.title_string().clone(),
-            path: note.path_string().clone(),
+            title: note.title(),
+            path: note.path(),
             aliases: note.aliases()
         }
     }

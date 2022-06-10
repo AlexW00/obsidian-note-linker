@@ -4,8 +4,8 @@ use crate::rs::note::note::Note;
 
 #[wasm_bindgen]
 pub struct NoteScannedEvent {
-    note_title: js_sys::JsString,
-    note_path: js_sys::JsString,
+    note_title: String,
+    note_path: String,
 }
 #[wasm_bindgen]
 impl NoteScannedEvent {
@@ -17,12 +17,8 @@ impl NoteScannedEvent {
         }
     }
     #[wasm_bindgen(getter)]
-    pub fn note_title(&self) -> js_sys::JsString {
-        self.note_title.clone()
-    }
+    pub fn note_title(&self) -> String { self.note_title.clone() }
 
     #[wasm_bindgen(getter)]
-    pub fn note_path(&self) -> js_sys::JsString {
-        self.note_path.clone()
-    }
+    pub fn note_path(&self) -> String { self.note_path.clone() }
 }

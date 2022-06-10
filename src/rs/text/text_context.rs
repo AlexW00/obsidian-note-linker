@@ -45,14 +45,10 @@ impl TextContext {
         &self.right_context_tail
     }
 
-    pub fn match_text_string(&self) -> &String {
-        &self.match_text
-    }
-
     pub fn text(&self) -> String {
         format!(
             "...{}**{}**{}...",
-            &self.left_context_tail.text_string(), &self.match_text, &self.right_context_tail.text_string()
+            &self.left_context_tail.text(), &self.match_text, &self.right_context_tail.text()
         )
     }
 }

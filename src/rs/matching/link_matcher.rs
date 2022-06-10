@@ -29,8 +29,8 @@ struct LinkMatcherResult <'m> {
 
 impl <'m> LinkMatcherResult <'m> {
     fn new(note: &'m Note, target_note: &'m Note) -> Self {
-        let regex_matches: Vec<RegexMatch> = get_link_matcher(note.title_string())
-            .find_iter(&note.content_string())
+        let regex_matches: Vec<RegexMatch> = get_link_matcher(&note.title())
+            .find_iter(&note.content())
             .filter_map(|match_result| { match_result.ok() })
             .map(|m: Match| RegexMatch::new_from_match(m))
             .collect();
@@ -61,8 +61,8 @@ impl <'m> Into<Vec<LinkMatch>> for LinkMatcherResult <'m> {
     }
 }
 
-fn get_link_matcher(title_string: &String) -> LinkMatcher {
-    let escaped_name = fancy_regex::escape(title_string);
+fn get_link_matcher(title: &String) -> LinkMatcher {
+    let escaped_name = fancy_regex::escape(title);
     Regex::new(&*format!(r"\b{}\b", escaped_name)).unwrap()
 }
 
@@ -71,7 +71,7 @@ pub fn get_link_matches(note_to_check: &Note, target_note_candidates: &[Note]) -
         target_note_candidates
         .iter()
         .filter_map(|target_note: &Note| {
-            if !&target_note.title_string().eq(note_to_check.title_string()) {
+            if !&target_note.title().eq(&note_to_check.title()) {
                 return Some(
                     LinkMatcherResult::new(
                         note_to_check,
