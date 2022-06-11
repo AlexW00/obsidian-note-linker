@@ -1,12 +1,12 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
-interface LinkMatchingResultTitleComponentProps {
+interface NoteMatchingResultTitleProps {
     noteTitle: string,
     notePath: string
 }
 
-export const LinkMatchingResultTitleComponent = ({noteTitle, notePath}: LinkMatchingResultTitleComponentProps) => {
+export const NoteMatchingResultTitleComponent = ({noteTitle, notePath}: NoteMatchingResultTitleProps) => {
 
     return (
         <div>

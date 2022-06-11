@@ -1,7 +1,7 @@
 use js_sys::{Array};
 use wasm_bindgen::prelude::*;
 
-use crate::rs::matching::link_match_target_candidate::LinkMatchTargetCandidate;
+use crate::rs::matching::link_match_target_candidate::LinkTargetCandidate;
 use crate::rs::matching::link_matcher::RegexMatch;
 use crate::rs::note::note::Note;
 use crate::rs::text::text_context::TextContext;
@@ -29,7 +29,7 @@ impl LinkMatch {
 }
 
 impl LinkMatch {
-    pub fn new(position: Range, matched_text: String, context: TextContext, link_target_candidates_vec: Vec<LinkMatchTargetCandidate>) -> Self {
+    pub fn new(position: Range, matched_text: String, context: TextContext, link_target_candidates_vec: Vec<LinkTargetCandidate>) -> Self {
         let link_target_candidates: Array = js_sys::Array::new();
         for link_target in link_target_candidates_vec {
                 link_target_candidates.push(&link_target.into());
@@ -43,7 +43,7 @@ impl LinkMatch {
     }
 
     pub fn new_from_match(regex_match: &RegexMatch, note: &Note, target_note: &Note) -> Self {
-        let link_target_candidates: Vec<LinkMatchTargetCandidate> = vec![target_note.into()];
+        let link_target_candidates: Vec<LinkTargetCandidate> = vec![target_note.into()];
         Self::new(
             regex_match.position.clone(),
             regex_match.matched_text.clone(),

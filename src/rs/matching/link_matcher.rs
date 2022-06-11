@@ -5,7 +5,7 @@ use fancy_regex::{escape, Match, Regex};
 use crate::log;
 
 use crate::rs::matching::link_match::LinkMatch;
-use crate::rs::matching::link_matching_result::LinkMatchingResult;
+use crate::rs::matching::note_matching_result::NoteMatchingResult;
 use crate::rs::note::note::Note;
 use crate::rs::util::range::Range;
 
@@ -83,7 +83,7 @@ fn get_link_matcher(note: &Note) -> LinkMatcher {
     Regex::new(&*format!(r"\b{}\b", regex_string)).unwrap()
 }
 
-pub fn get_link_matches(note_to_check: &Note, target_note_candidates: &[Note]) -> Option<LinkMatchingResult> {
+pub fn get_link_matches(note_to_check: &Note, target_note_candidates: &[Note]) -> Option<NoteMatchingResult> {
     let text_link_matches: Vec<LinkMatch> =
         target_note_candidates
         .iter()
@@ -109,7 +109,7 @@ pub fn get_link_matches(note_to_check: &Note, target_note_candidates: &[Note]) -
         .collect();
     if *&!text_link_matches.is_empty() {
         return Some(
-            LinkMatchingResult::new(
+            NoteMatchingResult::new(
                 note_to_check.clone(),
                 text_link_matches
             )

@@ -2,13 +2,13 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import {TextContext} from "../../../../pkg";
 
-interface LinkMatchingResultLinkMatchCandidateReplacementProps {
+interface noteLinkMatchResultLinkMatchCandidateReplacementProps {
     replacement: string
     targetNoteTitle: string
     textContext: TextContext
 }
 
-export const LinkMatchTargetCandidateReplacementComponent = ({replacement, targetNoteTitle, textContext}: LinkMatchingResultLinkMatchCandidateReplacementProps) => {
+export const ReplacementItemComponent = ({replacement, targetNoteTitle, textContext}: noteLinkMatchResultLinkMatchCandidateReplacementProps) => {
 
     return (
         <li>

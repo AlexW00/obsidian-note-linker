@@ -1,20 +1,20 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import {useContext, useEffect, useState} from "react";
-import {LinkMatchingResult, Note, NoteScannedEvent} from "../../../../pkg";
+import {Note, NoteMatchingResult, NoteScannedEvent} from "../../../../pkg";
 import JsNote from "../../JsNote";
 import {AppContext} from "../../context";
 import * as wasm from "../../../../pkg";
 import Progress from "../../Progress";
 import {ProgressComponent} from "../general/ProgressComponent";
-import {LinkMatchingResultsListComponent} from "../lists/LinkMatchingResultsListComponent";
+import {NoteMatchingResultsList} from "../lists/NoteMatchingResultsListComponent";
 
 
 export const LinkMatcherComponent = () => {
 
     const {vault, metadataCache} = useContext(AppContext);
 
-    const [linkMatchingResults, setLinkMatchingResults] = useState<Array<LinkMatchingResult>>([]);
+    const [noteMatchingResults, setNoteMatchingResults] = useState<Array<NoteMatchingResult>>([]);
     const [linkMatchingProgress] = useState<Progress>(new Progress(JsNote.getNumberOfNotes(vault, metadataCache)));
 
     const onLinkMatchingProgress = (noteScannedEvent: NoteScannedEvent) => {
@@ -26,9 +26,9 @@ export const LinkMatcherComponent = () => {
         // On mount
         JsNote.getNotesFromVault(vault, metadataCache)
             .then((jsNotes: JsNote[]) => wasm.find(this, jsNotes as Note[], onLinkMatchingProgress))
-            .then((linkMatchingResults: Array<LinkMatchingResult>) => {
+            .then((noteLinkMatchResults: Array<NoteMatchingResult>) => {
                 console.log("got results");
-                setLinkMatchingResults(linkMatchingResults)
+                setNoteMatchingResults(noteLinkMatchResults)
             })
         return () => {
             // On unmount
@@ -37,7 +37,7 @@ export const LinkMatcherComponent = () => {
 
     return (
         linkMatchingProgress.isComplete() ?
-            <LinkMatchingResultsListComponent linkMatchingResults={linkMatchingResults}/>:
+            <NoteMatchingResultsList noteMatchingResults={noteMatchingResults}/>:
             <ProgressComponent progress={linkMatchingProgress}/>
     );
 };

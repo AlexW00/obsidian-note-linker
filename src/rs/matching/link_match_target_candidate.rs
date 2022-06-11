@@ -5,7 +5,7 @@ use crate::rs::util::wasm_util::StringArray;
 
 /// A candidate note for a matching to matching to
 #[wasm_bindgen]
-pub struct LinkMatchTargetCandidate {
+pub struct LinkTargetCandidate {
     title: String,
     path: String,
     aliases: StringArray
@@ -13,7 +13,7 @@ pub struct LinkMatchTargetCandidate {
 
 // TODO: Rename ->LinkTargetCandidate
 #[wasm_bindgen]
-impl LinkMatchTargetCandidate {
+impl LinkTargetCandidate {
     #[wasm_bindgen(getter)]
     pub fn title(&self) -> String { self.title.clone() }
     #[wasm_bindgen(getter)]
@@ -22,9 +22,9 @@ impl LinkMatchTargetCandidate {
     pub fn aliases(&self) -> StringArray { self.aliases.clone() }
 }
 
-impl LinkMatchTargetCandidate {
+impl LinkTargetCandidate {
     pub fn new (title: String, path: String, aliases: Vec<String>) -> Self {
-        LinkMatchTargetCandidate {
+        LinkTargetCandidate {
             title,
             path,
             aliases: aliases.into()
@@ -32,9 +32,9 @@ impl LinkMatchTargetCandidate {
     }
 }
 
-impl From<&Note> for LinkMatchTargetCandidate {
+impl From<&Note> for LinkTargetCandidate {
     fn from(note: &Note) -> Self {
-        LinkMatchTargetCandidate {
+        LinkTargetCandidate {
             title: note.title(),
             path: note.path(),
             aliases: note.aliases()

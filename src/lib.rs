@@ -5,7 +5,7 @@ use wasm_bindgen::{JsCast, JsValue};
 use wasm_bindgen::prelude::*;
 
 use crate::rs::matching::link_matcher;
-use crate::rs::matching::link_matching_result::LinkMatchingResult;
+use crate::rs::matching::note_matching_result::NoteMatchingResult;
 use crate::rs::note::note::{Note, NoteArray};
 use crate::rs::note::note_scanned_event::NoteScannedEvent;
 use crate::rs::util::wasm_util::log;
@@ -24,7 +24,7 @@ pub fn find (context: &JsValue, notes: NoteArray, callback: &js_sys::Function) -
         .filter_map(|note: JsValue| Note::try_from(note).ok())
         .collect();
 
-    let res: Vec<LinkMatchingResult> = notes.clone().into_iter().flat_map(|note| {
+    let res: Vec<NoteMatchingResult> = notes.clone().into_iter().flat_map(|note| {
         let args = js_sys::Array::new();
         let note_scanned_event = NoteScannedEvent::new(&note);
         let js: JsValue = note_scanned_event.into();
