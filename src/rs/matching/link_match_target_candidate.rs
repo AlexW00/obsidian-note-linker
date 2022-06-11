@@ -11,6 +11,7 @@ pub struct LinkMatchTargetCandidate {
     aliases: StringArray
 }
 
+// TODO: Rename ->LinkTargetCandidate
 #[wasm_bindgen]
 impl LinkMatchTargetCandidate {
     #[wasm_bindgen(getter)]

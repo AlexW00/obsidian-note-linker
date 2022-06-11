@@ -13,7 +13,7 @@ pub struct LinkMatch {
     position: Range,
     matched_text: String,
     context: TextContext,
-    link_target_candidates: Array
+    link_match_target_candidates: Array //
 }
 
 #[wasm_bindgen]
@@ -25,7 +25,7 @@ impl LinkMatch {
     #[wasm_bindgen(getter)]
     pub fn context(&self) -> TextContext { self.context.clone() }
     #[wasm_bindgen(getter)]
-    pub fn link_target_candidates(&self) -> Array { self.link_target_candidates.clone() }
+    pub fn link_match_target_candidate(&self) -> Array { self.link_match_target_candidates.clone() }
 }
 
 impl LinkMatch {
@@ -38,7 +38,7 @@ impl LinkMatch {
             position,
             matched_text,
             context,
-            link_target_candidates
+            link_match_target_candidates: link_target_candidates
         }
     }
 

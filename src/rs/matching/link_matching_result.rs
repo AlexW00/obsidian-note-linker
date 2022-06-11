@@ -7,7 +7,7 @@ use crate::rs::note::note::Note;
 #[wasm_bindgen]
 pub struct LinkMatchingResult {
     note: Note,
-    text_link_matches: Array
+    link_matches: Array // TODO: Rename -> link_match
 }
 
 #[wasm_bindgen]
@@ -15,7 +15,7 @@ impl LinkMatchingResult {
     #[wasm_bindgen(getter)]
     pub fn note(&self) -> Note { self.note.clone() }
     #[wasm_bindgen(getter)]
-    pub fn text_link_matches(&self) -> Array { self.text_link_matches.clone() }
+    pub fn link_matches(&self) -> Array { self.link_matches.clone() }
 }
 
 impl LinkMatchingResult {
@@ -26,7 +26,7 @@ impl LinkMatchingResult {
         };
         LinkMatchingResult {
             note,
-            text_link_matches
+            link_matches: text_link_matches
         }
     }
 }
