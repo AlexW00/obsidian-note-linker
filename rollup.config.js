@@ -13,7 +13,7 @@ if you want to view the source visit the plugins github repository
 export default {
   input: 'src/index.ts',
   output: {
-    file: 'main.js',
+    file: 'main.ts',
     sourcemap: 'inline',
     format: 'cjs',
     exports: 'default',

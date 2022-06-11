@@ -1,9 +1,7 @@
 import { Plugin, Notice, App, Vault} from "obsidian";
 import rustPlugin from "../pkg/obsidian_rust_plugin_bg.wasm";
 import * as wasm from "../pkg";
-import JsNote from "./js/JsNote";
-import {LinkMatch, Note, set_timeout} from "../pkg";
-import LinkMatchSelectionModal from "./js/LinkMatchSelectionModal";
+import LinkMatchSelectionModal from "./ts/LinkMatchSelectionModal";
 
 export default class RustPlugin extends Plugin {
 	async onload() {
