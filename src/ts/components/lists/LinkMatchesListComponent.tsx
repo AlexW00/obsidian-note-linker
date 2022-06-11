@@ -14,7 +14,11 @@ export const LinkMatchesListComponent = ({noteLinkMatchResult}: noteLinkMatchRes
             <NoteMatchingResultTitleComponent noteTitle={noteLinkMatchResult.note.title} notePath={noteLinkMatchResult.note.path}/>
             <ul>
                 {noteLinkMatchResult.link_matches.map((link_match: LinkMatch) => {
-                    return <LinkTargetCandidatesListComponent linkMatch={link_match} key={link_match.matched_text}/>
+                    return (
+                        <LinkTargetCandidatesListComponent
+                            linkMatch={link_match}
+                            key={`${link_match.matched_text}-${link_match.position.start}-${link_match.position.end}`}/>
+                    )
                 })}
             </ul>
         </li>

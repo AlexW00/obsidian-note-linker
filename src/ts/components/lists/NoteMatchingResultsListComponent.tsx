@@ -12,7 +12,7 @@ export const NoteMatchingResultsList = ({noteMatchingResults}: NoteMatchingResul
             <h2>Note Link Matches</h2>
             <ul>
                 {noteMatchingResults.map((noteLinkMatchResult: NoteMatchingResult) => {
-                    return <LinkMatchesListComponent key={noteLinkMatchResult.note.path + "result"} noteLinkMatchResult={noteLinkMatchResult}/>
+                    return <LinkMatchesListComponent key={noteLinkMatchResult.note.path + "-linkMatches"} noteLinkMatchResult={noteLinkMatchResult}/>
                 })}
             </ul>
             <button>Replace</button>

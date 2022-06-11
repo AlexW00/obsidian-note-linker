@@ -1,7 +1,7 @@
 import * as React from "react";
 import {LinkMatch, LinkTargetCandidate} from "../../../../pkg";
 import {LinkMatchTitleComponent} from "../titles/LinkMatchTitleComponent";
-import {ReplacementsSelectionComponent} from "../selection/ReplacementsSelectionComponent";
+import {ReplacementsSelectionComponent} from "../selections/ReplacementsSelectionComponent";
 
 
 interface noteLinkMatchResultTextMatchProps {
@@ -19,7 +19,7 @@ export const LinkTargetCandidatesListComponent = ({linkMatch}: noteLinkMatchResu
                         <ReplacementsSelectionComponent
                             linkTargetCandidate={linkTargetCandidate}
                             textContext={linkMatch.context}
-                            key={linkTargetCandidate.path + "match"}
+                            key={linkTargetCandidate.path + "-replacementsSelection"}
                         />
                     )
                 })}

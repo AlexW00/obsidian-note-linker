@@ -23,6 +23,7 @@ export const ReplacementsSelectionComponent = ({linkTargetCandidate, textContext
                             replacement={replacement}
                             targetNoteTitle={linkTargetCandidate.title}
                             textContext={textContext}
+                            key={replacement + "-replacement"}
                         />
                     )
                 })}

@@ -10,7 +10,7 @@ import {ProgressComponent} from "../general/ProgressComponent";
 import {NoteMatchingResultsList} from "../lists/NoteMatchingResultsListComponent";
 
 
-export const LinkMatcherComponent = () => {
+export const MatcherComponent = () => {
 
     const {vault, metadataCache} = useContext(AppContext);
 
