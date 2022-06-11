@@ -1,4 +1,8 @@
-use fancy_regex::{Match, Regex};
+use std::borrow::Cow;
+use std::ops::Add;
+use std::thread::Builder;
+use fancy_regex::{escape, Match, Regex};
+use crate::log;
 
 use crate::rs::matching::link_match::LinkMatch;
 use crate::rs::matching::link_matching_result::LinkMatchingResult;
@@ -29,7 +33,7 @@ struct LinkMatcherResult <'m> {
 
 impl <'m> LinkMatcherResult <'m> {
     fn new(note: &'m Note, target_note: &'m Note) -> Self {
-        let regex_matches: Vec<RegexMatch> = get_link_matcher(&note.title())
+        let regex_matches: Vec<RegexMatch> = get_link_matcher(&target_note)
             .find_iter(&note.content())
             .filter_map(|match_result| { match_result.ok() })
             .map(|m: Match| RegexMatch::new_from_match(m))
@@ -61,9 +65,22 @@ impl <'m> Into<Vec<LinkMatch>> for LinkMatcherResult <'m> {
     }
 }
 
-fn get_link_matcher(title: &String) -> LinkMatcher {
-    let escaped_name = fancy_regex::escape(title);
-    Regex::new(&*format!(r"\b{}\b", escaped_name)).unwrap()
+fn concat_as_regex_string (strings: &Vec<String>) -> String {
+    strings.iter()
+        .enumerate()
+        .fold("(".to_string(), |prev, (index, current)| {
+            return if index == 0 { format!("{}{}", prev, current) } else { format!("{}|{}", prev, current) }
+        })
+        .add(")")
+}
+
+fn get_link_matcher(note: &Note) -> LinkMatcher {
+    let mut escaped_search_strings: Vec<String> = note.aliases_vec().iter().map(|alias| escape(alias).to_string()).collect();
+    let escaped_title = escape(&*note.title()).to_string();
+    escaped_search_strings.push(escaped_title);
+
+    let regex_string = concat_as_regex_string(&escaped_search_strings);
+    Regex::new(&*format!(r"\b{}\b", regex_string)).unwrap()
 }
 
 pub fn get_link_matches(note_to_check: &Note, target_note_candidates: &[Note]) -> Option<LinkMatchingResult> {
