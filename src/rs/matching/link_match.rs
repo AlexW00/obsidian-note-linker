@@ -13,7 +13,7 @@ pub struct LinkMatch {
     position: Range,
     matched_text: String,
     context: TextContext,
-    link_match_target_candidates: Array //
+    link_match_target_candidates: Array
 }
 
 #[wasm_bindgen]
@@ -44,7 +44,12 @@ impl LinkMatch {
     }
 
     pub fn new_from_match(regex_match: &RegexMatch, note: &Note, target_note: &Note) -> Self {
-        let link_target_candidates: Vec<LinkTargetCandidate> = vec![target_note.into()];
+        let link_target_candidates: Vec<LinkTargetCandidate> = vec![LinkTargetCandidate::new(
+          target_note.title(),
+          target_note.path(),
+          target_note.aliases_vec(),
+            regex_match.capture_index
+        )];
         Self::new(
             regex_match.position.clone(),
             regex_match.matched_text.clone(),

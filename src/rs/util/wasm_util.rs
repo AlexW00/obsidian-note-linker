@@ -33,8 +33,8 @@ impl From<StringArray> for Array {
     }
 }
 
-impl From<Vec<String>> for StringArray {
-    fn from(string_vec: Vec<String>) -> Self {
+impl From<&Vec<String>> for StringArray {
+    fn from(string_vec: &Vec<String>) -> Self {
         let arr: Array = js_sys::Array::new();
         string_vec.iter().for_each(
             |string| {

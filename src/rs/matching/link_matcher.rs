@@ -1,8 +1,11 @@
 use std::borrow::Cow;
+use std::convert::TryFrom;
 use std::ops::Add;
 use std::thread::Builder;
-use fancy_regex::{escape, Match, Regex};
+use fancy_regex::{Captures, escape, Match, Regex};
+use js_sys::Error;
 use crate::log;
+use crate::rs::Errors::CastError::CastError;
 
 use crate::rs::matching::link_match::LinkMatch;
 use crate::rs::matching::note_matching_result::NoteMatchingResult;
@@ -13,14 +16,32 @@ type LinkMatcher = Regex;
 
 pub struct RegexMatch {
     pub position: Range,
-    pub matched_text: String
+    pub matched_text: String,
+    pub capture_index: usize
 }
 
-impl RegexMatch {
-    pub fn new_from_match (m: Match) -> Self {
-        RegexMatch {
-            position: Range::new(m.start(), m.end()),
-            matched_text: m.as_str().to_string()
+
+impl <'c> TryFrom<Captures <'c>> for RegexMatch {
+    type Error = CastError;
+
+    fn try_from(captures: Captures) -> Result<Self, CastError> {
+        let valid = captures.iter()
+            .enumerate()
+            .find_map(|(i,c)| c.map(|c_| (c_, i)));
+
+        match valid {
+            Some((m, capture_index)) => {
+                // TODO: Why is this always 0???
+                //log(format!("got match at index {}", &capture_index).as_str());
+                Ok(
+                    RegexMatch {
+                        position: Range::new(m.start(), m.end()),
+                        matched_text: m.as_str().to_string(),
+                        capture_index,
+                    }
+                )
+            },
+            _ => Err(CastError::CapturesToRegexMatch())
         }
     }
 }
@@ -34,9 +55,9 @@ struct LinkMatcherResult <'m> {
 impl <'m> LinkMatcherResult <'m> {
     fn new(note: &'m Note, target_note: &'m Note) -> Self {
         let regex_matches: Vec<RegexMatch> = get_link_matcher(&target_note)
-            .find_iter(&note.content())
-            .filter_map(|match_result| { match_result.ok() })
-            .map(|m: Match| RegexMatch::new_from_match(m))
+            .captures_iter(&note.content())
+            .filter_map( |match_result| match_result.ok() )
+            .filter_map( |c: Captures| RegexMatch::try_from(c).ok() )
             .collect();
 
         LinkMatcherResult {
