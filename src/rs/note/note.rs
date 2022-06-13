@@ -66,8 +66,8 @@ impl Note {
     pub fn sanitized_content(&self) -> String {
         let mut content = self.content().clone();
         for ignore in self.ignore_vec() {
-            let start = ignore.start_usize();
-            let end = ignore.end_usize();
+            let start = ignore.start();
+            let end = ignore.end();
             let from = get_nearest_char_boundary(&content, start, true);
             let to = get_nearest_char_boundary(&content, end, false);
             content = content.replace(&content[from..to], &create_string_with_n_characters(end - start, ' '));

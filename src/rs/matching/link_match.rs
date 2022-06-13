@@ -53,7 +53,7 @@ impl LinkMatch {
         )
     }
 
-    pub fn merge_link_match_target_candidates (&mut self, mut link_match_target_candidates: Array) {
+    pub fn merge_link_match_target_candidates (&mut self, link_match_target_candidates: Array) {
         link_match_target_candidates.for_each(&mut |x, _, _| {
             self.link_match_target_candidates.push(&x);
         });

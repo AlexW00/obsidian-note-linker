@@ -24,35 +24,35 @@ impl TextContextTail {
 
     pub fn new(note: &Note, match_position: &range::Range, is_left_tail: bool) -> TextContextTail {
         let position = if is_left_tail {
-            range::Range::new_with_usize(
-                if match_position.start_usize() >= TextContextTail::TAIL_SIZE * 2 {
-                    match_position.start_usize() - &TextContextTail::TAIL_SIZE * 2
+            range::Range::new(
+                if match_position.start() >= TextContextTail::TAIL_SIZE * 2 {
+                    match_position.start() - &TextContextTail::TAIL_SIZE * 2
                 } else {
                     0
                 },
-                match_position.start_usize(),
+                match_position.start(),
             )
         } else {
-            range::Range::new_with_usize(
-                match_position.end_usize(),
-                if match_position.end_usize() + TextContextTail::TAIL_SIZE * 2 >= note.content().len() {
+            range::Range::new(
+                match_position.end(),
+                if match_position.end() + TextContextTail::TAIL_SIZE * 2 >= note.content().len() {
                     note.content().len() - 1
                 } else {
-                    match_position.end_usize() + TextContextTail::TAIL_SIZE * 2
+                    match_position.end() + TextContextTail::TAIL_SIZE * 2
                 },
             )
         };
         TextContextTail {
             text: TextContextTail::get_context_text(
-                range::Range::from(position.to_range()),
+                position.clone(),
                 &note.content()),
             position,
         }
     }
 
     fn get_context_text(text_position: range::Range, text: &str) -> String {
-        let start = get_nearest_char_boundary(text, text_position.start_usize(), true);
-        let end = get_nearest_char_boundary(text, text_position.end_usize(), false);
+        let start = get_nearest_char_boundary(text, text_position.start(), true);
+        let end = get_nearest_char_boundary(text, text_position.end(), false);
         text[start..end]
             .chars()
             .map(

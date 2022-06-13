@@ -10,65 +10,41 @@ use crate::rs::util::wasm_util::generic_of_jsval;
 #[wasm_bindgen]
 #[derive(Clone)]
 pub struct Range {
-    start: js_sys::Number,
-    end: js_sys::Number,
-
-    _start: usize,
-    _end: usize,
+    start: usize,
+    end: usize,
 }
 
 #[wasm_bindgen]
 impl Range {
     #[wasm_bindgen(constructor)]
-    pub fn new(start: js_sys::Number, end: js_sys::Number) -> Range {
+    pub fn new(start: usize, end: usize) -> Range {
         Range {
-            start: start.clone(),
-            end: end.clone(),
-            _start: start.as_f64().unwrap() as usize,
-            _end: end.as_f64().unwrap() as usize,
+            start,
+            end,
         }
     }
 
     #[wasm_bindgen(getter)]
-    pub fn start(&self) -> js_sys::Number {
-        self.start.clone()
-    }
+    pub fn start(&self) -> usize { self.start }
 
     #[wasm_bindgen(getter)]
-    pub fn end(&self) -> js_sys::Number {
-        self.end.clone()
+    pub fn end(&self) -> usize { self.end }
+
+    pub fn is_equal_to(&self, range: &Range) -> bool {
+        self.start == range.start && self.end == range.end
     }
 
+    pub fn does_overlap(&self, range: &Range) -> bool {
+        self.start <= range.end && range.start <= self.end
+    }
 }
 
-impl Range {
-    pub fn new_with_usize(start: usize, end: usize) -> Range {
-        Range {
-            start: usize_to_number(start),
-            end: usize_to_number(end),
-            _start: start,
-            _end: end,
+impl Into<std::ops::Range<usize>> for Range {
+    fn into(self) -> std::ops::Range<usize> {
+        std::ops::Range {
+            start: self.start,
+            end: self.end,
         }
-    }
-
-    pub fn start_usize(&self) -> usize {
-        self._start
-    }
-
-    pub fn end_usize(&self) -> usize {
-        self._end
-    }
-
-    pub fn to_range(&self) -> std::ops::Range<usize> {
-        self._start..self._end
-    }
-
-    pub fn is_equal_to(&self, range: &Self) -> bool {
-        self._start == range._start && self._end == range._end
-    }
-
-    pub fn does_overlap(&self, range: &Self) -> bool {
-        self.start <= range.end && range.start <= self.end
     }
 }
 
@@ -90,16 +66,10 @@ impl TryFrom<JsValue> for Range {
 impl From<std::ops::Range<usize>> for Range {
     fn from(range: std::ops::Range<usize>) -> Self {
         Range {
-            start: usize_to_number(range.start),
-            end: usize_to_number(range.end),
-            _start: range.start,
-            _end: range.end,
+            start: range.start,
+            end: range.end,
         }
     }
-}
-
-pub fn usize_to_number (value: usize) -> js_sys::Number {
-    js_sys::Number::from(value as f64)
 }
 
 #[wasm_bindgen]

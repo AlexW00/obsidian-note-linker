@@ -19,7 +19,7 @@ pub struct RegexMatch {
 impl RegexMatch {
     pub fn new_from_match (m: Match) -> Self {
         RegexMatch {
-            position: Range::new_with_usize(m.start(), m.end()),
+            position: Range::new(m.start(), m.end()),
             matched_text: m.as_str().to_string()
         }
     }
@@ -116,6 +116,7 @@ pub fn get_link_matches(note_to_check: &Note, target_note_candidates: &[Note]) -
             }
             merged_link_matches
         });
+
 
     if *&!link_matches.is_empty() {
         return Some(
