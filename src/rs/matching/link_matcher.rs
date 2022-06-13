@@ -84,7 +84,7 @@ fn get_link_matcher(note: &Note) -> LinkMatcher {
 }
 
 pub fn get_link_matches(note_to_check: &Note, target_note_candidates: &[Note]) -> Option<NoteMatchingResult> {
-    let text_link_matches: Vec<LinkMatch> =
+    let link_matches: Vec<LinkMatch> =
         target_note_candidates
         .iter()
         .filter_map(|target_note: &Note| {
@@ -106,12 +106,22 @@ pub fn get_link_matches(note_to_check: &Note, target_note_candidates: &[Note]) -
             }
         )
         .flatten()
-        .collect();
-    if *&!text_link_matches.is_empty() {
+        .fold(Vec::new(), |mut merged_link_matches, link_match| {
+            let index = merged_link_matches.iter()
+                .position(|m: &LinkMatch| m.position().is_equal_to(&link_match.position()));
+            if let Some(index) = index {
+                merged_link_matches[index].merge_link_match_target_candidates(link_match.link_match_target_candidate());
+            } else {
+                merged_link_matches.push(link_match);
+            }
+            merged_link_matches
+        });
+
+    if *&!link_matches.is_empty() {
         return Some(
             NoteMatchingResult::new(
                 note_to_check.clone(),
-                text_link_matches
+                link_matches
             )
         )
     }

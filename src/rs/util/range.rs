@@ -62,6 +62,14 @@ impl Range {
     pub fn to_range(&self) -> std::ops::Range<usize> {
         self._start..self._end
     }
+
+    pub fn is_equal_to(&self, range: &Self) -> bool {
+        self._start == range._start && self._end == range._end
+    }
+
+    pub fn does_overlap(&self, range: &Self) -> bool {
+        self.start <= range.end && range.start <= self.end
+    }
 }
 
 #[derive(Debug, Error)]

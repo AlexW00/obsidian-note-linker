@@ -25,6 +25,7 @@ impl LinkMatch {
     #[wasm_bindgen(getter)]
     pub fn context(&self) -> TextContext { self.context.clone() }
     #[wasm_bindgen(getter)]
+    // TODO: Rename
     pub fn link_match_target_candidate(&self) -> Array { self.link_match_target_candidates.clone() }
 }
 
@@ -50,5 +51,11 @@ impl LinkMatch {
             TextContext::new(note, regex_match.position.clone(), regex_match.matched_text.clone()),
             link_target_candidates
         )
+    }
+
+    pub fn merge_link_match_target_candidates (&mut self, mut link_match_target_candidates: Array) {
+        link_match_target_candidates.for_each(&mut |x, _, _| {
+            self.link_match_target_candidates.push(&x);
+        });
     }
 }
