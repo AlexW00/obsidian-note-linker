@@ -89,22 +89,15 @@ pub fn get_link_matches(note_to_check: &Note, target_note_candidates: &[Note]) -
         .iter()
         .filter_map(|target_note: &Note| {
             if !&target_note.title().eq(&note_to_check.title()) {
-                return Some(
-                    LinkMatcherResult::new(
+                let link_matcher_result = LinkMatcherResult::new(
                         note_to_check,
                         target_note
-                    )
-                )
+                    );
+                let link_matches: Vec<LinkMatch> = link_matcher_result.into();
+                return Some(link_matches);
             }
             None
         })
-        .map(
-            |link_matcher_result: LinkMatcherResult| {
-                // TODO: is there a mapping function for casting?
-                let text_link_match: Vec<LinkMatch> = link_matcher_result.into();
-                text_link_match
-            }
-        )
         .flatten()
         .fold(Vec::new(), |mut merged_link_matches, link_match| {
             let index = merged_link_matches.iter()
