@@ -26,6 +26,7 @@ impl LinkTargetCandidate {
 }
 
 impl LinkTargetCandidate {
+    //TODO: Change parameters -> &Note ?
     pub fn new (title: String, path: String, aliases: &Vec<String>, selected_index: usize) -> Self {
         let mut replacement_selection_items = Array::new();
         let selection_title = SelectionItem::new(title.clone(), selected_index == 0);
