@@ -21,17 +21,18 @@ export const ReplacementsSelectionComponent = ({linkTargetCandidate, textContext
             </span>
             <ul>
                 {linkTargetCandidate.replacement_selection_items.map((replacement_selection_item: SelectionItem) => {
+                    // De-select any items that aren't from the first matching group
+                    if (!isPrimary) replacement_selection_item.is_selected = false;
                     return (
                         <ReplacementItemComponent
                             replacement={replacement_selection_item.content}
                             targetNoteTitle={linkTargetCandidate.title}
                             textContext={textContext}
-                            // TODO: change the isPrimary stuff
-                            isSelected={(replacement_selection_item.is_selected) && isPrimary}
+                            isSelected={replacement_selection_item.is_selected}
                             key={replacement_selection_item.content + "-replacement"}
                             onChange={ (e) => {
                                 console.log("changed", e);
-                                replacement_selection_item.selected = true;
+                                replacement_selection_item.is_selected = true;
                             }}
                         />
                     )

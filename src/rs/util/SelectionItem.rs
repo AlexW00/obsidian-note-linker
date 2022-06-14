@@ -21,9 +21,9 @@ impl SelectionItem {
     #[wasm_bindgen(getter)]
     pub fn content(&self) -> String {self.content.clone()}
     #[wasm_bindgen(getter)]
-    pub fn is_selected(&self) -> bool {self.is_selected}
+    pub fn is_selected(&self) -> bool { self.is_selected }
     #[wasm_bindgen(setter)]
-    pub fn set_selected(&mut self, is_selected: bool) {
+    pub fn set_is_selected(&mut self, is_selected: bool) {
         self.is_selected = is_selected;
     }
 }

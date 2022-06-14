@@ -33,7 +33,8 @@ impl LinkTargetCandidate {
         aliases.into_iter().enumerate().for_each(|(index, alias)|{
             let selection_alias = SelectionItem::new(
                 alias.clone(),
-                index == selected_index
+                // add one because the index starts with the title at 0
+                index + 1 == selected_index
             );
             replacement_selection_items.push(
                 &selection_alias.into()
