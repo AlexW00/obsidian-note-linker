@@ -1,6 +1,9 @@
+use js_sys::Array;
 use wasm_bindgen::prelude::*;
+use wasm_bindgen::{JsCast, JsValue};
 
 use crate::rs::note::note::Note;
+use crate::rs::util::SelectionItem::SelectionItem;
 use crate::rs::util::wasm_util::StringArray;
 
 /// A candidate note for a matching to matching to
@@ -8,8 +11,7 @@ use crate::rs::util::wasm_util::StringArray;
 pub struct LinkTargetCandidate {
     title: String,
     path: String,
-    aliases: StringArray,
-    selected_index: usize
+    replacement_selection_items: Array,
 }
 
 // TODO: Rename ->LinkTargetCandidate
@@ -20,31 +22,27 @@ impl LinkTargetCandidate {
     #[wasm_bindgen(getter)]
     pub fn path(&self) -> String { self.path.clone() }
     #[wasm_bindgen(getter)]
-    pub fn aliases(&self) -> StringArray { self.aliases.clone() }
-    #[wasm_bindgen(getter)]
-    pub fn selected_index(&self) -> usize { self.selected_index }
-    #[wasm_bindgen(setter)]
-    pub fn set_selected_index(mut self, new_selection: usize) { self.selected_index = new_selection; }
+    pub fn replacement_selection_items(&self) -> Array { self.replacement_selection_items.clone() }
 }
 
 impl LinkTargetCandidate {
     pub fn new (title: String, path: String, aliases: &Vec<String>, selected_index: usize) -> Self {
+        let mut replacement_selection_items = Array::new();
+        let selection_title = SelectionItem::new(title.clone(), selected_index == 0);
+        replacement_selection_items.push(&selection_title.into());
+        aliases.into_iter().enumerate().for_each(|(index, alias)|{
+            let selection_alias = SelectionItem::new(
+                alias.clone(),
+                index == selected_index
+            );
+            replacement_selection_items.push(
+                &selection_alias.into()
+            );
+        });
         LinkTargetCandidate {
             title,
             path,
-            aliases: aliases.into(),
-            selected_index
-        }
-    }
-}
-
-impl From<&Note> for LinkTargetCandidate {
-    fn from(note: &Note) -> Self {
-        LinkTargetCandidate {
-            title: note.title(),
-            path: note.path(),
-            aliases: note.aliases(),
-            selected_index: 0
+            replacement_selection_items
         }
     }
 }

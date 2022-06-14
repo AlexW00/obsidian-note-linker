@@ -8,19 +8,24 @@ interface noteLinkMatchResultLinkMatchCandidateReplacementProps {
     targetNoteTitle: string
     textContext: TextContext
     isSelected: boolean
-    onSelect: ReactEventHandler<HTMLInputElement>
+    onChange: ReactEventHandler<HTMLInputElement>
 }
 
-export const ReplacementItemComponent = ({replacement, targetNoteTitle, textContext, isSelected, onSelect}: noteLinkMatchResultLinkMatchCandidateReplacementProps) => {
+export const ReplacementItemComponent = ({replacement, targetNoteTitle, textContext, isSelected, onChange}: noteLinkMatchResultLinkMatchCandidateReplacementProps) => {
 
     return (
-        <li>
-            <input type={"checkbox"} checked={isSelected} onChange={onSelect}/>
-            <span>
+        <li className={"replacement-item"}>
+            <input 
+                className={"checkbox"}
+                type={"checkbox"} 
+                checked={isSelected} 
+                onChange={onChange}
+            />
+            <span className={"replacement-text"}>
                 {replacement}
             </span>
-            <span>
-                "{textContext.left_context_tail.text}{generateMockupMdLink(replacement, targetNoteTitle)}{textContext.right_context_tail.text}"
+            <span className={"replacement-context"}>
+                "→ {textContext.left_context_tail.text}{generateMockupMdLink(replacement, targetNoteTitle)}{textContext.right_context_tail.text}"
             </span>
         </li>
     );

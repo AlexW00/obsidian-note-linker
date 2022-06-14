@@ -1,7 +1,9 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import {LinkTargetCandidate, TextContext} from "../../../../pkg";
+import {LinkTargetCandidate, SelectionItem, TextContext} from "../../../../pkg";
 import {ReplacementItemComponent} from "../items/ReplacementItemComponent";
+import {useState} from "react";
+import {string} from "prop-types";
 
 
 interface noteLinkMatchResultLinkMatchCandidateProps {
@@ -11,22 +13,26 @@ interface noteLinkMatchResultLinkMatchCandidateProps {
 }
 
 export const ReplacementsSelectionComponent = ({linkTargetCandidate, textContext, isPrimary}: noteLinkMatchResultLinkMatchCandidateProps) => {
-    console.log(linkTargetCandidate.selected_index);
+
     return (
         <li>
             <span>
                 🔗{linkTargetCandidate.path}
             </span>
             <ul>
-                {[linkTargetCandidate.title, ...linkTargetCandidate.aliases].map((replacement: string, index: number) => {
+                {linkTargetCandidate.replacement_selection_items.map((replacement_selection_item: SelectionItem) => {
                     return (
                         <ReplacementItemComponent
-                            replacement={replacement}
+                            replacement={replacement_selection_item.content}
                             targetNoteTitle={linkTargetCandidate.title}
                             textContext={textContext}
-                            isSelected={(index === linkTargetCandidate.selected_index) && isPrimary}
-                            key={replacement + "-replacement"}
-                            onSelect={ (e) => {console.log("selected", e)}}
+                            // TODO: change the isPrimary stuff
+                            isSelected={(replacement_selection_item.is_selected) && isPrimary}
+                            key={replacement_selection_item.content + "-replacement"}
+                            onChange={ (e) => {
+                                console.log("changed", e);
+                                replacement_selection_item.selected = true;
+                            }}
                         />
                     )
                 })}
