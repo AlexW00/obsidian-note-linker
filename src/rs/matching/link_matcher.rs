@@ -55,9 +55,14 @@ struct LinkMatcherResult <'m> {
 impl <'m> LinkMatcherResult <'m> {
     fn new(note: &'m Note, target_note: &'m Note) -> Self {
         let regex_matches: Vec<RegexMatch> = get_link_matcher(&target_note)
-            .captures_iter(&note.content())
-            .filter_map( |match_result| match_result.ok() )
-            .filter_map( |c: Captures| RegexMatch::try_from(c).ok() )
+            .captures_iter(&note.sanitized_content())
+            .filter_map( |capture_result| {
+                    match capture_result {
+                        Ok(captures) => RegexMatch::try_from(captures).ok(),
+                        _ => None
+                    }
+                }
+            )
             .collect();
 
         LinkMatcherResult {
