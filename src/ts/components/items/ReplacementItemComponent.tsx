@@ -13,7 +13,7 @@ interface noteLinkMatchResultLinkMatchCandidateReplacementProps {
 }
 
 export const ReplacementItemComponent = ({replacementSelectionItem, targetNoteTitle, textContext, onSelect}: noteLinkMatchResultLinkMatchCandidateReplacementProps) => {
-
+    console.table(replacementSelectionItem);
     return (
         <li className={"replacement-item"}>
 
@@ -21,7 +21,7 @@ export const ReplacementItemComponent = ({replacementSelectionItem, targetNoteTi
                 className={"checkbox"}
                 type={"checkbox"}
                 checked={replacementSelectionItem.is_selected}
-                onClick={(e) => {
+                onChange={(e) => {
                     onSelect();
                 }}
             />

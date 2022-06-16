@@ -65,11 +65,7 @@ impl LinkMatch {
         link_match.link_match_target_candidates.iter().for_each(|js_candidate: JsValue| {
             // uncheck all candidates
             let mut candidate : LinkTargetCandidate = generic_of_jsval(js_candidate, "LinkTargetCandidate").unwrap();
-            candidate.replacement_selection_items().iter().for_each(|mut js_selection_item: JsValue| {
-                let mut selection: SelectionItem = generic_of_jsval(js_selection_item, "SelectionItem").unwrap();
-                selection.set_is_selected(selection.is_selected());
-            });
-            // push it into the existing array
+            candidate.de_select_all();
             let js: JsValue = candidate.into();
             self.link_match_target_candidates.push(&js);
         });
