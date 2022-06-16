@@ -13,7 +13,6 @@ interface noteLinkMatchResultLinkMatchCandidateReplacementProps {
 }
 
 export const ReplacementItemComponent = ({replacementSelectionItem, targetNoteTitle, textContext, onSelect}: noteLinkMatchResultLinkMatchCandidateReplacementProps) => {
-    console.table(replacementSelectionItem);
     return (
         <li className={"replacement-item"}>
 

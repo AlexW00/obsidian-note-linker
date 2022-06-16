@@ -25,14 +25,12 @@ impl LinkTargetCandidate {
     pub fn replacement_selection_items(&self) -> Array { self.replacement_selection_items.clone() }
     #[wasm_bindgen]
     pub fn de_select_all(&mut self) {
-        let new_arr : Array = Array::new();
-        self.replacement_selection_items.iter().for_each(|js: JsValue| {
+        self.replacement_selection_items = self.replacement_selection_items.map(&mut |js,_,_| {
             let mut selection: SelectionItem = generic_of_jsval(js, "SelectionItem").unwrap();
             selection.set_is_selected(false);
             let js_selection: JsValue = selection.into();
-            new_arr.push(&js_selection);
+            js_selection
         });
-        self.replacement_selection_items = new_arr;
     }
 }
 
