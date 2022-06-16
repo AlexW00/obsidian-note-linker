@@ -1,11 +1,14 @@
 use js_sys::{Array};
 use wasm_bindgen::prelude::*;
+use crate::log;
 
 use crate::rs::matching::link_match_target_candidate::LinkTargetCandidate;
 use crate::rs::matching::link_matcher::RegexMatch;
 use crate::rs::note::note::Note;
 use crate::rs::text::text_context::TextContext;
 use crate::rs::util::range::Range;
+use crate::rs::util::SelectionItem::SelectionItem;
+use crate::rs::util::wasm_util::generic_of_jsval;
 
 /// A text passage, that has been identified as a possible matching
 #[wasm_bindgen]
@@ -58,9 +61,17 @@ impl LinkMatch {
         )
     }
 
-    pub fn merge_link_match_target_candidates (&mut self, link_match_target_candidates: Array) {
-        link_match_target_candidates.for_each(&mut |x, _, _| {
-            self.link_match_target_candidates.push(&x);
+    pub fn merge_link_match_target_candidates (&mut self, mut link_match: LinkMatch) {
+        link_match.link_match_target_candidates.iter().for_each(|js_candidate: JsValue| {
+            // uncheck all candidates
+            let mut candidate : LinkTargetCandidate = generic_of_jsval(js_candidate, "LinkTargetCandidate").unwrap();
+            candidate.replacement_selection_items().iter().for_each(|mut js_selection_item: JsValue| {
+                let mut selection: SelectionItem = generic_of_jsval(js_selection_item, "SelectionItem").unwrap();
+                selection.set_is_selected(selection.is_selected());
+            });
+            // push it into the existing array
+            let js: JsValue = candidate.into();
+            self.link_match_target_candidates.push(&js);
         });
     }
 }

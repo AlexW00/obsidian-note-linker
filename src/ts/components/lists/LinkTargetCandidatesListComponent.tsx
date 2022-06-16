@@ -2,15 +2,30 @@ import * as React from "react";
 import {LinkMatch, LinkTargetCandidate, SelectionItem} from "../../../../pkg";
 import {LinkMatchTitleComponent} from "../titles/LinkMatchTitleComponent";
 import {ReplacementsSelectionComponent} from "../selections/ReplacementsSelectionComponent";
+import {useEffect, useState} from "react";
 
 
 interface noteLinkMatchResultTextMatchProps {
     linkMatch: LinkMatch
-    onLinkTargetCandidateSelected: (selectionItem: SelectionItem, linkMatch: LinkMatch, isSelected: boolean) => void
+    onLinkTargetCandidateSelected: (selectionItem: SelectionItem, linkMatch: LinkMatch) => void
 }
 
 export const LinkTargetCandidatesListComponent = ({linkMatch, onLinkTargetCandidateSelected}: noteLinkMatchResultTextMatchProps) => {
 
+    const [linkMatchTargetCandidates, setLinkMatchTargetCandidates] = useState<Array<LinkTargetCandidate>>(linkMatch.link_match_target_candidate);
+
+    const handleItemSelection = (selectionItem: SelectionItem) => {
+        const newLinkMatchTargetCandidates = linkMatchTargetCandidates.map( (linkMatchTargetCandidate: LinkTargetCandidate) => {
+            linkMatchTargetCandidate.replacement_selection_items.forEach((item: SelectionItem) => {
+                if (item != selectionItem) item.is_selected = false;
+                else item.is_selected = !item.is_selected;
+            });
+            return linkMatchTargetCandidate
+            }
+        )
+        setLinkMatchTargetCandidates(newLinkMatchTargetCandidates);
+        onLinkTargetCandidateSelected(selectionItem, linkMatch)
+    }
     return (
         <div>
             <LinkMatchTitleComponent matchedText={linkMatch.matched_text} position={linkMatch.position}/>
@@ -22,7 +37,7 @@ export const LinkTargetCandidatesListComponent = ({linkMatch, onLinkTargetCandid
                             textContext={linkMatch.context}
                             key={linkTargetCandidate.path + "-replacementsSelection"}
                             onSelectionItemSelected={
-                                (selectionItem: SelectionItem, isSelected: boolean) => onLinkTargetCandidateSelected(selectionItem, linkMatch, isSelected)
+                                handleItemSelection
                             }
                         />
                     )

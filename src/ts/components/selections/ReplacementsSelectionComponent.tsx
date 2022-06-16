@@ -9,7 +9,7 @@ import {string} from "prop-types";
 interface noteLinkMatchResultLinkMatchCandidateProps {
     linkTargetCandidate: LinkTargetCandidate
     textContext: TextContext
-    onSelectionItemSelected: (selectionItem: SelectionItem, isSelected: boolean) => void
+    onSelectionItemSelected: (selectionItem: SelectionItem) => void
 }
 
 export const ReplacementsSelectionComponent = ({linkTargetCandidate, textContext, onSelectionItemSelected}: noteLinkMatchResultLinkMatchCandidateProps) => {
@@ -27,8 +27,7 @@ export const ReplacementsSelectionComponent = ({linkTargetCandidate, textContext
                             textContext={textContext}
                             replacementSelectionItem = {replacement_selection_item}
                             key={replacement_selection_item.content + "-replacement"}
-                            // TODO: use isSelected
-                            onSelectionChanged={ (isSelected: boolean) => onSelectionItemSelected(replacement_selection_item, isSelected) }
+                            onSelect={ () => onSelectionItemSelected(replacement_selection_item) }
                         />
                     )
                 })}

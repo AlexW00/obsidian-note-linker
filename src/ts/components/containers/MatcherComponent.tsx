@@ -1,7 +1,15 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import {useContext, useEffect, useState} from "react";
-import {Note, NoteChangeOperation, NoteMatchingResult, NoteScannedEvent, Range, Replacement} from "../../../../pkg";
+import {
+    LinkMatch, LinkTargetCandidate,
+    Note,
+    NoteChangeOperation,
+    NoteMatchingResult,
+    NoteScannedEvent,
+    Range,
+    Replacement, SelectionItem
+} from "../../../../pkg";
 import JsNote from "../../JsNote";
 import {AppContext} from "../../context";
 import * as wasm from "../../../../pkg";
@@ -54,6 +62,37 @@ export const MatcherComponent = () => {
         }
     }
 
+    const initNoteChangeOperations = (noteLinkMatchResults: Array<NoteMatchingResult>) => {
+        const operations : Map<String, NoteChangeOperation> = new Map;
+            noteLinkMatchResults.forEach((result: NoteMatchingResult) => {
+            const path = result.note.path;
+            const content = result.note.content;
+            const replacements : Array<Replacement> = [];
+            // TODO: Extra function?
+            result.link_matches.forEach((match: LinkMatch) => {
+                match.link_match_target_candidate.forEach((candidate: LinkTargetCandidate) => {
+                    candidate.replacement_selection_items.forEach((selection: SelectionItem) => {
+                        if (selection.is_selected) {
+                            replacements.push(
+                                new Replacement(
+                                    match.position,
+                                    selection.content
+                                )
+                            )
+                            return;
+                        }
+                    })
+                })
+            })
+            if (replacements.length > 0) operations.set(path, new NoteChangeOperation(
+                path,
+                content,
+                replacements
+            ))
+        })
+        set_note_change_operations(operations)
+    }
+
     useEffect(() => {
         // On mount
         JsNote.getNotesFromVault(vault, metadataCache)
@@ -61,6 +100,7 @@ export const MatcherComponent = () => {
             .then((noteLinkMatchResults: Array<NoteMatchingResult>) => {
                 console.log("got results");
                 setNoteMatchingResults(noteLinkMatchResults)
+                initNoteChangeOperations(noteLinkMatchResults);
             })
         return () => {
             // On unmount

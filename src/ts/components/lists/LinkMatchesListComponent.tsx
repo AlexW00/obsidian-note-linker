@@ -18,7 +18,7 @@ export const LinkMatchesListComponent = ({noteLinkMatchResult, onNoteChangeOpera
                     return (
                         <LinkTargetCandidatesListComponent
                             linkMatch={link_match}
-                            onLinkTargetCandidateSelected={(selectionItem: SelectionItem, linkMatch: LinkMatch, isSelected: boolean) =>
+                            onLinkTargetCandidateSelected={(selectionItem: SelectionItem, linkMatch: LinkMatch) =>
                                 onNoteChangeOperationSelected(
                                     new NoteChangeOperation(
                                         noteLinkMatchResult.note.path,
@@ -28,7 +28,7 @@ export const LinkMatchesListComponent = ({noteLinkMatchResult, onNoteChangeOpera
                                             selectionItem.content
                                         )]
                                     ),
-                                    isSelected
+                                    selectionItem.is_selected
                                 )
                             }
                             key={`${link_match.matched_text}-${link_match.position.start}-${link_match.position.end}`}/>

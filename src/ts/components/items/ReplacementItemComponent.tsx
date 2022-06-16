@@ -1,19 +1,18 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import {SelectionItem, TextContext} from "../../../../pkg";
-import {ReactEventHandler, useState} from "react";
+import {Note, NoteMatchingResult, SelectionItem, TextContext} from "../../../../pkg";
+import {ReactEventHandler, useEffect, useState} from "react";
+import JsNote from "../../JsNote";
+import * as wasm from "../../../../pkg";
 
 interface noteLinkMatchResultLinkMatchCandidateReplacementProps {
     targetNoteTitle: string
     textContext: TextContext
-    onSelectionChanged: (isSelected: boolean) => void
+    onSelect: () => void
     replacementSelectionItem: SelectionItem
 }
 
-export const ReplacementItemComponent = ({replacementSelectionItem, targetNoteTitle, textContext, onSelectionChanged}: noteLinkMatchResultLinkMatchCandidateReplacementProps) => {
-
-    const [isSelected, setSelected] = useState(replacementSelectionItem.is_selected);
-    if (isSelected) onSelectionChanged(isSelected); // init the note change operations
+export const ReplacementItemComponent = ({replacementSelectionItem, targetNoteTitle, textContext, onSelect}: noteLinkMatchResultLinkMatchCandidateReplacementProps) => {
 
     return (
         <li className={"replacement-item"}>
@@ -21,10 +20,9 @@ export const ReplacementItemComponent = ({replacementSelectionItem, targetNoteTi
             <input
                 className={"checkbox"}
                 type={"checkbox"}
-                checked={isSelected}
-                onChange={() => {
-                    setSelected(!isSelected);
-                    onSelectionChanged(!isSelected);
+                checked={replacementSelectionItem.is_selected}
+                onClick={(e) => {
+                    onSelect();
                 }}
             />
             <span className={"replacement-text"}>
