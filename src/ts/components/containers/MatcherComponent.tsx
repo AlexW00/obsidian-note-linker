@@ -11,16 +11,18 @@ import {
     Replacement, SelectionItem
 } from "../../../../pkg";
 import JsNote from "../../JsNote";
-import {AppContext} from "../../context";
+import {AppContext, NoteFilesContext} from "../../context";
 import * as wasm from "../../../../pkg";
 import Progress from "../../Progress";
 import {ProgressComponent} from "../general/ProgressComponent";
 import {NoteMatchingResultsList} from "../lists/NoteMatchingResultsListComponent";
+import {TFile} from "obsidian";
 
 
 export const MatcherComponent = () => {
 
-    const {vault, metadataCache} = useContext(AppContext);
+    const {vault, metadataCache, fileManager} = useContext(AppContext);
+
 
     const [noteMatchingResults, setNoteMatchingResults] = useState<Array<NoteMatchingResult>>([]);
     const [linkMatchingProgress] = useState<Progress>(new Progress(JsNote.getNumberOfNotes(vault, metadataCache)));
@@ -68,7 +70,6 @@ export const MatcherComponent = () => {
             const path = result.note.path;
             const content = result.note.content;
             const replacements : Array<Replacement> = [];
-            // TODO: Extra function?
             result.link_matches.forEach((match: LinkMatch) => {
                 match.link_match_target_candidate.forEach((candidate: LinkTargetCandidate) => {
                     candidate.replacement_selection_items.forEach((selection: SelectionItem) => {
@@ -76,7 +77,14 @@ export const MatcherComponent = () => {
                             replacements.push(
                                 new Replacement(
                                     match.position,
-                                    selection.content
+                                    fileManager.generateMarkdownLink(
+                                        noteFiles.get(candidate.path),
+                                        result.note.path,
+                                        null,
+                                        selection.content == result.note.title
+                                            ? null
+                                            : selection.content
+                                    )
                                 )
                             )
                             return;
@@ -92,9 +100,17 @@ export const MatcherComponent = () => {
         })
         set_note_change_operations(operations)
     }
+    const initNoteFiles = () : Map<String, TFile> => {
+        const noteFiles = new Map<String, TFile>();
+        vault.getFiles().forEach((file: TFile) => noteFiles.set(file.path, file))
+        return noteFiles
+    }
+
+    const [noteFiles, setNoteFiles] = useState<Map<String, TFile>>(initNoteFiles());
+
+
 
     useEffect(() => {
-        // On mount
         JsNote.getNotesFromVault(vault, metadataCache)
             .then((jsNotes: JsNote[]) => wasm.find(this, jsNotes as Note[], onLinkMatchingProgress))
             .then((noteLinkMatchResults: Array<NoteMatchingResult>) => {
@@ -109,9 +125,11 @@ export const MatcherComponent = () => {
 
     return (
         linkMatchingProgress.isComplete()
-            ? <NoteMatchingResultsList noteMatchingResults={noteMatchingResults}
-                                       onNoteChangeOperationSelected={handleNoteChangeOperationSelected}
-            />
+            ? <NoteFilesContext.Provider value={noteFiles}>
+                <NoteMatchingResultsList noteMatchingResults={noteMatchingResults}
+                                         onNoteChangeOperationSelected={handleNoteChangeOperationSelected}
+                />
+            </NoteFilesContext.Provider>
             : <ProgressComponent progress={linkMatchingProgress}/>
     );
 };

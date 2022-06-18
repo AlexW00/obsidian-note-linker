@@ -7,14 +7,14 @@ import {useEffect, useState} from "react";
 
 interface noteLinkMatchResultTextMatchProps {
     linkMatch: LinkMatch
-    onLinkTargetCandidateSelected: (selectionItem: SelectionItem, linkMatch: LinkMatch) => void
+    onLinkTargetCandidateSelected: (selectionItem: SelectionItem, candidate: LinkTargetCandidate) => void
 }
 
 export const LinkTargetCandidatesListComponent = ({linkMatch, onLinkTargetCandidateSelected}: noteLinkMatchResultTextMatchProps) => {
 
     const [linkMatchTargetCandidates, setLinkMatchTargetCandidates] = useState<Array<LinkTargetCandidate>>(linkMatch.link_match_target_candidate);
 
-    const handleItemSelection = (selectionItem: SelectionItem) => {
+    const handleItemSelection = (selectionItem: SelectionItem, candidate: LinkTargetCandidate) => {
         const newLinkMatchTargetCandidates = linkMatchTargetCandidates.map( (linkMatchTargetCandidate: LinkTargetCandidate) => {
             linkMatchTargetCandidate.replacement_selection_items.forEach((item: SelectionItem) => {
                 if (item != selectionItem) item.is_selected = false;
@@ -24,7 +24,7 @@ export const LinkTargetCandidatesListComponent = ({linkMatch, onLinkTargetCandid
             }
         )
         setLinkMatchTargetCandidates(newLinkMatchTargetCandidates);
-        onLinkTargetCandidateSelected(selectionItem, linkMatch)
+        onLinkTargetCandidateSelected(selectionItem, candidate)
     }
     return (
         <div>
@@ -37,7 +37,7 @@ export const LinkTargetCandidatesListComponent = ({linkMatch, onLinkTargetCandid
                             textContext={linkMatch.context}
                             key={linkTargetCandidate.path + "-replacementsSelection"}
                             onSelectionItemSelected={
-                                handleItemSelection
+                                (selectionItem: SelectionItem) => handleItemSelection(selectionItem, linkTargetCandidate)
                             }
                         />
                     )
