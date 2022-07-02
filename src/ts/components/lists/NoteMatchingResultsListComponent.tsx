@@ -11,9 +11,9 @@ interface NoteMatchingResultsListProps {
 export const NoteMatchingResultsList = ({noteMatchingResults, onNoteChangeOperationSelected, onClickReplaceButton}: NoteMatchingResultsListProps) => {
     
     return (
-        <div>
+        <div className = "note-matching-result-list">
             <h2>Note Link Matches</h2>
-            <ul>
+            <ul className = {"hide-list-styling"}>
                 {noteMatchingResults.map((noteLinkMatchResult: NoteMatchingResult) => {
                     return (<LinkMatchesListComponent key={noteLinkMatchResult.note.path + "-linkMatches"}
                                  noteLinkMatchResult={noteLinkMatchResult}
@@ -22,7 +22,8 @@ export const NoteMatchingResultsList = ({noteMatchingResults, onNoteChangeOperat
                             )
                 })}
             </ul>
-            <button onClick={onClickReplaceButton}>Replace</button>
+            <button onClick={onClickReplaceButton}>🔗 Link selected</button>
+
         </div>
     );
 };

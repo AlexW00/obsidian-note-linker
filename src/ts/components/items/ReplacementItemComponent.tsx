@@ -15,7 +15,6 @@ interface noteLinkMatchResultLinkMatchCandidateReplacementProps {
 export const ReplacementItemComponent = ({replacementSelectionItem, targetNoteTitle, textContext, onSelect}: noteLinkMatchResultLinkMatchCandidateReplacementProps) => {
     return (
         <li className={"replacement-item"}>
-
             <input
                 className={"checkbox"}
                 type={"checkbox"}
@@ -24,12 +23,21 @@ export const ReplacementItemComponent = ({replacementSelectionItem, targetNoteTi
                     onSelect();
                 }}
             />
-            <span className={"replacement-text"}>
-                {replacementSelectionItem.content}
+            <span className={"matched-text"}>
+                "{replacementSelectionItem.content}"
             </span>
-            <span className={"replacement-context"}>
-                "→ {textContext.left_context_tail.text}{generateMockupMdLink(replacementSelectionItem.content, targetNoteTitle)}{textContext.right_context_tail.text}"
-            </span>
+            <div className={"replacement-context"}>
+                <span className={"arrow-icon"}>→</span>
+                <span className={"context-tail"}>
+                    "... {textContext.left_context_tail.text}
+                </span>
+                <span className={"link-preview"}>
+                    {generateMockupMdLink(replacementSelectionItem.content, targetNoteTitle)}
+                </span>
+                <span className={"context-tail"}>
+                    {textContext.right_context_tail.text} ..."
+                </span>
+            </div>
         </li>
     );
 };

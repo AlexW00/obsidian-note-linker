@@ -68,6 +68,7 @@ export const MatcherComponent = () => {
         note_change_operations.forEach((op : NoteChangeOperation) => {
             op.apply_replacements()
             console.log(op.content)
+            // TODO: replace note content
         })
     }
 

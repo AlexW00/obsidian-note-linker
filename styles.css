@@ -1,62 +1,108 @@
-.link-match-list {
+/* Note Matching Results List */
+
+.note-matching-result-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.note-matching-result-list > button {
+  margin-top: 15px;
+  font-size: 15px;
+  align-self: center;
+  width: 100%;
+}
+
+
+/* Link Matches List Component */
+
+.link-matches-list {
+  background: white;
+  border-radius: 10px;
+  margin-top: 15px;
+  padding: 5px;
+}
+
+/* Note Matching Result Title*/
+
+.note-matching-result-title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.note-matching-result-title > h3 {
+  margin: 0;
+}
+
+
+/* Link Match Title */
+
+.link-match-title {
+  display: flex;
+  flex-direction: row;
+}
+
+.link-match-title > h4 {
+  margin: 0;
+  padding-right: 5px;
+}
+
+/* Link Target Candidates List */
+
+.link-target-candidates-list {
+  padding: 10px;
+}
+
+.link-target-candidates-list > ul {
+  padding-left: 10px;
+}
+
+/* Replacements Selection */
+
+.replacements-selection {
+  margin-top: 6px;
+}
+
+.replacements-selection > ul {
+  padding-left: 10px;
+}
+
+/* Replacement Item */
+
+.replacement-item {
+  display: flex;
+  flex-direction: row;
+}
+
+.replacement-item > .matched-text {
+  white-space: nowrap;
+}
+
+.replacement-context {
+  font-size: 14px;
+  color: dimgray;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.replacement-context > .arrow-icon {
+  padding-left: 5px;
+  padding-right: 5px;
+}
+/* Other styling */
+
+.hide-list-styling {
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
-.link-match-item-replacement-option {
-  display: flex;
-  flex-direction: row;
-  margin-right: 10px;
-  justify-content: flex-start;
-  align-items: center;
-  align-content: center;
-  white-space: nowrap;
-  overflow: hidden;
-}
-
-
-
-.link-match-item-replacement-option-replacement-text {
-  margin-right: 7px;
-}
-
-.link-match-item-replacement-option-description {
-  font-size: 0.8em;
+.light-description {
+  font-size: 10px;
+  color: darkgray;
   font-style: italic;
-  color: gray;
-}
-
-.link-match-item-replacement-checkbox {
-  margin-right: 7px;
-}
-
-
-.link-match-item {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 10px;
-  list-style: none;
-  background: white;
-  border-radius: 5px;
-  padding: 15px;
-}
-
-.link-match-item-title {
-  font-weight: bold;
-}
-
-.link-match-item-sub-title {
-  font-size: 0.8em;
-  font-style: italic;
-  color: gray;
-  margin-bottom: 5px;
-}
-
-.link-match-item-replacement {
-
-}
-
-.link-match-item-replacement-title {
-  font-weight: 500;
 }

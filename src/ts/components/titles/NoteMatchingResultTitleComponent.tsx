@@ -9,9 +9,9 @@ interface NoteMatchingResultTitleProps {
 export const NoteMatchingResultTitleComponent = ({noteTitle, notePath}: NoteMatchingResultTitleProps) => {
 
     return (
-        <div>
-            <h4>{noteTitle}</h4>
-            <span>{notePath}</span>
+        <div className={"note-matching-result-title"}>
+            <h3>{noteTitle}</h3>
+            <span className={"light-description"}>{notePath}</span>
         </div>
     );
 };

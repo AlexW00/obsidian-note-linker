@@ -8,11 +8,11 @@ interface noteLinkMatchResultLinkMatchTitleProps {
 
 export const LinkMatchTitleComponent = ({matchedText, position}: noteLinkMatchResultLinkMatchTitleProps) => {
     return (
-        <div>
-            <span>
+        <div className={"link-match-title"}>
+            <h4>
                 "{matchedText}"
-            </span>
-            <span>
+            </h4>
+            <span className={"light-description"}>
                 ({position.start}-{position.end})
             </span>
         </div>

@@ -24,9 +24,9 @@ export const LinkMatchesListComponent = ({noteLinkMatchResult, onNoteChangeOpera
     const noteFiles = useContext<Map<String, TFile>>(NoteFilesContext);
 
     return (
-        <li>
+        <li className={"link-matches-list"}>
             <NoteMatchingResultTitleComponent noteTitle={noteLinkMatchResult.note.title} notePath={noteLinkMatchResult.note.path}/>
-            <ul>
+            <ul className={"hide-list-styling"}>
                 {noteLinkMatchResult.link_matches.map((link_match: LinkMatch) => {
                     return (
                         <LinkTargetCandidatesListComponent

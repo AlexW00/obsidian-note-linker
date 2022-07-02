@@ -15,11 +15,9 @@ interface noteLinkMatchResultLinkMatchCandidateProps {
 export const ReplacementsSelectionComponent = ({linkTargetCandidate, textContext, onSelectionItemSelected}: noteLinkMatchResultLinkMatchCandidateProps) => {
 
     return (
-        <li>
-            <span>
-                🔗{linkTargetCandidate.path}
-            </span>
-            <ul>
+        <li className={"replacements-selection"}>
+            <span className={"title"}>🔗{linkTargetCandidate.path}</span>
+            <ul className={"hide-list-styling"}>
                 {linkTargetCandidate.replacement_selection_items.map((replacement_selection_item: SelectionItem) => {
                     return (
                         <ReplacementItemComponent
