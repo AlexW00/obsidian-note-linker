@@ -5,9 +5,11 @@ import {LinkMatchesListComponent} from "./LinkMatchesListComponent";
 interface NoteMatchingResultsListProps {
     noteMatchingResults: Array<NoteMatchingResult>,
     onNoteChangeOperationSelected: (noteChangeOperation: NoteChangeOperation, doAdd: boolean) => void
+    onClickReplaceButton: () => void
 }
 
-export const NoteMatchingResultsList = ({noteMatchingResults, onNoteChangeOperationSelected}: NoteMatchingResultsListProps) => {
+export const NoteMatchingResultsList = ({noteMatchingResults, onNoteChangeOperationSelected, onClickReplaceButton}: NoteMatchingResultsListProps) => {
+    
     return (
         <div>
             <h2>Note Link Matches</h2>
@@ -20,7 +22,7 @@ export const NoteMatchingResultsList = ({noteMatchingResults, onNoteChangeOperat
                             )
                 })}
             </ul>
-            <button>Replace</button>
+            <button onClick={onClickReplaceButton}>Replace</button>
         </div>
     );
 };

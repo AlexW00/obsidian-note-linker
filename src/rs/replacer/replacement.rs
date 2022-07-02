@@ -1,3 +1,4 @@
+use std::cmp::Ordering;
 use wasm_bindgen::prelude::*;
 use crate::rs::util::range::Range;
 

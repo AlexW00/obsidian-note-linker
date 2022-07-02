@@ -64,6 +64,13 @@ export const MatcherComponent = () => {
         }
     }
 
+    const handleReplaceButtonClicked = () => {
+        note_change_operations.forEach((op : NoteChangeOperation) => {
+            op.apply_replacements()
+            console.log(op.content)
+        })
+    }
+
     const initNoteChangeOperations = (noteLinkMatchResults: Array<NoteMatchingResult>) => {
         const operations : Map<String, NoteChangeOperation> = new Map;
             noteLinkMatchResults.forEach((result: NoteMatchingResult) => {
@@ -128,6 +135,7 @@ export const MatcherComponent = () => {
             ? <NoteFilesContext.Provider value={noteFiles}>
                 <NoteMatchingResultsList noteMatchingResults={noteMatchingResults}
                                          onNoteChangeOperationSelected={handleNoteChangeOperationSelected}
+                                         onClickReplaceButton={handleReplaceButtonClicked}
                 />
             </NoteFilesContext.Provider>
             : <ProgressComponent progress={linkMatchingProgress}/>

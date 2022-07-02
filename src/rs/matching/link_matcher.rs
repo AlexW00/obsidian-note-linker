@@ -129,9 +129,12 @@ pub fn get_link_matches(note_to_check: &Note, target_note_candidates: &[Note]) -
         .fold(Vec::new(), |mut merged_link_matches, mut link_match| {
             let index = merged_link_matches.iter()
                 .position(|m: &LinkMatch| m.position().is_equal_to(&link_match.position()));
+            
             if let Some(index) = index {
+                // merge it into the existing match, if the position is the same
                 merged_link_matches[index].merge_link_match_target_candidates(link_match);
             } else {
+                // otherwise push a new match
                 merged_link_matches.push(link_match);
             }
             merged_link_matches
