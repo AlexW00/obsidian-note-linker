@@ -19,6 +19,7 @@ export default class IgnoreRange extends Range {
     }
 
     private static findInternalLinks (cache: CachedMetadata) : IgnoreRange[] {
+        console.log("cache links", cache.links);
         return (cache.links ? cache.links : []).map(link => new IgnoreRange(link.position.start.offset, link.position.end.offset));
     }
 

@@ -3,6 +3,7 @@ import React from "react";
 import {createRoot, Root} from 'react-dom/client';
 import { AppContext } from "./context";
 import {MatcherComponent} from "./components/containers/MatcherComponent";
+import {init_panic_hook} from "../../pkg";
 
 export default class LinkMatchingPopupModal extends Modal {
 

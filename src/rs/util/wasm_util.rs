@@ -2,6 +2,8 @@ use js_sys::Array;
 use wasm_bindgen::convert::FromWasmAbi;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::{JsCast, JsValue};
+extern crate console_error_panic_hook;
+use std::panic;
 
 pub fn generic_of_jsval<T: FromWasmAbi<Abi=u32>>(js: JsValue, classname: &str) -> Result<T, JsValue> {
     use js_sys::{Object, Reflect};
@@ -16,6 +18,10 @@ pub fn generic_of_jsval<T: FromWasmAbi<Abi=u32>>(js: JsValue, classname: &str) -
     }
 }
 
+#[wasm_bindgen]
+pub fn init_panic_hook () {
+    console_error_panic_hook::set_once();
+}
 
 #[wasm_bindgen]
 extern "C" {

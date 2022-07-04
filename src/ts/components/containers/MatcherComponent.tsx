@@ -54,21 +54,23 @@ export const MatcherComponent = () => {
 
             new_note_change_operation.replacements.forEach((replacement: Replacement) => {
                 const index = existing_note_change_operation.replacements.findIndex(((r: Replacement) => r.position.is_equal_to(replacement.position)))
-                console.log(index);
+                //console.log(index);
                 if (index != -1) existing_note_change_operation.replacements[index] = replacement;
                 else existing_note_change_operation.replacements.push(replacement);
             })
             new_note_change_operations.set(new_note_change_operation.path, existing_note_change_operation)
             set_note_change_operations(new_note_change_operations)
-            console.log(note_change_operations)
+            //console.log(note_change_operations)
         }
     }
 
     const handleReplaceButtonClicked = () => {
         note_change_operations.forEach((op : NoteChangeOperation) => {
             op.apply_replacements()
-            console.log(op.content)
-            // TODO: replace note content
+            const noteFile = noteFiles.get(op.path);
+            vault.modify(noteFile, op.content).then(() => {
+                console.log("linked" + op.path)
+            })
         })
     }
 

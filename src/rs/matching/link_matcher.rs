@@ -56,7 +56,7 @@ struct LinkMatcherResult <'m> {
 impl <'m> LinkMatcherResult <'m> {
     fn new(note: &'m Note, target_note: &'m Note) -> Self {
         let regex_matches: Vec<RegexMatch> = get_link_matcher(&target_note)
-            .captures_iter(&note.sanitized_content())
+            .captures_iter(note.get_sanitized_content())
             .filter_map( |capture_result| {
                     match capture_result {
                         Ok(captures) => RegexMatch::try_from(captures).ok(),

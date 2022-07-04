@@ -3,10 +3,15 @@ use std::convert::TryFrom;
 use js_sys::Array;
 use wasm_bindgen::{JsCast, JsValue};
 use wasm_bindgen::prelude::*;
+use crate::log;
 
 use crate::rs::text::text_util::{create_string_with_n_characters, get_nearest_char_boundary};
 use crate::rs::util::range::{Range, RangeArray};
 use crate::rs::util::wasm_util::{generic_of_jsval, StringArray};
+
+extern crate unicode_segmentation;
+
+use unicode_segmentation::{Graphemes, UnicodeSegmentation};
 
 #[wasm_bindgen]
 #[derive(Clone)]
@@ -19,13 +24,15 @@ pub struct Note {
 
     _aliases: Vec<String>,
     _ignore: Vec<Range>,
+    _sanitized_content: String
 }
 
 #[wasm_bindgen]
 impl Note {
     #[wasm_bindgen(constructor)]
     pub fn new(title: String, path: String, content: String, aliases: StringArray, ignore: RangeArray) -> Note {
-        Note {
+        let ignore_vec = Vec::from(ignore.clone());
+        let note = Note {
             title: title.clone(),
             path: path.clone(),
             content: content.clone(),
@@ -33,8 +40,10 @@ impl Note {
             ignore: ignore.clone(),
 
             _aliases: aliases.into(),
-            _ignore: Vec::from(ignore),
-        }
+            _ignore: ignore_vec.clone(),
+            _sanitized_content: Note::sanitize_content(content, ignore_vec) // no need to clone anymore
+        };
+        note
     }
 
     #[wasm_bindgen(getter)]
@@ -63,16 +72,27 @@ impl Note {
         &self._ignore
     }
 
-    pub fn sanitized_content(&self) -> String {
-        let mut content = self.content().clone();
-        for ignore in self.ignore_vec() {
-            let start = ignore.start();
-            let end = ignore.end();
-            let from = get_nearest_char_boundary(&content, start, true);
-            let to = get_nearest_char_boundary(&content, end, false);
-            content = content.replace(&content[from..to], &create_string_with_n_characters(end - start, ' '));
+    fn sanitize_content(mut content: String, ignore_vec: Vec<Range>) -> String {
+        for ignore in ignore_vec {
+            let range: std::ops::Range<usize> = ignore.clone().into();
+            let split_content: Graphemes = UnicodeSegmentation::graphemes(content.as_str(), true);
+            let mut new_content: String = String::new();
+            // necessary to split graphemes, since characters such as emojis
+            // only increase the character offset by 1 (offset is provided by obsidian api),
+            // however in rust strings, they have a length of 2-4
+            split_content.enumerate().for_each(
+                |(index, grapheme)| {
+                    if &range.start <= &index && &range.end >= &index { new_content.push_str(&*create_string_with_n_characters(&grapheme.len(), '_')) }
+                    else { new_content.push_str(grapheme) }
+                }
+            );
+            content = new_content
         }
         content
+    }
+
+    pub fn get_sanitized_content (&self) -> &String {
+        &self._sanitized_content
     }
 }
 
