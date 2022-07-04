@@ -2,8 +2,7 @@ import {App, Modal} from "obsidian";
 import React from "react";
 import {createRoot, Root} from 'react-dom/client';
 import { AppContext } from "./context";
-import {MatcherComponent} from "./components/containers/MatcherComponent";
-import {init_panic_hook} from "../../pkg";
+import {MainComponent} from "./components/containers/MainComponent";
 
 export default class LinkMatchingPopupModal extends Modal {
 
@@ -13,11 +12,13 @@ export default class LinkMatchingPopupModal extends Modal {
         super(app);
     }
 
+
+
     onOpen() {
         this.root = createRoot(this.contentEl);
         this.root.render(
             <AppContext.Provider value={this.app}>
-                <MatcherComponent/>
+                <MainComponent/>
             </AppContext.Provider>
         )
     }

@@ -1,3 +1,50 @@
+:root {
+
+  --super-small-margin: 5px;
+  --small-margin: 10px;
+  --default-margin: 15px;
+  --double-default-margin: 30px;
+
+  --default-padding: 10px;
+  --small-padding: 5px;
+
+  --default-round-borders: 10px;
+  --small-round-borders: 7px;
+
+  --small-font-size: 10px;
+  --enlarged-default-font-size: 15px;
+
+  --default-description-text-color: #545454;
+  --light-description-text-color: darkgray;
+
+  --card-background-color: white;
+
+  --warning-background-color: rgb(255, 165, 0, 0.5);
+  --success-background-color: rgb(50, 205, 50, 0.5);
+  --info-background-color: rgb(100, 149, 237, 0.5);
+}
+
+
+.start-component {
+  display: flex;
+  flex-direction: column;
+}
+
+.start-component > h1 {
+  margin-bottom: var(--double-default-margin);
+}
+
+.start-component > span {
+  margin-bottom: var(--double-default-margin);
+}
+
+
+.start-component > button {
+  font-size: var(--enlarged-default-font-size);
+  align-self: center;
+}
+
+
 /* Note Matching Results List */
 
 .note-matching-result-list {
@@ -6,8 +53,8 @@
 }
 
 .note-matching-result-list > button {
-  margin-top: 15px;
-  font-size: 15px;
+  margin-top: var(--default-margin);
+  font-size: var(--enlarged-default-font-size);
   align-self: center;
   width: 100%;
 }
@@ -16,10 +63,10 @@
 /* Link Matches List Component */
 
 .link-matches-list {
-  background: white;
-  border-radius: 10px;
-  margin-top: 15px;
-  padding: 5px;
+  background: var(--card-background-color);
+  border-radius: var(--default-round-borders);
+  margin-top: var(--default-margin);
+  padding: var(--small-padding);
 }
 
 /* Note Matching Result Title*/
@@ -29,8 +76,8 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin-top: 10px;
-  margin-bottom: 10px;
+  margin-top: var(--small-margin);
+  margin-bottom: var(--small-margin);
 }
 
 .note-matching-result-title > h3 {
@@ -47,27 +94,27 @@
 
 .link-match-title > h4 {
   margin: 0;
-  padding-right: 5px;
+  padding-right: var(--small-padding);
 }
 
 /* Link Target Candidates List */
 
 .link-target-candidates-list {
-  padding: 10px;
+  padding: var(--default-padding);
 }
 
 .link-target-candidates-list > ul {
-  padding-left: 10px;
+  padding-left: var(--default-padding);
 }
 
 /* Replacements Selection */
 
 .replacements-selection {
-  margin-top: 6px;
+  margin-top: var(--super-small-margin);
 }
 
 .replacements-selection > ul {
-  padding-left: 10px;
+  padding-left: var(--default-padding);
 }
 
 /* Replacement Item */
@@ -82,16 +129,16 @@
 }
 
 .replacement-context {
-  font-size: 14px;
-  color: dimgray;
+  font-size: var(--enlarged-default-font-size);
+  color: var(--default-description-text-color);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .replacement-context > .arrow-icon {
-  padding-left: 5px;
-  padding-right: 5px;
+  padding-left: var(--small-padding);
+  padding-right: var(--small-padding);
 }
 /* Other styling */
 
@@ -102,7 +149,27 @@
 }
 
 .light-description {
-  font-size: 10px;
-  color: darkgray;
+  font-size: var(--small-font-size);
+  color: var(--light-description-text-color);
   font-style: italic;
+}
+
+
+
+.warning-toast {
+  background: var(--warning-background-color);
+  border-radius: var(--small-round-borders);
+  padding: var(--small-padding)
+}
+
+.success-toast {
+  background: var(--success-background-color);
+  border-radius: var(--small-round-borders);
+  padding: var(--small-padding)
+}
+
+.info-toast {
+  background: var(--info-background-color);
+  border-radius: var(--small-round-borders);
+  padding: var(--small-padding)
 }

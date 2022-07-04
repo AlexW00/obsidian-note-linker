@@ -1,5 +1,4 @@
 import * as React from "react";
-import * as ReactDOM from "react-dom";
 import {useContext, useEffect, useState} from "react";
 import {
     LinkMatch, LinkTargetCandidate,
@@ -18,20 +17,27 @@ import {ProgressComponent} from "../general/ProgressComponent";
 import {NoteMatchingResultsList} from "../lists/NoteMatchingResultsListComponent";
 import {TFile} from "obsidian";
 
+enum MatchingState {
+    Scanning,
+    Selecting,
+    Replacing,
+    Finished
+}
 
 export const MatcherComponent = () => {
 
     const {vault, metadataCache, fileManager} = useContext(AppContext);
 
+    const [matchingState, setMatchingState] = useState<MatchingState>(MatchingState.Scanning);
+    const [numberOfLinkedNotes, setNumberOfLinkedNotes] = useState<number>(0);
 
     const [noteMatchingResults, setNoteMatchingResults] = useState<Array<NoteMatchingResult>>([]);
     const [linkMatchingProgress] = useState<Progress>(new Progress(JsNote.getNumberOfNotes(vault, metadataCache)));
-    //TODO: Init state
     const [note_change_operations, set_note_change_operations] = useState<Map<String, NoteChangeOperation>>(new Map());
 
     const onLinkMatchingProgress = (noteScannedEvent: NoteScannedEvent) => {
         linkMatchingProgress.increment();
-        console.log(linkMatchingProgress.isComplete());
+        if (linkMatchingProgress.isComplete()) setMatchingState(MatchingState.Selecting)
     }
 
     const handleNoteChangeOperationSelected = (note_change_operation: NoteChangeOperation, doAdd: boolean) => {
@@ -65,13 +71,21 @@ export const MatcherComponent = () => {
     }
 
     const handleReplaceButtonClicked = () => {
+        setMatchingState(MatchingState.Replacing);
+        const operations: Array<Promise<void>> = [];
         note_change_operations.forEach((op : NoteChangeOperation) => {
             op.apply_replacements()
             const noteFile = noteFiles.get(op.path);
-            vault.modify(noteFile, op.content).then(() => {
-                console.log("linked" + op.path)
-            })
+            operations.push(vault.modify(noteFile, op.content));
         })
+        Promise.all(operations).then(() => {
+            onDidLinkNotes(operations.length)
+        })
+    }
+
+    const onDidLinkNotes = (num: number) => {
+        setNumberOfLinkedNotes(num);
+        setMatchingState(MatchingState.Finished)
     }
 
     const initNoteChangeOperations = (noteLinkMatchResults: Array<NoteMatchingResult>) => {
@@ -124,7 +138,6 @@ export const MatcherComponent = () => {
         JsNote.getNotesFromVault(vault, metadataCache)
             .then((jsNotes: JsNote[]) => wasm.find(this, jsNotes as Note[], onLinkMatchingProgress))
             .then((noteLinkMatchResults: Array<NoteMatchingResult>) => {
-                console.log("got results");
                 setNoteMatchingResults(noteLinkMatchResults)
                 initNoteChangeOperations(noteLinkMatchResults);
             })
@@ -132,16 +145,16 @@ export const MatcherComponent = () => {
             // On unmount
         }
     }, []);
-
-    return (
-        linkMatchingProgress.isComplete()
-            ? <NoteFilesContext.Provider value={noteFiles}>
+        if (matchingState == MatchingState.Scanning) return <ProgressComponent progress={linkMatchingProgress}/>
+        else if (matchingState == MatchingState.Selecting) return (
+            <NoteFilesContext.Provider value={noteFiles}>
                 <NoteMatchingResultsList noteMatchingResults={noteMatchingResults}
                                          onNoteChangeOperationSelected={handleNoteChangeOperationSelected}
                                          onClickReplaceButton={handleReplaceButtonClicked}
                 />
             </NoteFilesContext.Provider>
-            : <ProgressComponent progress={linkMatchingProgress}/>
-    );
+        )
+        else if (matchingState == MatchingState.Replacing) return <div className={"info-toast"}>⏳ Linking Notes...</div>
+        else return <div className={"success-toast"}>🎉 Successfully linked {numberOfLinkedNotes} notes!</div>
 };
 
