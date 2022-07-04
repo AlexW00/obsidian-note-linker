@@ -7,8 +7,10 @@ import {init_panic_hook} from "../pkg";
 export default class RustPlugin extends Plugin {
 	async onload() {
 		// @ts-ignore
+
 		const buffer = Uint8Array.from(atob(rustPlugin), c => c.charCodeAt(0))
 		await wasm.default(Promise.resolve(buffer));
+		//await init_panic_hook();
 		init_panic_hook()
 
 		const ribbonIconEl = this.addRibbonIcon('dice', 'Sample Plugin', (evt) => {

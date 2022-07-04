@@ -25,8 +25,6 @@ export default class JsNote extends Note{
                 doIgnoreCodeBlocks: true,
             }) ?? [];
             let jsNote: JsNote = new JsNote(name, path, content, aliases, ignoreRanges);
-            console.log(jsNote)
-            console.log(jsNote.ignore)
             return jsNote;
         });
         return await Promise.all(notes)

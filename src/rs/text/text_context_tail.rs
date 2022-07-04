@@ -53,12 +53,15 @@ impl TextContextTail {
     fn get_context_text(text_position: range::Range, text: &str) -> String {
         let start = get_nearest_char_boundary(text, text_position.start(), true);
         let end = get_nearest_char_boundary(text, text_position.end(), false);
-        text[start..end]
-            .chars()
-            .map(
-                // replace newline with whitespace
-                |c| if c == '\n' { ' ' } else { c },
-            )
-            .collect()
+        if &end > &start {
+            return text[start..end]
+                .chars()
+                .map(
+                    // replace newline with whitespace
+                    |c| if c == '\n' { ' ' } else { c },
+                )
+                .collect()
+        }
+        "".to_string()
     }
 }

@@ -36,6 +36,7 @@ export const MatcherComponent = () => {
     const [note_change_operations, set_note_change_operations] = useState<Map<String, NoteChangeOperation>>(new Map());
 
     const onLinkMatchingProgress = (noteScannedEvent: NoteScannedEvent) => {
+        //console.log(noteScannedEvent);
         linkMatchingProgress.increment();
         if (linkMatchingProgress.isComplete()) setMatchingState(MatchingState.Selecting)
     }
