@@ -12,6 +12,7 @@ use crate::rs::util::wasm_util::log;
 
 mod rs;
 
+pub use wasm_bindgen_rayon::init_thread_pool;
 #[wasm_bindgen]
 pub fn add (a: i32, b: i32) -> i32 {
     a + b

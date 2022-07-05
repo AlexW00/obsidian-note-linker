@@ -15,7 +15,8 @@
     "@types/react": "^18.0.12",
     "@types/react-dom": "^18.0.5",
     "rollup": "^2.32.1",
-    "rollup-plugin-base64": "^1.0.1"
+    "rollup-plugin-base64": "^1.0.1",
+    "tslib": "^2.4.0"
   },
   "dependencies": {
     "@rollup/plugin-typescript": "^8.3.2",
