@@ -1,11 +1,15 @@
 use std::borrow::Cow;
 use std::convert::TryFrom;
+use std::future;
 use std::ops::Add;
 use std::thread::Builder;
 use fancy_regex::{Captures, escape, Match, Regex};
 use js_sys::Error;
+use js_sys::WebAssembly::RuntimeError;
+use wasm_bindgen::JsValue;
 use crate::log;
 use crate::rs::Errors::CastError::CastError;
+use crate::rs::Errors::MatchingError::MatchingError;
 
 use crate::rs::matching::link_match::LinkMatch;
 use crate::rs::matching::link_match_target_candidate::LinkTargetCandidate;
@@ -110,14 +114,14 @@ fn get_link_matcher(note: &Note) -> LinkMatcher {
     Regex::new(&*format!(r"\b{}\b", regex_string)).unwrap()
 }
 
-pub fn get_link_matches(note_to_check: &Note, target_note_candidates: &[Note]) -> Option<NoteMatchingResult> {
+pub async fn get_link_matches(note_to_check: &Note, target_note_candidates: &Vec<Note>) -> Result<JsValue, JsValue> {
     let link_matches: Vec<LinkMatch> =
         target_note_candidates
         .iter()
         .filter_map(|target_note: &Note| {
             if !&target_note.title().eq(&note_to_check.title()) {
                 let link_matcher_result = LinkMatcherResult::new(
-                        note_to_check,
+                        &note_to_check,
                         target_note
                     );
                 let link_matches: Vec<LinkMatch> = link_matcher_result.into();
@@ -141,13 +145,13 @@ pub fn get_link_matches(note_to_check: &Note, target_note_candidates: &[Note]) -
         });
 
 
-    if *&!link_matches.is_empty() {
-        return Some(
-            NoteMatchingResult::new(
-                note_to_check.clone(),
-                link_matches
-            )
-        )
+    if !link_matches.is_empty() {
+        let js_note_matching_result: JsValue = NoteMatchingResult::new(
+            note_to_check.clone(),
+            link_matches
+        ).into();
+        Ok(js_note_matching_result)
+    } else {
+        Err(js_sys::Error::new("idk").into())
     }
-    None
 }
