@@ -45,6 +45,28 @@ pub async fn find (context: JsValue, notes: NoteArray, callback: js_sys::Functio
     Ok(res.into())
 }
 
+#[wasm_bindgen]
+pub async fn find_silent(notes: NoteArray) -> Result<JsValue, JsValue> {
+    log("find silent");
+    let arr = notes.unchecked_into::<Array>();
+    let notes: Vec<Note> = arr.iter()
+        .filter_map(|note: JsValue| Note::try_from(note).ok())
+        .collect();
+
+    log(format!("Array len: {}", &notes.len()).as_str());
+    let res: Array = Array::new();
+    for note in &notes {
+        log("scanned");
+        // this function is another async one and takes about 2 seconds to complete:
+        let link_matches_result_future = link_matcher::get_link_matches(note, &notes);
+        let link_matches_result = link_matches_result_future.await;
+        if let Ok(r) = link_matches_result {
+            res.push(&r);
+        }
+    };
+    Ok(res.into())
+}
+
 // receives callback and calls it after 5 sec
 #[wasm_bindgen]
 pub fn set_timeout(ctx: &JsValue, callback: &js_sys::Function) {

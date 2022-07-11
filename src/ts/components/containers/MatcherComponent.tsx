@@ -6,12 +6,10 @@ import {
     NoteChangeOperation,
     NoteMatchingResult,
     NoteScannedEvent,
-    Range,
     Replacement, SelectionItem
 } from "../../../../pkg";
 import JsNote from "../../JsNote";
-import {AppContext, NoteFilesContext} from "../../context";
-import * as wasm from "../../../../pkg";
+import {AppContext, NoteFilesContext, WasmWorkerInstanceContext} from "../../context";
 import Progress from "../../Progress";
 import {ProgressComponent} from "../general/ProgressComponent";
 import {NoteMatchingResultsList} from "../lists/NoteMatchingResultsListComponent";
@@ -27,6 +25,7 @@ enum MatchingState {
 export const MatcherComponent = () => {
 
     const {vault, metadataCache, fileManager} = useContext(AppContext);
+    const wasmWorkerInstance = useContext(WasmWorkerInstanceContext);
 
     const [matchingState, setMatchingState] = useState<MatchingState>(MatchingState.Scanning);
     const [numberOfLinkedNotes, setNumberOfLinkedNotes] = useState<number>(0);
@@ -137,7 +136,12 @@ export const MatcherComponent = () => {
 
     useEffect(() => {
         JsNote.getNotesFromVault(vault, metadataCache)
-            .then((jsNotes: JsNote[]) => wasm.find(this, jsNotes as Note[], onLinkMatchingProgress))
+            .then((jsNotes: JsNote[]) => {
+                console.log("got notes")
+                //console.log(wasmWorkerInstance)
+                //console.log(wasmWorkerInstance.add(1,5))
+                return wasmWorkerInstance.findSilent(jsNotes as Note[])
+            })
             .then((noteLinkMatchResults: Array<NoteMatchingResult>) => {
                 setNoteMatchingResults(noteLinkMatchResults)
                 initNoteChangeOperations(noteLinkMatchResults);
@@ -145,7 +149,7 @@ export const MatcherComponent = () => {
         return () => {
             // On unmount
         }
-    }, []);
+    }, [wasmWorkerInstance]);
         if (matchingState == MatchingState.Scanning) return <ProgressComponent progress={linkMatchingProgress}/>
         else if (matchingState == MatchingState.Selecting) return (
             <NoteFilesContext.Provider value={noteFiles}>
