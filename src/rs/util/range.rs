@@ -4,11 +4,12 @@ use js_sys::{Array};
 use thiserror::Error;
 use wasm_bindgen::{JsCast, JsValue};
 use wasm_bindgen::prelude::*;
+use serde::{Serialize, Deserialize};
 
 use crate::rs::util::wasm_util::generic_of_jsval;
 
 #[wasm_bindgen]
-#[derive(Clone)]
+#[derive(Clone, Serialize, Deserialize)]
 pub struct Range {
     start: usize,
     end: usize,
@@ -29,6 +30,11 @@ impl Range {
 
     #[wasm_bindgen(getter)]
     pub fn end(&self) -> usize { self.end }
+
+    #[wasm_bindgen]
+    pub fn to_json (&self) -> String {
+        serde_json::to_string(&self).unwrap()
+    }
 
     pub fn is_equal_to(&self, range: &Range) -> bool {
         self.start == range.start && self.end == range.end

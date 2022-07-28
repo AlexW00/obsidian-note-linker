@@ -4,6 +4,7 @@ use js_sys::Array;
 use wasm_bindgen::{JsCast, JsValue};
 use wasm_bindgen::prelude::*;
 use crate::log;
+use serde::{Serialize, Deserialize};
 
 use crate::rs::text::text_util::{create_string_with_n_characters, get_nearest_char_boundary};
 use crate::rs::util::range::{Range, RangeArray};
@@ -94,6 +95,7 @@ impl Note {
     pub fn get_sanitized_content (&self) -> &String {
         &self._sanitized_content
     }
+
 }
 
 impl TryFrom<JsValue> for Note {

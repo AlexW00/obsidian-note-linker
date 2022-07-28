@@ -18,12 +18,12 @@ class WasmComlinkWorker {
     }
 
     public async find(context: any, notes: Note[], callback: Function) {
-        console.log("calling find")
+
         return await find(context, notes, callback);
     }
 
     public async findSilent(notes: Note[]) {
-        console.log("calling find silent")
+
         return await find_silent(notes);
     }
 

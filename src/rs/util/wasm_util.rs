@@ -2,6 +2,7 @@ use js_sys::Array;
 use wasm_bindgen::convert::FromWasmAbi;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::{JsCast, JsValue};
+use serde::{Serialize, Deserialize};
 extern crate console_error_panic_hook;
 use std::panic;
 

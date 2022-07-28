@@ -137,9 +137,7 @@ export const MatcherComponent = () => {
     useEffect(() => {
         JsNote.getNotesFromVault(vault, metadataCache)
             .then((jsNotes: JsNote[]) => {
-                console.log("got notes")
-                //console.log(wasmWorkerInstance)
-                //console.log(wasmWorkerInstance.add(1,5))
+
                 return wasmWorkerInstance.findSilent(jsNotes as Note[])
             })
             .then((noteLinkMatchResults: Array<NoteMatchingResult>) => {
