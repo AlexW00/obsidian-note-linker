@@ -3,9 +3,10 @@ use wasm_bindgen::prelude::*;
 use crate::rs::note::note::Note;
 use crate::rs::text::text_util::get_nearest_char_boundary;
 use crate::rs::util::range;
+use serde::{Serialize, Deserialize};
 
 #[wasm_bindgen]
-#[derive(Clone)]
+#[derive(Clone, Serialize, Deserialize)]
 pub struct TextContextTail {
     text: String,
     position: range::Range,

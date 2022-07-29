@@ -32,6 +32,7 @@ impl Range {
     pub fn end(&self) -> usize { self.end }
 
     #[wasm_bindgen]
+
     pub fn to_json (&self) -> String {
         serde_json::to_string(&self).unwrap()
     }
@@ -88,22 +89,9 @@ pub fn range_from_js_value (js: JsValue) -> Option<Range> {
     }
 }
 
-#[wasm_bindgen]
-extern "C" {
-    #[wasm_bindgen(typescript_type = "Array<Range>")]
-    #[derive(Clone, Debug)]
-    pub type RangeArray;
-}
-
-
-impl From<RangeArray> for Vec<Range> {
-    fn from(range_array: RangeArray) -> Self {
-        let arr: Result<Array, RangeArray> = range_array.dyn_into::<Array>();
-        arr.map_or(vec![], |array: Array| {
-            array.iter()
-                .filter_map(|js_val_range: JsValue|
-                    generic_of_jsval(js_val_range, "Range").ok())
-                .collect()
-        })
-    }
+pub fn array_to_range_vec (range_array: Array) -> Vec<Range> {
+    range_array.iter()
+        .filter_map(|js_val_range: JsValue|
+            generic_of_jsval(js_val_range, "Range").ok())
+        .collect()
 }

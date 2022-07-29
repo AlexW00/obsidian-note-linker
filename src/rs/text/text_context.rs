@@ -3,9 +3,10 @@ use wasm_bindgen::prelude::*;
 use crate::rs::note::note::Note;
 use crate::rs::text::text_context_tail::TextContextTail;
 use crate::rs::util::range::Range;
+use serde::{Serialize, Deserialize};
 
 #[wasm_bindgen]
-#[derive(Clone)]
+#[derive(Clone, Serialize, Deserialize)]
 pub struct TextContext {
     left_context_tail: TextContextTail,
     right_context_tail: TextContextTail,

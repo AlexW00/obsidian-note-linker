@@ -1,22 +1,24 @@
 use js_sys::{Array};
 use wasm_bindgen::prelude::*;
 use crate::log;
+use serde::{Serialize, Deserialize};
 
-use crate::rs::matching::link_match_target_candidate::LinkTargetCandidate;
+use crate::rs::matching::link_match_target_candidate::{link_target_candidate_vec_into_array, LinkTargetCandidate};
 use crate::rs::matching::link_matcher::RegexMatch;
 use crate::rs::note::note::Note;
 use crate::rs::text::text_context::TextContext;
 use crate::rs::util::range::Range;
-use crate::rs::util::SelectionItem::SelectionItem;
-use crate::rs::util::wasm_util::generic_of_jsval;
 
 /// A text passage, that has been identified as a possible matching
 #[wasm_bindgen]
+#[derive(Clone, Serialize, Deserialize)]
 pub struct LinkMatch {
     position: Range,
     matched_text: String,
     context: TextContext,
-    link_match_target_candidates: Array
+
+    #[serde(rename = "link_match_target_candidates")]
+    _link_match_target_candidates: Vec<LinkTargetCandidate>
 }
 
 #[wasm_bindgen]
@@ -29,20 +31,18 @@ impl LinkMatch {
     pub fn context(&self) -> TextContext { self.context.clone() }
     #[wasm_bindgen(getter)]
     // TODO: Rename
-    pub fn link_match_target_candidate(&self) -> Array { self.link_match_target_candidates.clone() }
+    pub fn link_match_target_candidate(&self) -> Array {
+        link_target_candidate_vec_into_array(self._link_match_target_candidates.clone())
+    }
 }
 
 impl LinkMatch {
-    pub fn new(position: Range, matched_text: String, context: TextContext, link_target_candidates_vec: Vec<LinkTargetCandidate>) -> Self {
-        let link_target_candidates: Array = js_sys::Array::new();
-        for link_target in link_target_candidates_vec {
-                link_target_candidates.push(&link_target.into());
-        }
+    pub fn new(position: Range, matched_text: String, context: TextContext, _link_match_target_candidates: Vec<LinkTargetCandidate>) -> Self {
         LinkMatch {
             position,
             matched_text,
             context,
-            link_match_target_candidates: link_target_candidates
+            _link_match_target_candidates
         }
     }
 
@@ -61,13 +61,19 @@ impl LinkMatch {
         )
     }
 
-    pub fn merge_link_match_target_candidates (&mut self, mut link_match: LinkMatch) {
-        link_match.link_match_target_candidates.iter().for_each(|js_candidate: JsValue| {
+    pub fn merge_link_match_target_candidates (&mut self, link_match: LinkMatch) {
+        for mut candidate in link_match._link_match_target_candidates {
             // uncheck all candidates
-            let mut candidate : LinkTargetCandidate = generic_of_jsval(js_candidate, "LinkTargetCandidate").unwrap();
             candidate.de_select_all();
-            let js: JsValue = candidate.into();
-            self.link_match_target_candidates.push(&js);
-        });
+            self._link_match_target_candidates.push(candidate);
+        }
     }
+}
+
+pub fn link_match_vec_into_array(link_matches: Vec<LinkMatch>) -> Array {
+    let mut link_matches_array = Array::new();
+    for link_match in link_matches {
+        link_matches_array.push(&link_match.into());
+    }
+    link_matches_array
 }

@@ -1,15 +1,12 @@
 use std::convert::TryFrom;
-use std::sync::Arc;
 use futures::{stream, Stream};
-use futures::lock::Mutex;
 
 use js_sys::{Array, Promise};
 use wasm_bindgen::{JsCast, JsValue};
 use wasm_bindgen::prelude::*;
 
 use crate::rs::matching::link_matcher;
-use crate::rs::matching::note_matching_result::NoteMatchingResult;
-use crate::rs::note::note::{Note, NoteArray};
+use crate::rs::note::note::{Note};
 use crate::rs::note::note_scanned_event::NoteScannedEvent;
 use crate::rs::util::wasm_util::log;
 
@@ -21,9 +18,8 @@ pub fn add (a: i32, b: i32) -> i32 {
 }
 
 #[wasm_bindgen]
-pub async fn find (context: JsValue, notes: NoteArray, callback: js_sys::Function) -> Result<JsValue, JsValue> {
-    let arr = notes.unchecked_into::<Array>();
-    let notes: Vec<Note> = arr.iter()
+pub async fn find (context: JsValue, notes: Array, callback: js_sys::Function) -> Result<JsValue, JsValue> {
+    let notes: Vec<Note> = notes.iter()
         .filter_map(|note: JsValue| Note::try_from(note).ok())
         .collect();
 
@@ -46,10 +42,9 @@ pub async fn find (context: JsValue, notes: NoteArray, callback: js_sys::Functio
 }
 
 #[wasm_bindgen]
-pub async fn find_silent(notes: NoteArray) -> Result<JsValue, JsValue> {
+pub async fn find_silent(notes: Array) -> Result<JsValue, JsValue> {
     log("find silent");
-    let arr = notes.unchecked_into::<Array>();
-    let notes: Vec<Note> = arr.iter()
+    let notes: Vec<Note> = notes.iter()
         .filter_map(|note: JsValue| Note::try_from(note).ok())
         .collect();
 

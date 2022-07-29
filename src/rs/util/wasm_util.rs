@@ -24,33 +24,15 @@ pub fn init_panic_hook () {
     console_error_panic_hook::set_once();
 }
 
-#[wasm_bindgen]
-extern "C" {
-    #[wasm_bindgen(typescript_type = "Array<string>")]
-    #[derive(Clone, Debug)]
-    pub type StringArray;
-}
-
-impl From<StringArray> for Array {
-    fn from(string_array: StringArray) -> Self {
-        match string_array.dyn_into::<Array>() {
-            Ok(array) => array,
-            Err(_) => js_sys::Array::new(),
+pub fn string_vec_to_array (string_vec: &Vec<String>) -> Array {
+    let arr: Array = js_sys::Array::new();
+    string_vec.iter().for_each(
+        |string| {
+            let js: JsValue = JsValue::from_str(string.as_str());
+            arr.push(&js);
         }
-    }
-}
-
-impl From<&Vec<String>> for StringArray {
-    fn from(string_vec: &Vec<String>) -> Self {
-        let arr: Array = js_sys::Array::new();
-        string_vec.iter().for_each(
-            |string| {
-                let js: JsValue = JsValue::from_str(string.as_str());
-                arr.push(&js);
-            }
-        );
-        arr.unchecked_into::<StringArray>()
-    }
+    );
+    arr.unchecked_into::<Array>()
 }
 
 #[wasm_bindgen]
@@ -58,4 +40,8 @@ extern "C" {
     // import console log
     #[wasm_bindgen(js_namespace = console)]
     pub fn log(s: &str);
+}
+
+pub trait JsonSerializable {
+    fn to_json_string(&self) -> String;
 }

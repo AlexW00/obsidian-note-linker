@@ -3,48 +3,51 @@ use std::convert::TryFrom;
 use js_sys::Array;
 use wasm_bindgen::{JsCast, JsValue};
 use wasm_bindgen::prelude::*;
-use crate::log;
 use serde::{Serialize, Deserialize};
 
-use crate::rs::text::text_util::{create_string_with_n_characters, get_nearest_char_boundary};
-use crate::rs::util::range::{Range, RangeArray};
-use crate::rs::util::wasm_util::{generic_of_jsval, StringArray};
+use crate::rs::text::text_util::{create_string_with_n_characters};
+use crate::rs::util::range::{array_to_range_vec, Range};
+use crate::rs::util::wasm_util::{generic_of_jsval, JsonSerializable};
 
 extern crate unicode_segmentation;
 
 use unicode_segmentation::{Graphemes, UnicodeSegmentation};
 
 #[wasm_bindgen]
-#[derive(Clone)]
+#[derive(Clone, Serialize, Deserialize)]
 pub struct Note {
     title: String,
     path: String,
     content: String,
-    aliases: StringArray,
-    ignore: RangeArray,
+    #[serde(skip)]
+    aliases: Array,
+    #[serde(skip)]
+    ignore: Array,
 
+    #[serde(rename = "aliases")]
     _aliases: Vec<String>,
+    #[serde(rename = "ignore")]
     _ignore: Vec<Range>,
+    #[serde(skip)]
     _sanitized_content: String
 }
 
 #[wasm_bindgen]
 impl Note {
     #[wasm_bindgen(constructor)]
-    pub fn new(title: String, path: String, content: String, aliases: StringArray, ignore: RangeArray) -> Note {
-        let ignore_vec = Vec::from(ignore.clone());
-        let note = Note {
-            title: title.clone(),
-            path: path.clone(),
+    pub fn new(title: String, path: String, content: String, aliases: Array, ignore: Array) -> Note {
+        let ignore_vec = array_to_range_vec(ignore.clone());
+        Note {
+            title,
+            path,
             content: content.clone(),
             aliases: aliases.clone(),
-            ignore: ignore.clone(),
+            ignore,
 
-            _aliases: aliases.into(),
+            _aliases: array_to_string_vec(aliases.clone()),
             _ignore: ignore_vec.clone(),
             _sanitized_content: Note::sanitize_content(content, ignore_vec) // no need to clone anymore
-        };
-        note
+        }
     }
 
     #[wasm_bindgen(getter)]
@@ -56,13 +59,24 @@ impl Note {
         self.content.clone()
     }
     #[wasm_bindgen(getter)]
-    pub fn aliases(&self) -> StringArray {
+    pub fn aliases(&self) -> Array {
         self.aliases.clone()
     }
     #[wasm_bindgen(getter)]
-    pub fn ignore(&self) -> RangeArray {
+    pub fn ignore(&self) -> Array {
         self.ignore.clone()
     }
+
+    #[wasm_bindgen]
+    pub fn to_json_string(&self) -> String {
+        serde_json::to_string(self).unwrap()
+    }
+
+    #[wasm_bindgen]
+    pub fn from_json_string(json_string: &str) -> Self {
+        serde_json::from_str(json_string).unwrap()
+    }
+
 }
 
 impl Note {
@@ -98,6 +112,7 @@ impl Note {
 
 }
 
+
 impl TryFrom<JsValue> for Note {
     type Error = ();
     fn try_from(js: JsValue) -> Result<Self, Self::Error> {
@@ -110,20 +125,8 @@ pub fn note_from_js_value(js: JsValue) -> Option<Note> {
     generic_of_jsval(js, "Note").unwrap_or(None)
 }
 
-#[wasm_bindgen]
-extern "C" {
-    #[wasm_bindgen(typescript_type = "Array<Note>")]
-    pub type NoteArray;
-}
-
-impl Into<Vec<String>> for StringArray {
-    fn into(self) -> Vec<String> {
-        let arr: Result<Array, StringArray> = self.dyn_into::<Array>();
-        match arr {
-            Ok(arr) => arr.iter()
-                .filter_map(|a: JsValue| a.as_string())
-                .collect(),
-            Err(_) => vec![],
-        }
-    }
+pub fn array_to_string_vec(array: Array) -> Vec<String> {
+    array.iter()
+        .filter_map(|a: JsValue| a.as_string())
+        .collect()
 }
