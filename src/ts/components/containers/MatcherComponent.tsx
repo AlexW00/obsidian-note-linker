@@ -140,7 +140,9 @@ export const MatcherComponent = () => {
                 const noteStrings: Array<string> = jsNotes.map((jsNote: JsNote) => jsNote.to_json_string());
                 return wasmWorkerInstance.findSilent(noteStrings);
             })
-            .then((noteLinkMatchResults: Array<NoteMatchingResult>) => {
+            .then((serializedNoteLinkMatchResults: Array<string>) => {
+                const noteLinkMatchResults : Array<NoteMatchingResult> = serializedNoteLinkMatchResults.map((noteLinkMatchResult: string) => NoteMatchingResult.from_json_string(noteLinkMatchResult));
+                console.log(noteLinkMatchResults);
                 setNoteMatchingResults(noteLinkMatchResults)
                 initNoteChangeOperations(noteLinkMatchResults);
             })

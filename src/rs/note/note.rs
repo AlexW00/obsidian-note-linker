@@ -12,6 +12,7 @@ use crate::rs::util::wasm_util::{generic_of_jsval, JsonSerializable};
 extern crate unicode_segmentation;
 
 use unicode_segmentation::{Graphemes, UnicodeSegmentation};
+use crate::log;
 
 #[wasm_bindgen]
 #[derive(Clone, Serialize, Deserialize)]
@@ -106,7 +107,10 @@ impl Note {
         content
     }
 
-    pub fn get_sanitized_content (&self) -> &String {
+    pub fn get_sanitized_content (&mut self) -> &String {
+        if self._sanitized_content.is_empty(){
+            self._sanitized_content = Note::sanitize_content(self.content.clone(), self._ignore.clone());
+        }
         &self._sanitized_content
     }
 

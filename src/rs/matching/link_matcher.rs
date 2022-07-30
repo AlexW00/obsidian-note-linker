@@ -1,4 +1,4 @@
-use std::borrow::Cow;
+use std::borrow::{BorrowMut, Cow};
 use std::convert::TryFrom;
 use std::future;
 use std::ops::Add;
@@ -37,7 +37,7 @@ impl <'c> TryFrom<Captures <'c>> for RegexMatch {
         match valid {
             Some((m, capture_index)) => {
                 // TODO: Why is this always 0???
-                //log(format!("got match at index {}", &capture_index).as_str());
+                log(format!("got match at index {}", &capture_index).as_str());
                 Ok(
                     RegexMatch {
                         position: Range::new(m.start(), m.end()),
@@ -58,13 +58,21 @@ struct LinkMatcherResult <'m> {
 }
 
 impl <'m> LinkMatcherResult <'m> {
-    fn new(note: &'m Note, target_note: &'m Note) -> Self {
-        let regex_matches: Vec<RegexMatch> = get_link_matcher(&target_note)
+    fn new(note: &'m mut Note, target_note: &'m Note) -> Self {
+        //log(format!("creating link matcher {}", get_link_matcher(target_note)).as_str());
+        //log(format!("note content {}", note.get_sanitized_content()).as_str());
+        let regex_matches: Vec<RegexMatch> = get_link_matcher(target_note)
             .captures_iter(note.get_sanitized_content())
             .filter_map( |capture_result| {
                     match capture_result {
-                        Ok(captures) => RegexMatch::try_from(captures).ok(),
-                        _ => None
+                        Ok(captures) => {
+                            log(format!("got match: {}", captures.len()).as_str());
+                            RegexMatch::try_from(captures).ok()
+                        },
+                        _ => {
+                            log("no capture result");
+                            None
+                        }
                     }
                 }
             )
@@ -114,15 +122,15 @@ fn get_link_matcher(note: &Note) -> LinkMatcher {
     Regex::new(&*format!(r"\b{}\b", regex_string)).unwrap()
 }
 
-pub async fn get_link_matches(note_to_check: &Note, target_note_candidates: &Vec<Note>) -> Result<JsValue, JsValue> {
+pub fn get_link_matches(note_to_check: &mut Note, target_note_candidates: &[Note]) -> Option<NoteMatchingResult> {
     let link_matches: Vec<LinkMatch> =
         target_note_candidates
         .iter()
         .filter_map(|target_note: &Note| {
             if !&target_note.title().eq(&note_to_check.title()) {
                 let link_matcher_result = LinkMatcherResult::new(
-                        &note_to_check,
-                        target_note
+                    note_to_check,
+                    target_note
                     );
                 let link_matches: Vec<LinkMatch> = link_matcher_result.into();
                 return Some(link_matches);
@@ -146,12 +154,11 @@ pub async fn get_link_matches(note_to_check: &Note, target_note_candidates: &Vec
 
 
     if !link_matches.is_empty() {
-        let js_note_matching_result: JsValue = NoteMatchingResult::new(
+        return Some(NoteMatchingResult::new(
             note_to_check.clone(),
             link_matches
-        ).into();
-        Ok(js_note_matching_result)
-    } else {
-        Err(js_sys::Error::new("idk").into())
+        ));
     }
+
+    None
 }
