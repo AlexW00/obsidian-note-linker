@@ -30,6 +30,12 @@ impl SelectionItem {
     pub fn set_is_selected(&mut self, is_selected: bool) {
         self.is_selected = is_selected;
     }
+
+    #[wasm_bindgen]
+    pub fn to_json_string(&self) -> String {
+        serde_json::to_string(self).unwrap()
+    }
+
 }
 
 pub fn selection_item_vec_to_array(selection_item_vec: Vec<SelectionItem>) -> Array {

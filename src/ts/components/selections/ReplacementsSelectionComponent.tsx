@@ -2,18 +2,19 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import {LinkTargetCandidate, SelectionItem, TextContext} from "../../../../pkg";
 import {ReplacementItemComponent} from "../items/ReplacementItemComponent";
-import {useState} from "react";
+import {useContext, useState} from "react";
 import {string} from "prop-types";
+import {LinkTargetCandidateContext} from "../../context";
 
 
 interface noteLinkMatchResultLinkMatchCandidateProps {
-    linkTargetCandidate: LinkTargetCandidate
     textContext: TextContext
-    onSelectionItemSelected: (selectionItem: SelectionItem) => void
+    onSelectionItemSelected: (selectionItem: SelectionItem, isSelected: boolean) => void
 }
 
-export const ReplacementsSelectionComponent = ({linkTargetCandidate, textContext, onSelectionItemSelected}: noteLinkMatchResultLinkMatchCandidateProps) => {
+export const ReplacementsSelectionComponent = ({textContext, onSelectionItemSelected}: noteLinkMatchResultLinkMatchCandidateProps) => {
 
+    const linkTargetCandidate = useContext(LinkTargetCandidateContext);
     return (
         <li className={"replacements-selection"}>
             <span className={"title"}>🔗{linkTargetCandidate.path}</span>
@@ -22,10 +23,11 @@ export const ReplacementsSelectionComponent = ({linkTargetCandidate, textContext
                     return (
                         <ReplacementItemComponent
                             targetNoteTitle={linkTargetCandidate.title}
+                            targetNotePath={linkTargetCandidate.path}
                             textContext={textContext}
                             replacementSelectionItem = {replacement_selection_item}
                             key={replacement_selection_item.content + "-replacement"}
-                            onSelect={ () => onSelectionItemSelected(replacement_selection_item) }
+                            onSelect={ (isSelected) => onSelectionItemSelected(replacement_selection_item, isSelected) }
                         />
                     )
                 })}

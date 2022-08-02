@@ -61,7 +61,7 @@ impl LinkTargetCandidate {
 }
 
 pub fn link_target_candidate_vec_into_array(link_target_candidates: Vec<LinkTargetCandidate>) -> Array {
-    let mut link_target_candidates_array = Array::new();
+    let link_target_candidates_array = Array::new();
     for link_target_candidate in link_target_candidates {
         link_target_candidates_array.push(&link_target_candidate.into());
     }
