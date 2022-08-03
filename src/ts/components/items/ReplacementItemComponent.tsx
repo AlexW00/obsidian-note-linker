@@ -1,43 +1,36 @@
 import * as React from "react";
-import * as ReactDOM from "react-dom";
 import {Note, NoteMatchingResult, Replacement, SelectionItem, TextContext} from "../../../../pkg";
 import {ReactEventHandler, useCallback, useContext, useEffect, useState} from "react";
-import JsNote from "../../JsNote";
-import * as wasm from "../../../../pkg";
 import {
     LinkMatchContext,
     LinkTargetCandidateContext,
     NoteMatchingResultContext,
-    SelectedNoteChangeOperations
+    SelectedNoteChangeOperations, SelectionItemContext
 } from "../../context";
 
 interface noteLinkMatchResultLinkMatchCandidateReplacementProps {
-    targetNoteTitle: string
-    targetNotePath: string
-    textContext: TextContext
     onSelect: (isSelected: boolean) => void
-    replacementSelectionItem: SelectionItem
 }
 
-export const ReplacementItemComponent = ({replacementSelectionItem, targetNoteTitle, targetNotePath, textContext, onSelect}: noteLinkMatchResultLinkMatchCandidateReplacementProps) => {
+export const ReplacementItemComponent = ({onSelect}: noteLinkMatchResultLinkMatchCandidateReplacementProps) => {
     const parentNote = useContext(NoteMatchingResultContext).note;
     const linkMatch = useContext(LinkMatchContext);
-    const replacementPosition = linkMatch.position;
-    const replacementSubstitute = replacementSelectionItem.content;
+    const linkTargetCandidate = useContext(LinkTargetCandidateContext);
+    const selectionItem = useContext(SelectionItemContext);
     const noteChangeOperation = useContext(SelectedNoteChangeOperations)[0].get(parentNote.path);
     const isSelected = useCallback(() => {
             if (noteChangeOperation === undefined || noteChangeOperation.replacements === undefined) return false;
             return noteChangeOperation.replacements.find(
                 (replacement: Replacement) => {
-                    // remove last two characters and anything up to the | character
-                    return replacement.position.start == replacementPosition.start &&
-                        replacement.position.end == replacementPosition.end &&
-                        replacement.targetNotePath == targetNotePath &&
-                        replacement.originalSubstitute == replacementSubstitute;
+                    return replacement.position.start == linkMatch.position.start &&
+                        replacement.position.end == linkMatch.position.end &&
+                        replacement.targetNotePath == linkTargetCandidate.path &&
+                        replacement.originalSubstitute == selectionItem.content;
                 }
             ) != undefined
         }
     , [noteChangeOperation]);
+
     return (
         <li className={"replacement-item"}>
             <input
@@ -47,18 +40,18 @@ export const ReplacementItemComponent = ({replacementSelectionItem, targetNoteTi
                 onChange={() => onSelect(!isSelected())}
             />
             <span className={"matched-text"}>
-                "{replacementSelectionItem.content}"
+                "{selectionItem.content}"
             </span>
             <div className={"replacement-context"}>
                 <span className={"arrow-icon"}>→</span>
                 <span className={"context-tail"}>
-                    "... {textContext.left_context_tail.text}
+                    "... {linkMatch.context.left_context_tail.text}
                 </span>
                 <span className={"link-preview"}>
-                    {generateMockupMdLink(replacementSelectionItem.content, targetNoteTitle)}
+                    {generateMockupMdLink(selectionItem.content, linkTargetCandidate.title)}
                 </span>
                 <span className={"context-tail"}>
-                    {textContext.right_context_tail.text} ..."
+                    {linkMatch.context.right_context_tail.text} ..."
                 </span>
             </div>
         </li>

@@ -25,7 +25,6 @@ export const subtractNoteChangeOperation = (setNoteChangeOperations: Dispatch<Se
 }
 
 export const addNoteChangeOperation = (setNoteChangeOperations: Dispatch<SetStateAction<Map<string, NoteChangeOperation>>>, noteChangeOperations: Map<string, NoteChangeOperation>, new_note_change_operation: NoteChangeOperation) => {
-    console.log("addNoteChangeOperation", new_note_change_operation);
     if (!noteChangeOperations.has(new_note_change_operation.path)) {
         noteChangeOperations.set(new_note_change_operation.path, new_note_change_operation)
     } else {
@@ -42,7 +41,6 @@ export const addNoteChangeOperation = (setNoteChangeOperations: Dispatch<SetStat
 }
 
 export const handleNoteChangeOperationSelected = (noteChangeOperations: Map<string, NoteChangeOperation>, setNoteChangeOperations: Dispatch<SetStateAction<Map<string, NoteChangeOperation>>>, note_change_operation: NoteChangeOperation, doAdd: boolean) => {
-    console.log("handleNoteChangeOperationSelected", note_change_operation, doAdd);
     const new_note_change_operations: Map<string, NoteChangeOperation> = noteChangeOperations;
     if (doAdd) addNoteChangeOperation(setNoteChangeOperations, new_note_change_operations, note_change_operation)
     else subtractNoteChangeOperation(setNoteChangeOperations, new_note_change_operations, note_change_operation)
