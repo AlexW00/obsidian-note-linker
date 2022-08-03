@@ -16,9 +16,9 @@ export const LinkTargetCandidatesListComponent = ({onLinkTargetCandidateSelected
 
     return (
         <div className={"link-target-candidates-list"}>
-            <LinkMatchTitleComponent matchedText={linkMatch.matched_text} position={linkMatch.position}/>
+            <LinkMatchTitleComponent matchedText={linkMatch.matchedText} position={linkMatch.position}/>
             <ul className={"hide-list-styling"}>
-                {linkMatch.link_match_target_candidate.map((linkTargetCandidate: LinkTargetCandidate) => {
+                {linkMatch.linkMatchTargetCandidates.map((linkTargetCandidate: LinkTargetCandidate) => {
                     return (
                         <LinkTargetCandidateContext.Provider value={linkTargetCandidate}>
                             <ReplacementsSelectionComponent

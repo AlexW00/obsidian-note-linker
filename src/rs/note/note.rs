@@ -68,12 +68,12 @@ impl Note {
         self.ignore.clone()
     }
 
-    #[wasm_bindgen]
+    #[wasm_bindgen(method, js_name = "toJSON")]
     pub fn to_json_string(&self) -> String {
         serde_json::to_string(self).unwrap()
     }
 
-    #[wasm_bindgen]
+    #[wasm_bindgen(method, js_name = "fromJSON")]
     pub fn from_json_string(json_string: &str) -> Self {
         serde_json::from_str(json_string).unwrap()
     }
@@ -98,7 +98,7 @@ impl Note {
             // however in rust strings, they have a length of 2-4
             split_content.enumerate().for_each(
                 |(index, grapheme)| {
-                    if &range.start <= &index && &range.end >= &index { new_content.push_str(&*create_string_with_n_characters(&grapheme.len(), '_')) }
+                    if range.start <= index && range.end >= index { new_content.push_str(&*create_string_with_n_characters(&grapheme.len(), '_')) }
                     else { new_content.push_str(grapheme) }
                 }
             );
@@ -115,7 +115,6 @@ impl Note {
     }
 
 }
-
 
 impl TryFrom<JsValue> for Note {
     type Error = ();

@@ -37,7 +37,6 @@ impl <'c> TryFrom<Captures <'c>> for RegexMatch {
         match valid {
             Some((m, capture_index)) => {
                 // TODO: Why is this always 0???
-                log(format!("got match at index {}", &capture_index).as_str());
                 Ok(
                     RegexMatch {
                         position: Range::new(m.start(), m.end()),
@@ -59,8 +58,6 @@ struct LinkMatcherResult <'m> {
 
 impl <'m> LinkMatcherResult <'m> {
     fn new(note: &'m mut Note, target_note: &'m Note) -> Self {
-        //log(format!("creating link matcher {}", get_link_matcher(target_note)).as_str());
-        //log(format!("note content {}", note.get_sanitized_content()).as_str());
         let regex_matches: Vec<RegexMatch> = get_link_matcher(target_note)
             .captures_iter(note.get_sanitized_content())
             .filter_map( |capture_result| {
@@ -84,10 +81,6 @@ impl <'m> LinkMatcherResult <'m> {
             target_note,
         }
     }
-
-    /*fn has_matches(&self) -> bool {
-        &self.regex_matches.count() > &0
-    }*/
 }
 
 impl <'m> Into<Vec<LinkMatch>> for LinkMatcherResult <'m> {
@@ -104,7 +97,7 @@ impl <'m> Into<Vec<LinkMatch>> for LinkMatcherResult <'m> {
     }
 }
 
-fn concat_as_regex_string (strings: &Vec<String>) -> String {
+fn concat_as_regex_string (strings: &[String]) -> String {
     strings.iter()
         .enumerate()
         .fold("(".to_string(), |prev, (index, current)| {
@@ -122,6 +115,7 @@ fn get_link_matcher(note: &Note) -> LinkMatcher {
     Regex::new(&*format!(r"\b{}\b", regex_string)).unwrap()
 }
 
+// TODO: rewrite this shit to be more readable
 pub fn get_link_matches(note_to_check: &mut Note, target_note_candidates: &[Note]) -> Option<NoteMatchingResult> {
     let link_matches: Vec<LinkMatch> =
         target_note_candidates

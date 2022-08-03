@@ -18,7 +18,7 @@ export const ReplacementsSelectionComponent = ({onSelectionItemSelected}: noteLi
         <li className={"replacements-selection"}>
             <span className={"title"}>🔗{linkTargetCandidate.path}</span>
             <ul className={"hide-list-styling"}>
-                {linkTargetCandidate.replacement_selection_items.map((replacement_selection_item: SelectionItem) => {
+                {linkTargetCandidate.selectionItems.map((replacement_selection_item: SelectionItem) => {
                     return (
                         <SelectionItemContext.Provider value={replacement_selection_item}>
                             <ReplacementItemComponent

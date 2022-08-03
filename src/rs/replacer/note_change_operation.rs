@@ -32,9 +32,8 @@ impl NoteChangeOperation {
     #[wasm_bindgen(setter)]
     pub fn set_replacements(&mut self, replacements: Array) { self.replacements = replacements }
 
-    #[wasm_bindgen]
+    #[wasm_bindgen(method, js_name = "applyReplacements")]
     pub fn apply_replacements (&mut self) {
-        // TODO: Fix mysterious offset when replacing stuff (probably because other replacements are longer and change the size of the text)
         let mut new_content = self.content.clone();
         // we need to calculate the offset here, because replacements can be
         // shorter/longer than the original text, therefore distorting the position of the replacement
@@ -44,8 +43,8 @@ impl NoteChangeOperation {
             let substitute: &String = &replacement.substitute();
             let mut range: std::ops::Range<usize> = replacement.position().into();
 
-            let offset_range_start = range.start as i16 + &offset;
-            let offset_range_end = range.end as i16 + &offset;
+            let offset_range_start = range.start as i16 + offset;
+            let offset_range_end = range.end as i16 + offset;
             range.start = if offset_range_start >= 0 { offset_range_start as usize } else { 0 };
             range.end = if offset_range_end >= 0 { offset_range_end as usize } else { 0 };
 
@@ -54,7 +53,7 @@ impl NoteChangeOperation {
 
             new_content.replace_range(range, substitute);
 
-            offset = offset + (replacement_length - number_of_characters_replaced);
+            offset += (replacement_length - number_of_characters_replaced);
         });
         self.content = new_content;
     }

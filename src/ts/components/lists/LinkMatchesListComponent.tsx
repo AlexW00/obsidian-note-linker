@@ -91,13 +91,13 @@ export const LinkMatchesListComponent = ({noteLinkMatchResult}: noteLinkMatchRes
         <li className={"link-matches-list"}>
             <NoteMatchingResultTitleComponent noteTitle={noteLinkMatchResult.note.title} notePath={noteLinkMatchResult.note.path}/>
             <ul className={"hide-list-styling"}>
-                {noteLinkMatchResult.link_matches.map((link_match: LinkMatch) => {
+                {noteLinkMatchResult.linkMatches.map((link_match: LinkMatch) => {
                     return (
                         <LinkMatchContext.Provider value={link_match}>
                             <LinkTargetCandidatesListComponent
                                 onLinkTargetCandidateSelected={
                                     (...args) => handleLinkTargetCandidateSelected(...args, link_match)}
-                                key={`${link_match.matched_text}-${link_match.position.start}-${link_match.position.end}`}/>
+                                key={`${link_match.matchedText}-${link_match.position.start}-${link_match.position.end}`}/>
                         </LinkMatchContext.Provider>
                     )
                 })}

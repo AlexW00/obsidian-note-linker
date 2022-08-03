@@ -1,10 +1,10 @@
 use std::convert::TryFrom;
 
-use js_sys::{Array};
+use js_sys::Array;
+use serde::{Deserialize, Serialize};
 use thiserror::Error;
 use wasm_bindgen::{JsCast, JsValue};
 use wasm_bindgen::prelude::*;
-use serde::{Serialize, Deserialize};
 
 use crate::rs::util::wasm_util::generic_of_jsval;
 
@@ -31,16 +31,12 @@ impl Range {
     #[wasm_bindgen(getter)]
     pub fn end(&self) -> usize { self.end }
 
-    #[wasm_bindgen]
-
-    pub fn to_json (&self) -> String {
-        serde_json::to_string(&self).unwrap()
-    }
-
+    #[wasm_bindgen(method)]
     pub fn is_equal_to(&self, range: &Range) -> bool {
         self.start == range.start && self.end == range.end
     }
 
+    #[wasm_bindgen(method)]
     pub fn does_overlap(&self, range: &Range) -> bool {
         self.start <= range.end && range.start <= self.end
     }
@@ -80,7 +76,7 @@ impl From<std::ops::Range<usize>> for Range {
 }
 
 #[wasm_bindgen]
-pub fn range_from_js_value (js: JsValue) -> Option<Range> {
+pub fn range_from_js_value(js: JsValue) -> Option<Range> {
     let result = generic_of_jsval(js, "Range");
     if let Ok(range) = result {
         Some(range)
@@ -89,7 +85,7 @@ pub fn range_from_js_value (js: JsValue) -> Option<Range> {
     }
 }
 
-pub fn array_to_range_vec (range_array: Array) -> Vec<Range> {
+pub fn array_to_range_vec(range_array: Array) -> Vec<Range> {
     range_array.iter()
         .filter_map(|js_val_range: JsValue|
             generic_of_jsval(js_val_range, "Range").ok())

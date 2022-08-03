@@ -18,19 +18,19 @@ class WasmComlinkWorker {
     }
 
     public find(notesStringified: Array<string>, callback: Function): Array<string> {
-        const notes: Array<Note> = notesStringified.map(noteString => Note.from_json_string(noteString));
+        const notes: Array<Note> = notesStringified.map(noteString => Note.fromJSON(noteString));
         const noteMatchingResults: Array<NoteMatchingResult> = find(this, notes, callback);
-        return noteMatchingResults.map(noteMatchingResult => noteMatchingResult.to_json_string());
+        return noteMatchingResults.map(noteMatchingResult => noteMatchingResult.toJSON());
     }
 
 
     public findSilent(notesStringified: Array<string>): Array<string> {
         console.log("calling findSilent");
-        const notes: Array<Note> = notesStringified.map(noteString => Note.from_json_string(noteString));
+        const notes: Array<Note> = notesStringified.map(noteString => Note.fromJSON(noteString));
         console.log(notes);
         const noteMatchingResults: Array<NoteMatchingResult> = find_silent(notes);
         console.log("noteMatchingResults", noteMatchingResults);
-        return noteMatchingResults.map(noteMatchingResult => noteMatchingResult.to_json_string());
+        return noteMatchingResults.map(noteMatchingResult => noteMatchingResult.toJSON());
     }
 
 }

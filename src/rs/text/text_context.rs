@@ -15,15 +15,15 @@ pub struct TextContext {
 
 #[wasm_bindgen]
 impl TextContext {
-    #[wasm_bindgen(getter)]
+    #[wasm_bindgen(getter, js_name = "leftContextTail")]
     pub fn left_context_tail(&self) -> TextContextTail {
         self.left_context_tail.clone()
     }
-    #[wasm_bindgen(getter)]
+    #[wasm_bindgen(getter, js_name = "rightContextTail")]
     pub fn right_context_tail(&self) -> TextContextTail {
         self.right_context_tail.clone()
     }
-    #[wasm_bindgen(getter)]
+    #[wasm_bindgen(getter, js_name = "matchText")]
     pub fn match_text(&self) -> String {
         self.match_text.clone()
     }

@@ -25,13 +25,15 @@ pub struct LinkMatch {
 impl LinkMatch {
     #[wasm_bindgen(getter)]
     pub fn position(&self) -> Range { self.position.clone() }
-    #[wasm_bindgen(getter)]
+
+    #[wasm_bindgen(getter, js_name = "matchedText")]
     pub fn matched_text(&self) -> String { self.matched_text.clone() }
+
     #[wasm_bindgen(getter)]
     pub fn context(&self) -> TextContext { self.context.clone() }
-    #[wasm_bindgen(getter)]
-    // TODO: Rename
-    pub fn link_match_target_candidate(&self) -> Array {
+
+    #[wasm_bindgen(getter, js_name = "linkMatchTargetCandidates")]
+    pub fn link_match_target_candidates(&self) -> Array {
         link_target_candidate_vec_into_array(self._link_match_target_candidates.clone())
     }
 }
@@ -71,7 +73,7 @@ impl LinkMatch {
 }
 
 pub fn link_match_vec_into_array(link_matches: Vec<LinkMatch>) -> Array {
-    let mut link_matches_array = Array::new();
+    let link_matches_array = Array::new();
     for link_match in link_matches {
         link_matches_array.push(&link_match.into());
     }

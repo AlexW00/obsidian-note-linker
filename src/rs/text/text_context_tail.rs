@@ -54,7 +54,7 @@ impl TextContextTail {
     fn get_context_text(text_position: range::Range, text: &str) -> String {
         let start = get_nearest_char_boundary(text, text_position.start(), true);
         let end = get_nearest_char_boundary(text, text_position.end(), false);
-        if &end > &start {
+        if end > start {
             return text[start..end]
                 .chars()
                 .map(

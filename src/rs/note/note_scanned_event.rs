@@ -16,9 +16,9 @@ impl NoteScannedEvent {
             note_path: note.path(),
         }
     }
-    #[wasm_bindgen(getter)]
+    #[wasm_bindgen(getter, js_name="noteTitle")]
     pub fn note_title(&self) -> String { self.note_title.clone() }
 
-    #[wasm_bindgen(getter)]
+    #[wasm_bindgen(getter, js_name="notePath")]
     pub fn note_path(&self) -> String { self.note_path.clone() }
 }

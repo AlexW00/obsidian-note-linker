@@ -46,7 +46,7 @@ export const MatcherComponent = () => {
         setMatchingState(MatchingState.Replacing);
         const operations: Array<Promise<void>> = [];
         noteChangeOperations.forEach((op : NoteChangeOperation) => {
-            op.apply_replacements()
+            op.applyReplacements()
             const noteFile = noteFiles.get(op.path);
             operations.push(vault.modify(noteFile, op.content));
         })
@@ -66,10 +66,10 @@ export const MatcherComponent = () => {
             const path = result.note.path;
             const content = result.note.content;
             const replacements : Array<Replacement> = [];
-            result.link_matches.forEach((match: LinkMatch) => {
-                match.link_match_target_candidate.forEach((candidate: LinkTargetCandidate) => {
-                    candidate.replacement_selection_items.forEach((selection: SelectionItem) => {
-                        if (selection.is_selected) {
+            result.linkMatches.forEach((match: LinkMatch) => {
+                match.linkMatchTargetCandidates.forEach((candidate: LinkTargetCandidate) => {
+                    candidate.selectionItems.forEach((selection: SelectionItem) => {
+                        if (selection.isSelected) {
                             replacements.push(
                                 new Replacement(
                                     match.position,
@@ -109,11 +109,11 @@ export const MatcherComponent = () => {
     useEffect(() => {
         JsNote.getNotesFromVault(vault, metadataCache)
             .then((jsNotes: JsNote[]) => {
-                const noteStrings: Array<string> = jsNotes.map((jsNote: JsNote) => jsNote.to_json_string());
+                const noteStrings: Array<string> = jsNotes.map((jsNote: JsNote) => jsNote.toJSON());
                 return wasmWorkerInstance.find(noteStrings, Comlink.proxy(onLinkMatchingProgress));
             })
             .then((serializedNoteLinkMatchResults: Array<string>) => {
-                const noteLinkMatchResults : Array<NoteMatchingResult> = serializedNoteLinkMatchResults.map((noteLinkMatchResult: string) => NoteMatchingResult.from_json_string(noteLinkMatchResult));
+                const noteLinkMatchResults : Array<NoteMatchingResult> = serializedNoteLinkMatchResults.map((noteLinkMatchResult: string) => NoteMatchingResult.fromJSON(noteLinkMatchResult));
                 console.log(noteLinkMatchResults);
                 setNoteMatchingResults(noteLinkMatchResults)
                 initNoteChangeOperations(noteLinkMatchResults);

@@ -8,8 +8,8 @@ use wasm_bindgen::{JsCast, JsValue};
 #[wasm_bindgen]
 #[derive(Clone, Serialize, Deserialize)]
 pub struct SelectionItem {
-    content: String,
-    is_selected: bool
+    pub(crate) content: String,
+    pub(crate) is_selected: bool
 }
 
 #[wasm_bindgen]
@@ -24,22 +24,12 @@ impl SelectionItem {
 
     #[wasm_bindgen(getter)]
     pub fn content(&self) -> String {self.content.clone()}
-    #[wasm_bindgen(getter)]
+    #[wasm_bindgen(getter, js_name = "isSelected")]
     pub fn is_selected(&self) -> bool { self.is_selected }
-    #[wasm_bindgen(setter)]
-    pub fn set_is_selected(&mut self, is_selected: bool) {
-        self.is_selected = is_selected;
-    }
-
-    #[wasm_bindgen]
-    pub fn to_json_string(&self) -> String {
-        serde_json::to_string(self).unwrap()
-    }
-
 }
 
 pub fn selection_item_vec_to_array(selection_item_vec: Vec<SelectionItem>) -> Array {
-    let mut selection_items = Array::new();
+    let selection_items = Array::new();
     for selection_item in selection_item_vec {
         selection_items.push(&selection_item.into());
     }

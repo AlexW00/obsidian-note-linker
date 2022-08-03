@@ -50,13 +50,13 @@ export const ReplacementItemComponent = ({onSelect}: noteLinkMatchResultLinkMatc
             <div className={"replacement-context"}>
                 <span className={"arrow-icon"}>→</span>
                 <span className={"context-tail"}>
-                    "... {linkMatch.context.left_context_tail.text}
+                    "... {linkMatch.context.leftContextTail.text}
                 </span>
                 <span className={"link-preview"}>
                     {generateMockupMdLink(selectionItem.content, linkTargetCandidate.title)}
                 </span>
                 <span className={"context-tail"}>
-                    {linkMatch.context.right_context_tail.text} ..."
+                    {linkMatch.context.rightContextTail.text} ..."
                 </span>
             </div>
         </li>
