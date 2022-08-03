@@ -34,7 +34,7 @@ export const MatcherComponent = () => {
 
     const [noteMatchingResults, setNoteMatchingResults] = useState<Array<NoteMatchingResult>>([]);
     const [linkMatchingProgress] = useState<Progress>(new Progress(JsNote.getNumberOfNotes(vault, metadataCache)));
-    const [note_change_operations, set_note_change_operations] = useState<Map<string, NoteChangeOperation>>(new Map());
+    const [noteChangeOperations, setNoteChangeOperations] = useState<Map<string, NoteChangeOperation>>(new Map());
 
     const onLinkMatchingProgress = (noteScannedEvent: NoteScannedEvent) => {
         console.log("note scan event")
@@ -45,7 +45,7 @@ export const MatcherComponent = () => {
     const handleReplaceButtonClicked = () => {
         setMatchingState(MatchingState.Replacing);
         const operations: Array<Promise<void>> = [];
-        note_change_operations.forEach((op : NoteChangeOperation) => {
+        noteChangeOperations.forEach((op : NoteChangeOperation) => {
             op.apply_replacements()
             const noteFile = noteFiles.get(op.path);
             operations.push(vault.modify(noteFile, op.content));
@@ -96,7 +96,7 @@ export const MatcherComponent = () => {
                 replacements
             ))
         })
-        set_note_change_operations(operations)
+        setNoteChangeOperations(operations)
     }
     const initNoteFiles = () : Map<string, TFile> => {
         const noteFiles = new Map<string, TFile>();
@@ -104,8 +104,7 @@ export const MatcherComponent = () => {
         return noteFiles
     }
 
-    const [noteFiles, setNoteFiles] = useState<Map<string, TFile>>(initNoteFiles());
-
+    const [noteFiles] = useState<Map<string, TFile>>(initNoteFiles());
 
     useEffect(() => {
         JsNote.getNotesFromVault(vault, metadataCache)
@@ -126,10 +125,13 @@ export const MatcherComponent = () => {
         if (matchingState == MatchingState.Scanning) return <ProgressComponent progress={linkMatchingProgress}/>
         else if (matchingState == MatchingState.Selecting) return (
             <NoteFilesContext.Provider value={noteFiles}>
-                <SelectedNoteChangeOperations.Provider value={[note_change_operations, set_note_change_operations]}>
+                <SelectedNoteChangeOperations.Provider value={{noteChangeOperations, setNoteChangeOperations}}>
                     <NoteMatchingResultsList noteMatchingResults={noteMatchingResults}
                                              onClickReplaceButton={handleReplaceButtonClicked}
                     />
+                    <div>
+                        {noteChangeOperations.size}
+                    </div>
                 </SelectedNoteChangeOperations.Provider>
             </NoteFilesContext.Provider>
         )

@@ -10,61 +10,93 @@ import {
 import {LinkTargetCandidatesListComponent} from "./LinkTargetCandidatesListComponent";
 import {NoteMatchingResultTitleComponent} from "../titles/NoteMatchingResultTitleComponent";
 import {useContext} from "react";
-import {
-    AppContext,
-    LinkMatchContext,
-    NoteFilesContext,
-    NoteMatchingResultContext,
-    SelectedNoteChangeOperations
-} from "../../context";
+import {AppContext, LinkMatchContext, NoteFilesContext, SelectedNoteChangeOperations} from "../../context";
 import {TFile} from "obsidian";
-import {handleNoteChangeOperationSelected} from "../../hooks";
 
+interface noteLinkMatchResultComponentProps {
+    noteLinkMatchResult: NoteMatchingResult,
+}
 
-
-export const LinkMatchesListComponent = () => {
+export const LinkMatchesListComponent = ({noteLinkMatchResult}: noteLinkMatchResultComponentProps) => {
 
     const {fileManager} = useContext(AppContext);
     const noteFiles = useContext<Map<String, TFile>>(NoteFilesContext);
-    const [noteChangeOperations, setNoteChangeOperations] = useContext(SelectedNoteChangeOperations);
-    const noteMatchingResult = useContext(NoteMatchingResultContext);
+    const {noteChangeOperations, setNoteChangeOperations} = useContext(SelectedNoteChangeOperations);
 
-    const handleLinkTargetCandidateSelected = (selectionItem: SelectionItem, candidate: LinkTargetCandidate,link_match: LinkMatch, isSelected: boolean) => {
-        const noteChangeOperation = new NoteChangeOperation(
-            noteMatchingResult.note.path,
-            noteMatchingResult.note.content,
-            [new Replacement(
-                link_match.position,
+    const subtractNoteChangeOperation = (noteChangeOperationToSubtract: NoteChangeOperation) => {
+        const _noteChangeOperations = new Map(noteChangeOperations);
+        if (_noteChangeOperations.has(noteChangeOperationToSubtract.path)) {
+            const existing_note_change_operation = _noteChangeOperations.get(noteChangeOperationToSubtract.path);
+
+            noteChangeOperationToSubtract.replacements.forEach((replacement: Replacement) => {
+                const index = existing_note_change_operation.replacements.findIndex(((r: Replacement) => r.position.is_equal_to(replacement.position)))
+                if (index != -1) existing_note_change_operation.replacements.splice(index, 1);
+            })
+
+            if (existing_note_change_operation.replacements.length == 0)
+                _noteChangeOperations.delete(noteChangeOperationToSubtract.path);
+
+            setNoteChangeOperations(_noteChangeOperations)
+        }
+    }
+
+    const addNoteChangeOperation = (noteChangeOperationToAdd: NoteChangeOperation) => {
+        const _noteChangeOperations = new Map(noteChangeOperations);
+        if (!_noteChangeOperations.has(noteChangeOperationToAdd.path)) {
+            _noteChangeOperations.set(noteChangeOperationToAdd.path, noteChangeOperationToAdd)
+        } else {
+            const existing_note_change_operation = _noteChangeOperations.get(noteChangeOperationToAdd.path);
+
+            noteChangeOperationToAdd.replacements.forEach((replacement: Replacement) => {
+                const index = existing_note_change_operation.replacements.findIndex(((r: Replacement) => r.position.is_equal_to(replacement.position)))
+                if (index != -1) existing_note_change_operation.replacements[index] = replacement;
+                else existing_note_change_operation.replacements.push(replacement);
+            })
+            _noteChangeOperations.set(noteChangeOperationToAdd.path, existing_note_change_operation)
+        }
+        setNoteChangeOperations(_noteChangeOperations)
+    }
+
+    const handleNoteChangeOperationSelected = (noteChangeOperation: NoteChangeOperation, doAdd: boolean) => {
+        if (doAdd) addNoteChangeOperation(noteChangeOperation)
+        else subtractNoteChangeOperation(noteChangeOperation)
+    }
+
+    const handleLinkTargetCandidateSelected = (selectionItem: SelectionItem, candidate: LinkTargetCandidate, isSelected: boolean, linkMatch: LinkMatch) => {
+            const replacement = new Replacement(
+                linkMatch.position,
                 fileManager.generateMarkdownLink(
                     noteFiles.get(candidate.path),
-                    noteMatchingResult.note.path,
+                    noteLinkMatchResult.note.path,
                     null,
-                    selectionItem.content == noteMatchingResult.note.title
+                    selectionItem.content == noteLinkMatchResult.note.title
                         ? null
                         : selectionItem.content
                 ),
                 selectionItem.content,
                 candidate.path
-            )],
-        );       
-        handleNoteChangeOperationSelected(
-            noteChangeOperations,
-            setNoteChangeOperations,
-            noteChangeOperation,
-            isSelected
-        )
-    }
-    
+            );
+            handleNoteChangeOperationSelected(
+                new NoteChangeOperation(
+                    noteLinkMatchResult.note.path,
+                    noteLinkMatchResult.note.content,
+                    [replacement],
+                ),
+                isSelected
+            );
+        }
+
+
     return (
         <li className={"link-matches-list"}>
-            <NoteMatchingResultTitleComponent noteTitle={noteMatchingResult.note.title} notePath={noteMatchingResult.note.path}/>
+            <NoteMatchingResultTitleComponent noteTitle={noteLinkMatchResult.note.title} notePath={noteLinkMatchResult.note.path}/>
             <ul className={"hide-list-styling"}>
-                {noteMatchingResult.link_matches.map((link_match: LinkMatch) => {
+                {noteLinkMatchResult.link_matches.map((link_match: LinkMatch) => {
                     return (
                         <LinkMatchContext.Provider value={link_match}>
                             <LinkTargetCandidatesListComponent
-                                onLinkTargetCandidateSelected={(selectionItem: SelectionItem, candidate: LinkTargetCandidate, isSelected) => 
-                                    handleLinkTargetCandidateSelected(selectionItem, candidate, link_match, isSelected)}
+                                onLinkTargetCandidateSelected={
+                                    (...args) => handleLinkTargetCandidateSelected(...args, link_match)}
                                 key={`${link_match.matched_text}-${link_match.position.start}-${link_match.position.end}`}/>
                         </LinkMatchContext.Provider>
                     )

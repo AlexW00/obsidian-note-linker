@@ -6,7 +6,7 @@ import {LinkMatch, LinkTargetCandidate, NoteChangeOperation, NoteMatchingResult,
 export const AppContext = React.createContext<App>(undefined);
 export const NoteFilesContext = React.createContext<Map<String, TFile>>(undefined);
 export const WasmWorkerInstanceContext = React.createContext<any>(undefined)
-export const SelectedNoteChangeOperations = React.createContext<[Map<string, NoteChangeOperation>, Dispatch<SetStateAction<Map<string, NoteChangeOperation>>>]>(undefined);
+export const SelectedNoteChangeOperations = React.createContext<{noteChangeOperations: Map<string, NoteChangeOperation>, setNoteChangeOperations: Dispatch<SetStateAction<Map<string, NoteChangeOperation>>>}>(undefined);
 export const NoteMatchingResultContext = React.createContext<NoteMatchingResult>(undefined);
 export const LinkMatchContext = React.createContext<LinkMatch>(undefined);
 export const LinkTargetCandidateContext = React.createContext<LinkTargetCandidate>(undefined);

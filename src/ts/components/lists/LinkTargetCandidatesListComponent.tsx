@@ -2,7 +2,7 @@ import * as React from "react";
 import {LinkMatch, LinkTargetCandidate, SelectionItem} from "../../../../pkg";
 import {LinkMatchTitleComponent} from "../titles/LinkMatchTitleComponent";
 import {ReplacementsSelectionComponent} from "../selections/ReplacementsSelectionComponent";
-import {useContext} from "react";
+import {useContext, useEffect, useState} from "react";
 import {LinkMatchContext, LinkTargetCandidateContext} from "../../context";
 
 
@@ -11,6 +11,7 @@ interface noteLinkMatchResultTextMatchProps {
 }
 
 export const LinkTargetCandidatesListComponent = ({onLinkTargetCandidateSelected}: noteLinkMatchResultTextMatchProps) => {
+
     const linkMatch = useContext(LinkMatchContext);
 
     return (

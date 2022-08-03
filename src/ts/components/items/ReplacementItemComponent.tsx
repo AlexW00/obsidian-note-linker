@@ -1,5 +1,5 @@
 import * as React from "react";
-import {Note, NoteMatchingResult, Replacement, SelectionItem, TextContext} from "../../../../pkg";
+import {Replacement} from "../../../../pkg";
 import {ReactEventHandler, useCallback, useContext, useEffect, useState} from "react";
 import {
     LinkMatchContext,
@@ -7,6 +7,7 @@ import {
     NoteMatchingResultContext,
     SelectedNoteChangeOperations, SelectionItemContext
 } from "../../context";
+import {generateMockupMdLink} from "../../util";
 
 interface noteLinkMatchResultLinkMatchCandidateReplacementProps {
     onSelect: (isSelected: boolean) => void
@@ -17,19 +18,23 @@ export const ReplacementItemComponent = ({onSelect}: noteLinkMatchResultLinkMatc
     const linkMatch = useContext(LinkMatchContext);
     const linkTargetCandidate = useContext(LinkTargetCandidateContext);
     const selectionItem = useContext(SelectionItemContext);
-    const noteChangeOperation = useContext(SelectedNoteChangeOperations)[0].get(parentNote.path);
+    const {noteChangeOperations} = useContext(SelectedNoteChangeOperations);
+
+    const noteChangeOperation = noteChangeOperations.get(parentNote.path);
+
     const isSelected = useCallback(() => {
             if (noteChangeOperation === undefined || noteChangeOperation.replacements === undefined) return false;
-            return noteChangeOperation.replacements.find(
+            const isSelected = noteChangeOperation.replacements.find(
                 (replacement: Replacement) => {
                     return replacement.position.start == linkMatch.position.start &&
                         replacement.position.end == linkMatch.position.end &&
                         replacement.targetNotePath == linkTargetCandidate.path &&
                         replacement.originalSubstitute == selectionItem.content;
                 }
-            ) != undefined
-        }
-    , [noteChangeOperation]);
+            ) != undefined;
+            return isSelected
+        }, [noteChangeOperations]);
+
 
     return (
         <li className={"replacement-item"}>
@@ -57,13 +62,3 @@ export const ReplacementItemComponent = ({onSelect}: noteLinkMatchResultLinkMatc
         </li>
     );
 };
-
-const isAlias = (replacement: string, targetNoteTitle: string) : boolean => {
-    return replacement != targetNoteTitle;
-}
-
-const generateMockupMdLink = (replacement: string, targetNoteTitle: string) : string => {
-    return  isAlias(replacement, targetNoteTitle)
-        ? `[[${targetNoteTitle}|${replacement}]]`
-        : `[[${replacement}]]`;
-}
