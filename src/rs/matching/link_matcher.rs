@@ -8,8 +8,8 @@ use js_sys::Error;
 use js_sys::WebAssembly::RuntimeError;
 use wasm_bindgen::JsValue;
 use crate::log;
-use crate::rs::Errors::CastError::CastError;
-use crate::rs::Errors::MatchingError::MatchingError;
+use crate::rs::Errors::cast_error::CastError;
+use crate::rs::Errors::matching_error::MatchingError;
 
 use crate::rs::matching::link_match::LinkMatch;
 use crate::rs::matching::link_match_target_candidate::LinkTargetCandidate;

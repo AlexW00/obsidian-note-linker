@@ -3,7 +3,7 @@ use wasm_bindgen::prelude::*;
 use wasm_bindgen::{JsCast, JsValue};
 use serde::{Serialize, Deserialize};
 
-use crate::rs::util::SelectionItem::{selection_item_vec_to_array, SelectionItem};
+use crate::rs::util::selection_item::{selection_item_vec_to_array, SelectionItem};
 use crate::rs::util::wasm_util::{generic_of_jsval};
 
 /// A candidate note for a matching to matching to
