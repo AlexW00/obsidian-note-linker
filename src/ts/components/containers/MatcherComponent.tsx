@@ -1,14 +1,14 @@
 import * as React from "react";
-import * as Comlink from "comlink";
-
 import {useContext, useEffect, useState} from "react";
+import * as Comlink from "comlink";
 import {
-    LinkMatch, LinkTargetCandidate,
-    Note,
+    LinkMatch,
+    LinkTargetCandidate,
     NoteChangeOperation,
     NoteMatchingResult,
     NoteScannedEvent,
-    Replacement, SelectionItem
+    Replacement,
+    SelectionItem
 } from "../../../../pkg";
 import JsNote from "../../JsNote";
 import {AppContext, NoteFilesContext, SelectedNoteChangeOperations, WasmWorkerInstanceContext} from "../../context";
@@ -45,7 +45,7 @@ export const MatcherComponent = () => {
     const handleReplaceButtonClicked = () => {
         setMatchingState(MatchingState.Replacing);
         const operations: Array<Promise<void>> = [];
-        noteChangeOperations.forEach((op : NoteChangeOperation) => {
+        noteChangeOperations.forEach((op: NoteChangeOperation) => {
             op.applyReplacements()
             const noteFile = noteFiles.get(op.path);
             operations.push(vault.modify(noteFile, op.content));
@@ -61,11 +61,11 @@ export const MatcherComponent = () => {
     }
 
     const initNoteChangeOperations = (noteLinkMatchResults: Array<NoteMatchingResult>) => {
-        const operations : Map<string, NoteChangeOperation> = new Map;
-            noteLinkMatchResults.forEach((result: NoteMatchingResult) => {
+        const operations: Map<string, NoteChangeOperation> = new Map;
+        noteLinkMatchResults.forEach((result: NoteMatchingResult) => {
             const path = result.note.path;
             const content = result.note.content;
-            const replacements : Array<Replacement> = [];
+            const replacements: Array<Replacement> = [];
             result.linkMatches.forEach((match: LinkMatch) => {
                 match.linkMatchTargetCandidates.forEach((candidate: LinkTargetCandidate) => {
                     candidate.selectionItems.forEach((selection: SelectionItem) => {
@@ -98,7 +98,7 @@ export const MatcherComponent = () => {
         })
         setNoteChangeOperations(operations)
     }
-    const initNoteFiles = () : Map<string, TFile> => {
+    const initNoteFiles = (): Map<string, TFile> => {
         const noteFiles = new Map<string, TFile>();
         vault.getFiles().forEach((file: TFile) => noteFiles.set(file.path, file))
         return noteFiles
@@ -113,7 +113,7 @@ export const MatcherComponent = () => {
                 return wasmWorkerInstance.find(noteStrings, Comlink.proxy(onLinkMatchingProgress));
             })
             .then((serializedNoteLinkMatchResults: Array<string>) => {
-                const noteLinkMatchResults : Array<NoteMatchingResult> = serializedNoteLinkMatchResults.map((noteLinkMatchResult: string) => NoteMatchingResult.fromJSON(noteLinkMatchResult));
+                const noteLinkMatchResults: Array<NoteMatchingResult> = serializedNoteLinkMatchResults.map((noteLinkMatchResult: string) => NoteMatchingResult.fromJSON(noteLinkMatchResult));
                 console.log(noteLinkMatchResults);
                 setNoteMatchingResults(noteLinkMatchResults)
                 initNoteChangeOperations(noteLinkMatchResults);
@@ -122,20 +122,20 @@ export const MatcherComponent = () => {
             // On unmount
         }
     }, [wasmWorkerInstance]);
-        if (matchingState == MatchingState.Scanning) return <ProgressComponent progress={linkMatchingProgress}/>
-        else if (matchingState == MatchingState.Selecting) return (
-            <NoteFilesContext.Provider value={noteFiles}>
-                <SelectedNoteChangeOperations.Provider value={{noteChangeOperations, setNoteChangeOperations}}>
-                    <NoteMatchingResultsList noteMatchingResults={noteMatchingResults}
-                                             onClickReplaceButton={handleReplaceButtonClicked}
-                    />
-                    <div>
-                        {noteChangeOperations.size}
-                    </div>
-                </SelectedNoteChangeOperations.Provider>
-            </NoteFilesContext.Provider>
-        )
-        else if (matchingState == MatchingState.Replacing) return <div className={"info-toast"}>⏳ Linking Notes...</div>
-        else return <div className={"success-toast"}>🎉 Successfully linked {numberOfLinkedNotes} notes!</div>
+    if (matchingState == MatchingState.Scanning) return <ProgressComponent progress={linkMatchingProgress}/>
+    else if (matchingState == MatchingState.Selecting) return (
+        <NoteFilesContext.Provider value={noteFiles}>
+            <SelectedNoteChangeOperations.Provider value={{noteChangeOperations, setNoteChangeOperations}}>
+                <NoteMatchingResultsList noteMatchingResults={noteMatchingResults}
+                                         onClickReplaceButton={handleReplaceButtonClicked}
+                />
+                <div>
+                    {noteChangeOperations.size}
+                </div>
+            </SelectedNoteChangeOperations.Provider>
+        </NoteFilesContext.Provider>
+    )
+    else if (matchingState == MatchingState.Replacing) return <div className={"info-toast"}>⏳ Linking Notes...</div>
+    else return <div className={"success-toast"}>🎉 Successfully linked {numberOfLinkedNotes} notes!</div>
 };
 

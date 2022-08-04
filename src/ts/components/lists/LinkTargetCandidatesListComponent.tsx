@@ -1,16 +1,12 @@
 import * as React from "react";
-import {LinkMatch, LinkTargetCandidate, SelectionItem} from "../../../../pkg";
+import {useContext} from "react";
+import {LinkTargetCandidate} from "../../../../pkg";
 import {LinkMatchTitleComponent} from "../titles/LinkMatchTitleComponent";
 import {ReplacementsSelectionComponent} from "../selections/ReplacementsSelectionComponent";
-import {useContext, useEffect, useState} from "react";
 import {LinkMatchContext, LinkTargetCandidateContext} from "../../context";
 
 
-interface noteLinkMatchResultTextMatchProps {
-    onLinkTargetCandidateSelected: (selectionItem: SelectionItem, candidate: LinkTargetCandidate, isSelected: boolean) => void
-}
-
-export const LinkTargetCandidatesListComponent = ({onLinkTargetCandidateSelected}: noteLinkMatchResultTextMatchProps) => {
+export const LinkTargetCandidatesListComponent = () => {
 
     const linkMatch = useContext(LinkMatchContext);
 
@@ -18,20 +14,13 @@ export const LinkTargetCandidatesListComponent = ({onLinkTargetCandidateSelected
         <div className={"link-target-candidates-list"}>
             <LinkMatchTitleComponent matchedText={linkMatch.matchedText} position={linkMatch.position}/>
             <ul className={"hide-list-styling"}>
-                {linkMatch.linkMatchTargetCandidates.map((linkTargetCandidate: LinkTargetCandidate) => {
-                    return (
-                        <LinkTargetCandidateContext.Provider value={linkTargetCandidate}>
-                            <ReplacementsSelectionComponent
-                                key={linkTargetCandidate.path + "-replacementsSelection"}
-                                onSelectionItemSelected={
-                                    (selectionItem: SelectionItem, isSelected) => onLinkTargetCandidateSelected(selectionItem, linkTargetCandidate, isSelected)
-                                }
-                            />
-                        </LinkTargetCandidateContext.Provider>
-                    )
-                })}
+                {linkMatch.linkMatchTargetCandidates.map((linkTargetCandidate: LinkTargetCandidate) =>
+                    <LinkTargetCandidateContext.Provider value={linkTargetCandidate}
+                                                         key={`${linkTargetCandidate.path}`}>
+                        <ReplacementsSelectionComponent/>
+                    </LinkTargetCandidateContext.Provider>
+                )}
             </ul>
         </div>
-
     );
 };

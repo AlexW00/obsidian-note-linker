@@ -1,5 +1,4 @@
 import * as React from "react";
-import * as ReactDOM from "react-dom";
 
 interface NoteMatchingResultTitleProps {
     noteTitle: string,

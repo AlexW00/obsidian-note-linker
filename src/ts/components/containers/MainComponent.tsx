@@ -1,5 +1,4 @@
-import React from "react";
-import {useState} from "react";
+import React, {useState} from "react";
 import {StartComponent} from "./StartComponent";
 import {MatcherComponent} from "./MatcherComponent";
 
@@ -16,5 +15,5 @@ export const MainComponent = () => {
     }
 
     if (mainComponentState == MainComponentStates.Start) return <StartComponent onClickScan={onClickScan}/>
-    else return <MatcherComponent />
+    else return <MatcherComponent/>
 }
