@@ -1,6 +1,6 @@
 import * as React from "react";
 import {SelectionItem} from "../../../../pkg";
-import {ReplacementItemComponent} from "../items/ReplacementItemComponent";
+import {ReplacementItemComponent} from "../list-items/ReplacementItemComponent";
 import {SelectionItemContext} from "../../context";
 import {useLinkTargetCandidate} from "../../hooks";
 

@@ -5,7 +5,7 @@ import {AppContext, WasmWorkerInstanceContext} from "./context";
 import {MainComponent} from "./components/containers/MainComponent";
 import {Remote} from "comlink";
 
-export default class LinkMatchingPopupModal extends Modal {
+export default class MainModal extends Modal {
 
     private root: Root;
     private wasmComlinkWorkerInstance: any;
@@ -14,7 +14,6 @@ export default class LinkMatchingPopupModal extends Modal {
         super(app);
         this.wasmComlinkWorkerInstance = instance;
     }
-
 
 
     onOpen() {

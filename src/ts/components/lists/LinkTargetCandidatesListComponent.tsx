@@ -1,7 +1,7 @@
 import * as React from "react";
 import {LinkTargetCandidate} from "../../../../pkg";
 import {LinkMatchTitleComponent} from "../titles/LinkMatchTitleComponent";
-import {ReplacementsSelectionComponent} from "../selections/ReplacementsSelectionComponent";
+import {ReplacementsSelectionComponent} from "./ReplacementsSelectionComponent";
 import {LinkTargetCandidateContext} from "../../context";
 import {useLinkMatch} from "../../hooks";
 

@@ -4,7 +4,7 @@ import * as Comlink from "comlink";
 import {NoteChangeOperation, NoteMatchingResult, NoteScannedEvent} from "../../../../pkg";
 import JsNote from "../../objects/JsNote";
 import Progress from "../../objects/Progress";
-import {ProgressComponent} from "../general/ProgressComponent";
+import {ProgressComponent} from "../other/ProgressComponent";
 import {MatchSelectionComponent} from "./MatchSelectionComponent";
 import {TFile} from "obsidian";
 import {useApp, useWasmWorkerInstance} from "../../hooks";
