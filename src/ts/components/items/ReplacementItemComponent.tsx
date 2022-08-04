@@ -20,11 +20,25 @@ export const ReplacementItemComponent = () => {
     const linkTargetCandidate = useContext(LinkTargetCandidateContext);
     const selectionItem = useContext(SelectionItemContext);
     const {noteChangeOperations, setNoteChangeOperations} = useContext(SelectedNoteChangeOperations);
+    const {fileManager} = useContext(AppContext);
+    const noteFiles = useContext<Map<String, TFile>>(NoteFilesContext);
 
     const noteChangeOperation = noteChangeOperations.get(parentNote.path);
 
-    const {fileManager} = useContext(AppContext);
-    const noteFiles = useContext<Map<String, TFile>>(NoteFilesContext);
+
+    const isSelected = useCallback(() => {
+        if (noteChangeOperation === undefined || noteChangeOperation.replacements === undefined) return false;
+        const isSelected = noteChangeOperation.replacements.find(
+            (replacement: Replacement) => {
+                return replacement.position.start == linkMatch.position.start &&
+                    replacement.position.end == linkMatch.position.end &&
+                    replacement.targetNotePath == linkTargetCandidate.path &&
+                    replacement.originalSubstitute == selectionItem.content;
+            }
+        ) != undefined;
+        return isSelected
+    }, [noteChangeOperations]);
+
 
     const subtractNoteChangeOperation = (noteChangeOperationToSubtract: NoteChangeOperation) => {
         const _noteChangeOperations = new Map(noteChangeOperations);
@@ -60,12 +74,7 @@ export const ReplacementItemComponent = () => {
         setNoteChangeOperations(_noteChangeOperations)
     }
 
-    const handleNoteChangeOperationSelected = (noteChangeOperation: NoteChangeOperation, doAdd: boolean) => {
-        if (doAdd) addNoteChangeOperation(noteChangeOperation)
-        else subtractNoteChangeOperation(noteChangeOperation)
-    }
-
-    const handleLinkTargetCandidateSelected = (selectionItem: SelectionItem, candidate: LinkTargetCandidate, isSelected: boolean, linkMatch: LinkMatch) => {
+    const handleSelect = (selectionItem: SelectionItem, candidate: LinkTargetCandidate, doAdd: boolean, linkMatch: LinkMatch) => {
         const replacement = new Replacement(
             linkMatch.position,
             fileManager.generateMarkdownLink(
@@ -79,29 +88,16 @@ export const ReplacementItemComponent = () => {
             selectionItem.content,
             candidate.path
         );
-        handleNoteChangeOperationSelected(
-            new NoteChangeOperation(
-                parentNote.path,
-                parentNote.content,
-                [replacement],
-            ),
-            isSelected
+
+        const newNoteChangeOperation = new NoteChangeOperation(
+            parentNote.path,
+            parentNote.content,
+            [replacement],
         );
+
+        if (doAdd) addNoteChangeOperation(newNoteChangeOperation)
+        else subtractNoteChangeOperation(newNoteChangeOperation)
     }
-
-    const isSelected = useCallback(() => {
-        if (noteChangeOperation === undefined || noteChangeOperation.replacements === undefined) return false;
-        const isSelected = noteChangeOperation.replacements.find(
-            (replacement: Replacement) => {
-                return replacement.position.start == linkMatch.position.start &&
-                    replacement.position.end == linkMatch.position.end &&
-                    replacement.targetNotePath == linkTargetCandidate.path &&
-                    replacement.originalSubstitute == selectionItem.content;
-            }
-        ) != undefined;
-        return isSelected
-    }, [noteChangeOperations]);
-
 
     return (
         <li className={"replacement-item"}>
@@ -110,7 +106,7 @@ export const ReplacementItemComponent = () => {
                 type={"checkbox"}
                 checked={isSelected()}
                 onChange={() => {
-                    handleLinkTargetCandidateSelected(selectionItem, linkTargetCandidate, !isSelected(), linkMatch)
+                    handleSelect(selectionItem, linkTargetCandidate, !isSelected(), linkMatch)
                 }}
             />
             <span className={"matched-text"}>
