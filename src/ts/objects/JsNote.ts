@@ -1,16 +1,15 @@
 import {MetadataCache, parseFrontMatterAliases, Vault} from "obsidian";
 import IgnoreRange from "./IgnoreRange";
-import {Note} from "../../pkg";
-import {constraint} from "tern";
+import {Note} from "../../../pkg";
 
-export default class JsNote extends Note{
+export default class JsNote extends Note {
 
 
     constructor(title: string, path: string, content: string, aliases: string[] = [], ignore: IgnoreRange[] = []) {
         super(title, path, content, aliases, ignore);
     }
-    
-    static getNumberOfNotes(vault: Vault, cache: MetadataCache): number {
+
+    static getNumberOfNotes(vault: Vault): number {
         return vault.getMarkdownFiles().length;
     }
 

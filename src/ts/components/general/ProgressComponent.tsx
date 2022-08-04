@@ -1,5 +1,5 @@
 import * as React from "react";
-import Progress from "../../Progress";
+import Progress from "../../objects/Progress";
 
 interface LinkMatcherProgressComponentProps {
     progress: Progress

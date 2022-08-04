@@ -7,13 +7,13 @@ export default class Progress {
         this.max = max;
     }
 
-    public increment() : boolean {
+    public increment(): boolean {
         if (this.isComplete()) return false
         this.current++
         return true;
     }
 
-    public isComplete() : boolean {
+    public isComplete(): boolean {
         return this.current >= this.max
     }
 }

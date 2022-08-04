@@ -1,5 +1,5 @@
 import {CachedMetadata} from "obsidian";
-import {Range} from "../../pkg";
+import {Range} from "../../../pkg";
 
 
 export interface IgnoreRangeConfig {
@@ -18,11 +18,11 @@ export default class IgnoreRange extends Range {
         return [...codeBlocks, ...internalLinks];
     }
 
-    private static findInternalLinks (cache: CachedMetadata) : IgnoreRange[] {
+    private static findInternalLinks(cache: CachedMetadata): IgnoreRange[] {
         return (cache.links ? cache.links : []).map(link => new IgnoreRange(link.position.start.offset, link.position.end.offset));
     }
 
-    private static findCodeBlocks (cache: CachedMetadata) : IgnoreRange[] {
+    private static findCodeBlocks(cache: CachedMetadata): IgnoreRange[] {
         return (cache.sections ? cache.sections : []).filter(section => section.type === "code")
             .map(section => new IgnoreRange(section.position.start.offset, section.position.end.offset))
     }

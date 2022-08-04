@@ -71,7 +71,7 @@ export const MatchSelectionComponent = ({
         setNoteChangeOperations(operations)
     }
 
-    useEffect(() => initNoteChangeOperations(noteMatchingResults), []);
+    useEffect(() => initNoteChangeOperations(noteMatchingResults), [noteMatchingResults]);
 
     return (<NoteFilesContext.Provider value={noteFiles}>
         <SelectedNoteChangeOperationsContext.Provider value={{noteChangeOperations, setNoteChangeOperations}}>
