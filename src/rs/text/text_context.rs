@@ -37,19 +37,4 @@ impl TextContext {
             match_text,
         }
     }
-
-    pub fn left_context_tail_ref(&self) -> &TextContextTail {
-        &self.left_context_tail
-    }
-
-    pub fn right_context_tail_ref(&self) -> &TextContextTail {
-        &self.right_context_tail
-    }
-
-    pub fn text(&self) -> String {
-        format!(
-            "...{}**{}**{}...",
-            &self.left_context_tail.text(), &self.match_text, &self.right_context_tail.text()
-        )
-    }
 }

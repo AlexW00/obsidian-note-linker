@@ -7,7 +7,7 @@ import {
     useLinkMatch,
     useLinkTargetCandidate,
     useNoteFiles,
-    useNoteMatchingResult,
+    useLinkFinderResult,
     useSelectedNoteChangeOperations,
     useSelectionItem
 } from "../../hooks";
@@ -15,7 +15,7 @@ import {
 
 export const ReplacementItemComponent = () => {
     const {fileManager} = useApp();
-    const parentNote = useNoteMatchingResult().note;
+    const parentNote = useLinkFinderResult().note;
     const linkMatch = useLinkMatch();
     const linkTargetCandidate = useLinkTargetCandidate();
     const selectionItem = useSelectionItem();

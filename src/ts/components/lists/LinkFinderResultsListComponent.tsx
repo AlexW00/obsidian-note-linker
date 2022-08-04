@@ -1,25 +1,25 @@
 import * as React from "react";
-import {NoteMatchingResult} from "../../../../pkg";
+import {LinkFinderResult} from "../../../../pkg";
 import {LinkMatchesListComponent} from "./LinkMatchesListComponent";
-import {NoteMatchingResultContext} from "../../context";
+import {LinkFinderResultContext} from "../../context";
 
-interface NoteMatchingResultsListProps {
-    noteMatchingResults: Array<NoteMatchingResult>,
+interface LinkFinderResultsListProps {
+    linkFinderResults: Array<LinkFinderResult>,
     onClickReplaceButton: () => void
 }
 
-export const NoteMatchingResultsList = ({noteMatchingResults, onClickReplaceButton}: NoteMatchingResultsListProps) => {
-    if (noteMatchingResults.length !== 0) return (
+export const LinkFinderResultsList = ({linkFinderResults, onClickReplaceButton}: LinkFinderResultsListProps) => {
+    if (linkFinderResults.length !== 0) return (
         <div className="note-matching-result-list">
             <h2>Note Link Matches</h2>
             <ul className={"hide-list-styling"}>
-                {noteMatchingResults.map((noteLinkMatchResult: NoteMatchingResult) =>
-                    <NoteMatchingResultContext.Provider value={noteLinkMatchResult}
+                {linkFinderResults.map((noteLinkMatchResult: LinkFinderResult) =>
+                    <LinkFinderResultContext.Provider value={noteLinkMatchResult}
                                                         key={`${noteLinkMatchResult.note.path}`}>
                         <LinkMatchesListComponent
                             noteLinkMatchResult={noteLinkMatchResult}
                         />
-                    </NoteMatchingResultContext.Provider>
+                    </LinkFinderResultContext.Provider>
                 )}
             </ul>
             <button onClick={onClickReplaceButton}>🔗 Link selected</button>

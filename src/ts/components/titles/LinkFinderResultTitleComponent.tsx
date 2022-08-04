@@ -1,11 +1,11 @@
 import * as React from "react";
 
-interface NoteMatchingResultTitleProps {
+interface LinkFinderResultTitleProps {
     noteTitle: string,
     notePath: string
 }
 
-export const NoteMatchingResultTitleComponent = ({noteTitle, notePath}: NoteMatchingResultTitleProps) => {
+export const LinkFinderResultTitleComponent = ({noteTitle, notePath}: LinkFinderResultTitleProps) => {
 
     return (
         <div className={"note-matching-result-title"}>

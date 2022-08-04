@@ -1,5 +1,5 @@
 import {NoteFilesContext, SelectedNoteChangeOperationsContext} from "../../context";
-import {NoteMatchingResultsList} from "../lists/NoteMatchingResultsListComponent";
+import {LinkFinderResultsList} from "../lists/LinkFinderResultsListComponent";
 import * as React from "react";
 import {useEffect, useState} from "react";
 import {TFile} from "obsidian";
@@ -7,19 +7,19 @@ import {
     LinkMatch,
     LinkTargetCandidate,
     NoteChangeOperation,
-    NoteMatchingResult,
+    LinkFinderResult,
     Replacement,
     SelectionItem
 } from "../../../../pkg";
 import {useApp} from "../../hooks";
 
 interface MatchSelectionComponentProps {
-    noteMatchingResults: Array<NoteMatchingResult>;
+    linkFinderResults: Array<LinkFinderResult>;
     onClickReplaceButton: (noteChangeOperations: Map<string, NoteChangeOperation>, noteFiles: Map<string, TFile>) => void;
 }
 
 export const MatchSelectionComponent = ({
-                                            noteMatchingResults,
+                                            linkFinderResults,
                                             onClickReplaceButton
                                         }: MatchSelectionComponentProps) => {
 
@@ -32,14 +32,14 @@ export const MatchSelectionComponent = ({
         return noteFiles
     });
 
-    const initNoteChangeOperations = (noteLinkMatchResults: Array<NoteMatchingResult>) => {
+    const initNoteChangeOperations = (noteLinkMatchResults: Array<LinkFinderResult>) => {
         const operations: Map<string, NoteChangeOperation> = new Map;
-        noteLinkMatchResults.forEach((result: NoteMatchingResult) => {
+        noteLinkMatchResults.forEach((result: LinkFinderResult) => {
             const path = result.note.path;
             const content = result.note.content;
             const replacements: Array<Replacement> = [];
             result.linkMatches.forEach((match: LinkMatch) => {
-                match.linkMatchTargetCandidates.forEach((candidate: LinkTargetCandidate) => {
+                match.linkTargetCandidates.forEach((candidate: LinkTargetCandidate) => {
                     candidate.selectionItems.forEach((selection: SelectionItem) => {
                         if (selection.isSelected) {
                             replacements.push(
@@ -71,11 +71,11 @@ export const MatchSelectionComponent = ({
         setNoteChangeOperations(operations)
     }
 
-    useEffect(() => initNoteChangeOperations(noteMatchingResults), [noteMatchingResults]);
+    useEffect(() => initNoteChangeOperations(linkFinderResults), [linkFinderResults]);
 
     return (<NoteFilesContext.Provider value={noteFiles}>
         <SelectedNoteChangeOperationsContext.Provider value={{noteChangeOperations, setNoteChangeOperations}}>
-            <NoteMatchingResultsList noteMatchingResults={noteMatchingResults}
+            <LinkFinderResultsList linkFinderResults={linkFinderResults}
                                      onClickReplaceButton={() => onClickReplaceButton(noteChangeOperations, noteFiles)}
             />
             <div>

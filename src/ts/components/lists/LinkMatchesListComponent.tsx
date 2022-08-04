@@ -1,18 +1,18 @@
 import * as React from "react";
-import {LinkMatch, NoteMatchingResult} from "../../../../pkg";
+import {LinkMatch, LinkFinderResult} from "../../../../pkg";
 import {LinkTargetCandidatesListComponent} from "./LinkTargetCandidatesListComponent";
-import {NoteMatchingResultTitleComponent} from "../titles/NoteMatchingResultTitleComponent";
+import {LinkFinderResultTitleComponent} from "../titles/LinkFinderResultTitleComponent";
 import {LinkMatchContext} from "../../context";
 
 interface noteLinkMatchResultComponentProps {
-    noteLinkMatchResult: NoteMatchingResult,
+    noteLinkMatchResult: LinkFinderResult,
 }
 
 export const LinkMatchesListComponent = ({noteLinkMatchResult}: noteLinkMatchResultComponentProps) => {
 
     return (
         <li className={"link-matches-list"}>
-            <NoteMatchingResultTitleComponent noteTitle={noteLinkMatchResult.note.title}
+            <LinkFinderResultTitleComponent noteTitle={noteLinkMatchResult.note.title}
                                               notePath={noteLinkMatchResult.note.path}/>
             <ul className={"hide-list-styling"}>
                 {noteLinkMatchResult.linkMatches.map((link_match: LinkMatch) =>

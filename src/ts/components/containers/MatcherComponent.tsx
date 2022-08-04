@@ -1,7 +1,7 @@
 import * as React from "react";
 import {useEffect, useState} from "react";
 import * as Comlink from "comlink";
-import {NoteChangeOperation, NoteMatchingResult, NoteScannedEvent} from "../../../../pkg";
+import {NoteChangeOperation, LinkFinderResult, NoteScannedEvent} from "../../../../pkg";
 import JsNote from "../../objects/JsNote";
 import Progress from "../../objects/Progress";
 import {ProgressComponent} from "../other/ProgressComponent";
@@ -23,7 +23,7 @@ export const MatcherComponent = () => {
 
     const [matchingState, setMatchingState] = useState<MatchingState>(MatchingState.Scanning);
     const [numberOfLinkedNotes, setNumberOfLinkedNotes] = useState<number>(0);
-    const [noteMatchingResults, setNoteMatchingResults] = useState<Array<NoteMatchingResult>>([]);
+    const [linkFinderResults, setLinkFinderResults] = useState<Array<LinkFinderResult>>([]);
     const [linkMatchingProgress] = useState<Progress>(new Progress(JsNote.getNumberOfNotes(vault)));
 
     const onLinkMatchingProgress = (noteScannedEvent: NoteScannedEvent) => {
@@ -51,13 +51,13 @@ export const MatcherComponent = () => {
         Promise.all(operations).then(() => onFinishReplacing(operations.length))
     }
 
-    const findNoteMatchingResults = (jsNotes: JsNote[]) => {
+    const findLinkFinderResults = (jsNotes: JsNote[]) => {
         const noteStrings: Array<string> = jsNotes.map((jsNote: JsNote) => jsNote.toJSON());
         return wasmWorkerInstance.find(noteStrings, Comlink.proxy(onLinkMatchingProgress));
     }
     const showMatchSelection = (serializedNoteLinkMatchResults: Array<string>) => {
-        const noteLinkMatchResults: Array<NoteMatchingResult> = serializedNoteLinkMatchResults.map((noteLinkMatchResult: string) => NoteMatchingResult.fromJSON(noteLinkMatchResult));
-        setNoteMatchingResults(noteLinkMatchResults);
+        const noteLinkMatchResults: Array<LinkFinderResult> = serializedNoteLinkMatchResults.map((noteLinkMatchResult: string) => LinkFinderResult.fromJSON(noteLinkMatchResult));
+        setLinkFinderResults(noteLinkMatchResults);
         setMatchingState(MatchingState.Selecting);
     }
 
@@ -68,7 +68,7 @@ export const MatcherComponent = () => {
 
     useEffect(() => {
         JsNote.getNotesFromVault(vault, metadataCache)
-            .then(findNoteMatchingResults)
+            .then(findLinkFinderResults)
             .then(showMatchSelection)
             .catch(showError)
     }, [wasmWorkerInstance]);
@@ -76,7 +76,7 @@ export const MatcherComponent = () => {
 
     if (matchingState == MatchingState.Scanning) return <ProgressComponent progress={linkMatchingProgress}/>
     else if (matchingState == MatchingState.Selecting) return <MatchSelectionComponent
-        noteMatchingResults={noteMatchingResults}
+        linkFinderResults={linkFinderResults}
         onClickReplaceButton={handleReplaceButtonClicked}
     />
     else if (matchingState == MatchingState.Replacing) return <div className={"info-toast"}>⏳ Linking Notes...</div>

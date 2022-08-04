@@ -1,17 +1,16 @@
 import {
-    AppContext, LinkMatchContext, LinkTargetCandidateContext,
+    AppContext, LinkFinderResultContext, LinkMatchContext, LinkTargetCandidateContext,
     NoteFilesContext,
-    NoteMatchingResultContext,
     SelectedNoteChangeOperationsContext, SelectionItemContext,
     WasmWorkerInstanceContext
 } from "./context";
 import {App, TFile} from "obsidian";
 import React, {Dispatch, SetStateAction, useContext} from "react";
 import {
+    LinkFinderResult,
     LinkMatch,
     LinkTargetCandidate,
     NoteChangeOperation,
-    NoteMatchingResult,
     Replacement,
     SelectionItem
 } from "../../pkg";
@@ -33,8 +32,8 @@ export const useSelectedNoteChangeOperations = (): {noteChangeOperations: Map<st
     return React.useContext(SelectedNoteChangeOperationsContext);
 }
 
-export const useNoteMatchingResult = (): NoteMatchingResult | undefined => {
-    return React.useContext(NoteMatchingResultContext);
+export const useLinkFinderResult = (): LinkFinderResult | undefined => {
+    return React.useContext(LinkFinderResultContext);
 }
 
 export const useLinkMatch = (): LinkMatch | undefined => {

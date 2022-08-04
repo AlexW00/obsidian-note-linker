@@ -7,7 +7,7 @@ use crate::rs::note::note::Note;
 
 #[wasm_bindgen]
 #[derive(Serialize, Deserialize)]
-pub struct NoteMatchingResult {
+pub struct LinkFinderResult {
     note: Note,
 
     #[serde(rename = "linkMatches")]
@@ -15,7 +15,7 @@ pub struct NoteMatchingResult {
 }
 
 #[wasm_bindgen]
-impl NoteMatchingResult {
+impl LinkFinderResult {
     #[wasm_bindgen(getter)]
     pub fn note(&self) -> Note { self.note.clone() }
     #[wasm_bindgen(getter, js_name = "linkMatches")]
@@ -33,9 +33,9 @@ impl NoteMatchingResult {
     }
 }
 
-impl NoteMatchingResult {
+impl LinkFinderResult {
     pub fn new(note: Note, _link_matches: Vec<LinkMatch>) -> Self {
-        NoteMatchingResult {
+        LinkFinderResult {
             note,
             _link_matches,
         }
