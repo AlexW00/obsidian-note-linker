@@ -1,27 +1,26 @@
 import * as React from "react";
-import {useCallback, useContext} from "react";
+import {useCallback} from "react";
 import {LinkMatch, LinkTargetCandidate, NoteChangeOperation, Replacement, SelectionItem} from "../../../../pkg";
-import {
-    AppContext,
-    LinkMatchContext,
-    LinkTargetCandidateContext,
-    NoteFilesContext,
-    NoteMatchingResultContext,
-    SelectedNoteChangeOperations,
-    SelectionItemContext
-} from "../../context";
 import {generateMockupMdLink} from "../../util";
-import {TFile} from "obsidian";
+import {
+    useApp,
+    useLinkMatch,
+    useLinkTargetCandidate,
+    useNoteFiles,
+    useNoteMatchingResult,
+    useSelectedNoteChangeOperations,
+    useSelectionItem
+} from "../../hooks";
 
 
 export const ReplacementItemComponent = () => {
-    const parentNote = useContext(NoteMatchingResultContext).note;
-    const linkMatch = useContext(LinkMatchContext);
-    const linkTargetCandidate = useContext(LinkTargetCandidateContext);
-    const selectionItem = useContext(SelectionItemContext);
-    const {noteChangeOperations, setNoteChangeOperations} = useContext(SelectedNoteChangeOperations);
-    const {fileManager} = useContext(AppContext);
-    const noteFiles = useContext<Map<String, TFile>>(NoteFilesContext);
+    const {fileManager} = useApp();
+    const parentNote = useNoteMatchingResult().note;
+    const linkMatch = useLinkMatch();
+    const linkTargetCandidate = useLinkTargetCandidate();
+    const selectionItem = useSelectionItem();
+    const {noteChangeOperations, setNoteChangeOperations} = useSelectedNoteChangeOperations();
+    const noteFiles = useNoteFiles();
 
     const noteChangeOperation = noteChangeOperations.get(parentNote.path);
 

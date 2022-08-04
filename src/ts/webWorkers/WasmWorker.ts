@@ -1,9 +1,9 @@
 import * as Comlink from "comlink";
-import rustPlugin from "../../../../pkg/obsidian_rust_plugin_bg.wasm";
-import * as wasm from "../../../../pkg";
-import {add, find_silent, init_panic_hook, find,Note, NoteMatchingResult} from "../../../../pkg";
+import rustPlugin from "../../../pkg/obsidian_rust_plugin_bg.wasm";
+import * as wasm from "../../../pkg";
+import {add, find_silent, init_panic_hook, find,Note, NoteMatchingResult} from "../../../pkg";
 
-class WasmComlinkWorker {
+class WasmWorker {
     public async init () {
         console.log("calling init");
         // @ts-ignore
@@ -34,4 +34,4 @@ class WasmComlinkWorker {
     }
 
 }
-Comlink.expose(WasmComlinkWorker);
+Comlink.expose(WasmWorker);

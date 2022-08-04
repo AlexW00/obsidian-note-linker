@@ -1,14 +1,14 @@
 import * as React from "react";
-import {useContext} from "react";
 import {LinkTargetCandidate} from "../../../../pkg";
 import {LinkMatchTitleComponent} from "../titles/LinkMatchTitleComponent";
 import {ReplacementsSelectionComponent} from "../selections/ReplacementsSelectionComponent";
-import {LinkMatchContext, LinkTargetCandidateContext} from "../../context";
+import {LinkTargetCandidateContext} from "../../context";
+import {useLinkMatch} from "../../hooks";
 
 
 export const LinkTargetCandidatesListComponent = () => {
 
-    const linkMatch = useContext(LinkMatchContext);
+    const linkMatch = useLinkMatch();
 
     return (
         <div className={"link-target-candidates-list"}>

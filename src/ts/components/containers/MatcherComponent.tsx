@@ -8,6 +8,7 @@ import Progress from "../../Progress";
 import {ProgressComponent} from "../general/ProgressComponent";
 import {MatchSelectionComponent} from "./MatchSelectionComponent";
 import {TFile} from "obsidian";
+import {useApp, useWasmWorkerInstance} from "../../hooks";
 
 enum MatchingState {
     Scanning,
@@ -18,12 +19,11 @@ enum MatchingState {
 }
 
 export const MatcherComponent = () => {
-    const {vault, metadataCache} = useContext(AppContext);
-    const wasmWorkerInstance = useContext(WasmWorkerInstanceContext);
+    const {vault, metadataCache} = useApp();
+    const wasmWorkerInstance = useWasmWorkerInstance();
 
     const [matchingState, setMatchingState] = useState<MatchingState>(MatchingState.Scanning);
     const [numberOfLinkedNotes, setNumberOfLinkedNotes] = useState<number>(0);
-
     const [noteMatchingResults, setNoteMatchingResults] = useState<Array<NoteMatchingResult>>([]);
     const [linkMatchingProgress] = useState<Progress>(new Progress(JsNote.getNumberOfNotes(vault, metadataCache)));
 

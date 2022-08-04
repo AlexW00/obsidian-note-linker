@@ -1,13 +1,13 @@
 import * as React from "react";
-import {useContext} from "react";
 import {SelectionItem} from "../../../../pkg";
 import {ReplacementItemComponent} from "../items/ReplacementItemComponent";
-import {LinkTargetCandidateContext, SelectionItemContext} from "../../context";
+import {SelectionItemContext} from "../../context";
+import {useLinkTargetCandidate} from "../../hooks";
 
 
 export const ReplacementsSelectionComponent = () => {
 
-    const linkTargetCandidate = useContext(LinkTargetCandidateContext);
+    const linkTargetCandidate = useLinkTargetCandidate();
     return (
         <li className={"replacements-selection"}>
             <span className={"title"}>🔗{linkTargetCandidate.path}</span>

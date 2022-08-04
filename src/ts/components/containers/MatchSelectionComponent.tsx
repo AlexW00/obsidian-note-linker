@@ -1,7 +1,7 @@
-import {AppContext, NoteFilesContext, SelectedNoteChangeOperations} from "../../context";
+import {NoteFilesContext, SelectedNoteChangeOperationsContext} from "../../context";
 import {NoteMatchingResultsList} from "../lists/NoteMatchingResultsListComponent";
 import * as React from "react";
-import {useContext, useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import {TFile} from "obsidian";
 import {
     LinkMatch,
@@ -11,6 +11,7 @@ import {
     Replacement,
     SelectionItem
 } from "../../../../pkg";
+import {useApp} from "../../hooks";
 
 interface MatchSelectionComponentProps {
     noteMatchingResults: Array<NoteMatchingResult>;
@@ -22,7 +23,7 @@ export const MatchSelectionComponent = ({
                                             onClickReplaceButton
                                         }: MatchSelectionComponentProps) => {
 
-    const {vault, fileManager} = useContext(AppContext);
+    const {vault, fileManager} = useApp();
     const [noteChangeOperations, setNoteChangeOperations] = useState<Map<string, NoteChangeOperation>>(new Map());
 
     const [noteFiles] = useState<Map<string, TFile>>(() => {
@@ -73,13 +74,13 @@ export const MatchSelectionComponent = ({
     useEffect(() => initNoteChangeOperations(noteMatchingResults), []);
 
     return (<NoteFilesContext.Provider value={noteFiles}>
-        <SelectedNoteChangeOperations.Provider value={{noteChangeOperations, setNoteChangeOperations}}>
+        <SelectedNoteChangeOperationsContext.Provider value={{noteChangeOperations, setNoteChangeOperations}}>
             <NoteMatchingResultsList noteMatchingResults={noteMatchingResults}
                                      onClickReplaceButton={() => onClickReplaceButton(noteChangeOperations, noteFiles)}
             />
             <div>
                 {noteChangeOperations.size}
             </div>
-        </SelectedNoteChangeOperations.Provider>
+        </SelectedNoteChangeOperationsContext.Provider>
     </NoteFilesContext.Provider>)
 }
