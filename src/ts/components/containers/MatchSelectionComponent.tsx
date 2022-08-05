@@ -24,7 +24,7 @@ export const MatchSelectionComponent = ({
                                         }: MatchSelectionComponentProps) => {
 
     const {vault, fileManager} = useApp();
-    const [noteChangeOperations, setNoteChangeOperations] = useState<Map<string, NoteChangeOperation>>(new Map());
+    const [noteChangeOperations, setNoteChangeOperations] = useState<Map<string, NoteChangeOperation>>(undefined);
 
     const [noteFiles] = useState<Map<string, TFile>>(() => {
         const noteFiles = new Map<string, TFile>();
@@ -75,9 +75,9 @@ export const MatchSelectionComponent = ({
 
     return (<NoteFilesContext.Provider value={noteFiles}>
         <SelectedNoteChangeOperationsContext.Provider value={{noteChangeOperations, setNoteChangeOperations}}>
-            <LinkFinderResultsList linkFinderResults={linkFinderResults}
-                                     onClickReplaceButton={() => onClickReplaceButton(noteChangeOperations, noteFiles)}
-            />
+            {noteChangeOperations !== undefined ? <LinkFinderResultsList linkFinderResults={linkFinderResults}
+                                    onClickReplaceButton={() => onClickReplaceButton(noteChangeOperations, noteFiles)}
+            /> : <div/>}
         </SelectedNoteChangeOperationsContext.Provider>
     </NoteFilesContext.Provider>)
 }
