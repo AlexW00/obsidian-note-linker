@@ -9,7 +9,7 @@ import {
     NoteChangeOperation,
     LinkFinderResult,
     Replacement,
-    SelectionItem
+    PreferrableItem
 } from "../../../../pkg";
 import {useApp} from "../../hooks";
 
@@ -40,8 +40,8 @@ export const MatchSelectionComponent = ({
             const replacements: Array<Replacement> = [];
             result.linkMatches.forEach((match: LinkMatch) => {
                 match.linkTargetCandidates.forEach((candidate: LinkTargetCandidate) => {
-                    candidate.selectionItems.forEach((selection: SelectionItem) => {
-                        if (selection.isSelected) {
+                    candidate.replacementCandidates.forEach((replacementCandidate: PreferrableItem) => {
+                        if (replacementCandidate.isPreferred) {
                             replacements.push(
                                 new Replacement(
                                     match.position,
@@ -49,11 +49,11 @@ export const MatchSelectionComponent = ({
                                         noteFiles.get(candidate.path),
                                         result.note.path,
                                         null,
-                                        selection.content == result.note.title
+                                        replacementCandidate.content == result.note.title
                                             ? null
-                                            : selection.content
+                                            : replacementCandidate.content
                                     ),
-                                    selection.content,
+                                    replacementCandidate.content,
                                     candidate.path
                                 )
                             )

@@ -1,6 +1,6 @@
 import * as React from "react";
 import {useCallback} from "react";
-import {LinkMatch, LinkTargetCandidate, NoteChangeOperation, Replacement, SelectionItem} from "../../../../pkg";
+import {LinkMatch, LinkTargetCandidate, NoteChangeOperation, Replacement, PreferrableItem} from "../../../../pkg";
 import {generateMockupMdLink} from "../../util";
 import {
     useApp,
@@ -9,7 +9,7 @@ import {
     useNoteFiles,
     useLinkFinderResult,
     useSelectedNoteChangeOperations,
-    useSelectionItem
+    useReplacementCandidate
 } from "../../hooks";
 
 
@@ -18,24 +18,24 @@ export const ReplacementItemComponent = () => {
     const parentNote = useLinkFinderResult().note;
     const linkMatch = useLinkMatch();
     const linkTargetCandidate = useLinkTargetCandidate();
-    const selectionItem = useSelectionItem();
+    const replacementCandidate = useReplacementCandidate();
     const {noteChangeOperations, setNoteChangeOperations} = useSelectedNoteChangeOperations();
     const noteFiles = useNoteFiles();
 
     const noteChangeOperation = noteChangeOperations.get(parentNote.path);
 
 
-    const isSelected = useCallback(() => {
+    const isPreferred = useCallback(() => {
         if (noteChangeOperation === undefined || noteChangeOperation.replacements === undefined) return false;
-        const isSelected = noteChangeOperation.replacements.find(
+        const isPreferred = noteChangeOperation.replacements.find(
             (replacement: Replacement) => {
                 return replacement.position.start == linkMatch.position.start &&
                     replacement.position.end == linkMatch.position.end &&
                     replacement.targetNotePath == linkTargetCandidate.path &&
-                    replacement.originalSubstitute == selectionItem.content;
+                    replacement.originalSubstitute == replacementCandidate.content;
             }
         ) != undefined;
-        return isSelected
+        return isPreferred
     }, [noteChangeOperations]);
 
 
@@ -73,18 +73,18 @@ export const ReplacementItemComponent = () => {
         setNoteChangeOperations(_noteChangeOperations)
     }
 
-    const handleSelect = (selectionItem: SelectionItem, candidate: LinkTargetCandidate, doAdd: boolean, linkMatch: LinkMatch) => {
+    const handleSelect = (replacementCandidate: PreferrableItem, candidate: LinkTargetCandidate, doAdd: boolean, linkMatch: LinkMatch) => {
         const replacement = new Replacement(
             linkMatch.position,
             fileManager.generateMarkdownLink(
                 noteFiles.get(candidate.path),
                 parentNote.path,
                 null,
-                selectionItem.content == parentNote.title
+                replacementCandidate.content == parentNote.title
                     ? null
-                    : selectionItem.content
+                    : replacementCandidate.content
             ),
-            selectionItem.content,
+            replacementCandidate.content,
             candidate.path
         );
 
@@ -99,14 +99,14 @@ export const ReplacementItemComponent = () => {
     }
 
     return (
-        <li className={"replacement-item"} onClick={() => handleSelect(selectionItem, linkTargetCandidate, !isSelected(), linkMatch)}>
+        <li className={"replacement-item"} onClick={() => handleSelect(replacementCandidate, linkTargetCandidate, !isPreferred(), linkMatch)}>
             <input
                 className={"task-list-item-checkbox"}
                 type={"checkbox"}
-                checked={isSelected()}
+                checked={isPreferred()}
             />
             <span className={"matched-text"}>
-                "{selectionItem.content}"
+                "{replacementCandidate.content}"
             </span>
             <div className={"replacement-context"}>
                 <span className={"arrow-icon"}>→</span>
@@ -114,7 +114,7 @@ export const ReplacementItemComponent = () => {
                     "... {linkMatch.context.leftContextTail.text}
                 </span>
                 <span className={"link-preview"}>
-                    {generateMockupMdLink(selectionItem.content, linkTargetCandidate.title)}
+                    {generateMockupMdLink(replacementCandidate.content, linkTargetCandidate.title)}
                 </span>
                 <span className={"context-tail"}>
                     {linkMatch.context.rightContextTail.text} ..."

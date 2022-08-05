@@ -1,36 +1,36 @@
+extern crate unicode_segmentation;
+
 use std::convert::TryFrom;
 
 use js_sys::Array;
-use wasm_bindgen::{JsCast, JsValue};
-use wasm_bindgen::prelude::*;
-use serde::{Serialize, Deserialize};
-
-use crate::rs::text::text_util::{create_string_with_n_characters};
-use crate::rs::util::range::{array_to_range_vec, Range};
-use crate::rs::util::wasm_util::{generic_of_jsval, JsonSerializable};
-
-extern crate unicode_segmentation;
-
+use serde::{Deserialize, Serialize};
 use unicode_segmentation::{Graphemes, UnicodeSegmentation};
-use crate::log;
+use wasm_bindgen::{JsValue};
+use wasm_bindgen::prelude::*;
 
+use crate::rs::text::text_util::create_string_with_n_characters;
+use crate::rs::util::range::{array_to_range_vec, Range};
+use crate::rs::util::wasm_util::{generic_of_jsval};
+
+/// A single note.
 #[wasm_bindgen]
 #[derive(Clone, Serialize, Deserialize)]
 pub struct Note {
-    title: String,
-    path: String,
-    content: String,
+    title: String, // the title of the note
+    path: String, // the path of the note
+    content: String, // the content of the note
     #[serde(skip)]
-    aliases: Array,
+    aliases: Array, // possible aliases for the note
     #[serde(skip)]
-    ignore: Array,
+    ignore: Array, // text ranges that should be ignored by the Link Finder
 
+    // private fields for JSON serialization
     #[serde(rename = "aliases")]
     _aliases: Vec<String>,
     #[serde(rename = "ignore")]
     _ignore: Vec<Range>,
     #[serde(skip)]
-    _sanitized_content: String
+    _sanitized_content: String,
 }
 
 #[wasm_bindgen]
@@ -47,7 +47,7 @@ impl Note {
 
             _aliases: array_to_string_vec(aliases.clone()),
             _ignore: ignore_vec.clone(),
-            _sanitized_content: Note::sanitize_content(content, ignore_vec) // no need to clone anymore
+            _sanitized_content: Note::sanitize_content(content, ignore_vec), // no need to clone anymore
         }
     }
 
@@ -77,17 +77,18 @@ impl Note {
     pub fn from_json_string(json_string: &str) -> Self {
         serde_json::from_str(json_string).unwrap()
     }
-
 }
 
 impl Note {
     pub fn aliases_vec(&self) -> &Vec<String> {
         &self._aliases
     }
-    pub fn ignore_vec (&self) -> &Vec<Range> {
+    pub fn ignore_vec(&self) -> &Vec<Range> {
         &self._ignore
     }
 
+    /// Cleans up the note content by:
+    /// - removing all parts of the content that are in the ignore list
     fn sanitize_content(mut content: String, ignore_vec: Vec<Range>) -> String {
         for ignore in ignore_vec {
             let range: std::ops::Range<usize> = ignore.clone().into();
@@ -98,8 +99,7 @@ impl Note {
             // however in rust strings, they have a length of 2-4
             split_content.enumerate().for_each(
                 |(index, grapheme)| {
-                    if range.start <= index && range.end >= index { new_content.push_str(&*create_string_with_n_characters(&grapheme.len(), '_')) }
-                    else { new_content.push_str(grapheme) }
+                    if range.start <= index && range.end >= index { new_content.push_str(&*create_string_with_n_characters(&grapheme.len(), '_')) } else { new_content.push_str(grapheme) }
                 }
             );
             content = new_content
@@ -107,13 +107,12 @@ impl Note {
         content
     }
 
-    pub fn get_sanitized_content (&mut self) -> &String {
-        if self._sanitized_content.is_empty(){
+    pub fn get_sanitized_content(&mut self) -> &String {
+        if self._sanitized_content.is_empty() {
             self._sanitized_content = Note::sanitize_content(self.content.clone(), self._ignore.clone());
         }
         &self._sanitized_content
     }
-
 }
 
 impl TryFrom<JsValue> for Note {

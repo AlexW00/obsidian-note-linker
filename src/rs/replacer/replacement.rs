@@ -1,14 +1,14 @@
-use std::cmp::Ordering;
 use wasm_bindgen::prelude::*;
 use crate::rs::util::range::Range;
 
+/// A single replacement that should be performed on a text.
 #[wasm_bindgen]
 pub struct Replacement {
-    position: Range,
-    substitute: String,
+    position: Range, // the position of the replacement in the text
+    substitute: String, // the text that should be inserted instead of the original text
 
-    original_substitute: String,
-    target_note_path: String,
+    original_substitute: String, // the original text that should be replaced
+    target_note_path: String, // the path of the note that should be linked to
 }
 
 #[wasm_bindgen]

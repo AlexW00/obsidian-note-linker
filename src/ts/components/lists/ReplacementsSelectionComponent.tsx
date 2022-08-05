@@ -1,7 +1,7 @@
 import * as React from "react";
-import {SelectionItem} from "../../../../pkg";
+import {PreferrableItem} from "../../../../pkg";
 import {ReplacementItemComponent} from "../list-items/ReplacementItemComponent";
-import {SelectionItemContext} from "../../context";
+import {ReplacementCandidateContext} from "../../context";
 import {useLinkTargetCandidate} from "../../hooks";
 
 
@@ -12,11 +12,11 @@ export const ReplacementsSelectionComponent = () => {
         <li className={"replacements-selection"}>
             <span className={"title"}>🔗{linkTargetCandidate.path}</span>
             <ul className={"hide-list-styling"}>
-                {linkTargetCandidate.selectionItems.map((replacement_selection_item: SelectionItem, index: number) =>
-                    <SelectionItemContext.Provider value={replacement_selection_item}
-                                                   key={`${replacement_selection_item.content}-${index}`}>
+                {linkTargetCandidate.replacementCandidates.map((replacementCandidate: PreferrableItem, index: number) =>
+                    <ReplacementCandidateContext.Provider value={replacementCandidate}
+                                                          key={`${replacementCandidate.content}-${index}`}>
                         <ReplacementItemComponent/>
-                    </SelectionItemContext.Provider>
+                    </ReplacementCandidateContext.Provider>
                 )}
             </ul>
         </li>

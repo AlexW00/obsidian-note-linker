@@ -1,23 +1,20 @@
 use js_sys::Array;
 use serde::{Deserialize, Serialize};
-use wasm_bindgen::{JsCast, JsValue};
 use wasm_bindgen::prelude::*;
 
-use crate::rs::util::selection_item::{selection_item_vec_to_array, SelectionItem};
-use crate::rs::util::wasm_util::generic_of_jsval;
+use crate::rs::util::preferrable_item::{preferrable_item_vec_to_array, PreferrableItem};
 
-/// A candidate note for a matching to matching to
+/// A candidate (note) for a Link Match to link to.
 #[wasm_bindgen]
 #[derive(Clone, Serialize, Deserialize)]
 pub struct LinkTargetCandidate {
-    title: String,
-    path: String,
+    title: String, // the title of the note
+    path: String, // the path of the note
 
-    #[serde(rename = "replacement_selection_items")]
-    _selection_items: Vec<SelectionItem>,
+    #[serde(rename = "replacement_candidates")]
+    _replacement_candidates: Vec<PreferrableItem>, // the possible replacements for the matched text
 }
 
-// TODO: Rename ->LinkTargetCandidate
 #[wasm_bindgen]
 impl LinkTargetCandidate {
     #[wasm_bindgen(getter)]
@@ -26,38 +23,38 @@ impl LinkTargetCandidate {
     #[wasm_bindgen(getter)]
     pub fn path(&self) -> String { self.path.clone() }
 
-    #[wasm_bindgen(getter, js_name = "selectionItems")]
-    pub fn selection_items(&self) -> Array {
-        selection_item_vec_to_array(self._selection_items.clone())
+    #[wasm_bindgen(getter, js_name = "replacementCandidates")]
+    pub fn replacement_candidates(&self) -> Array {
+        preferrable_item_vec_to_array(self._replacement_candidates.clone())
     }
 
     #[wasm_bindgen(method, js_name = "deSelectAll")]
-    pub fn de_select_all(&mut self) {
-        for selection_item in &mut self._selection_items {
-            selection_item.is_selected = false;
+    pub fn un_prefer_all(&mut self) {
+        for replacement_candidate in &mut self._replacement_candidates {
+            replacement_candidate.is_preferred = false;
         }
     }
 }
 
 impl LinkTargetCandidate {
     pub fn new(title: String, path: String, aliases: &[String], selected_index: usize) -> Self {
-        let mut _selection_items: Vec<SelectionItem> = vec![];
-        let selection_title = SelectionItem::new(title.clone(), selected_index == 0);
-        _selection_items.push(selection_title);
+        let mut _replacement_candidates: Vec<PreferrableItem> = vec![];
+        let replacement_candidate_title = PreferrableItem::new(title.clone(), selected_index == 0);
+        _replacement_candidates.push(replacement_candidate_title);
 
         aliases.iter().enumerate().for_each(|(index, alias)| {
-            let selection_alias = SelectionItem::new(
+            let replacement_candidate_alias = PreferrableItem::new(
                 alias.clone(),
                 // add one because the index starts with the title at 0
                 index + 1 == selected_index,
             );
-            _selection_items.push(selection_alias);
+            _replacement_candidates.push(replacement_candidate_alias);
         });
 
         LinkTargetCandidate {
             title,
             path,
-            _selection_items,
+            _replacement_candidates,
         }
     }
 }

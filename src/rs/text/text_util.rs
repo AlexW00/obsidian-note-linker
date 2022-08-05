@@ -7,7 +7,7 @@ pub fn create_string_with_n_characters(n: &usize, c: char) -> String {
     s
 }
 
-/// returns the nearest char boundary that is not an emoji
+/// returns the nearest char boundary (e.g. that is not an emoji)
 pub fn get_nearest_char_boundary(text: &str, position: usize, do_expand_left: bool) -> usize {
     let mut i = position;
     let mut direction = do_expand_left;

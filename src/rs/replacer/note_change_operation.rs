@@ -1,10 +1,10 @@
 use js_sys::{Array};
 use wasm_bindgen::prelude::*;
-use crate::{log, Note};
 use crate::rs::replacer::replacement::Replacement;
-use crate::rs::util::range::Range;
 use crate::rs::util::wasm_util::generic_of_jsval;
 
+/// Changes that should be made to a Note.
+/// Created after the user selected all the replacements that should be made.
 #[wasm_bindgen]
 pub struct NoteChangeOperation {
     path: String,
@@ -32,6 +32,7 @@ impl NoteChangeOperation {
     #[wasm_bindgen(setter)]
     pub fn set_replacements(&mut self, replacements: Array) { self.replacements = replacements }
 
+    /// Applies the changes to the content.
     #[wasm_bindgen(method, js_name = "applyReplacements")]
     pub fn apply_replacements (&mut self) {
         let mut new_content = self.content.clone();
@@ -53,7 +54,7 @@ impl NoteChangeOperation {
 
             new_content.replace_range(range, substitute);
 
-            offset += (replacement_length - number_of_characters_replaced);
+            offset += replacement_length - number_of_characters_replaced;
         });
         self.content = new_content;
     }

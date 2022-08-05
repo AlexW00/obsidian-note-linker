@@ -3,11 +3,13 @@ use std::convert::TryFrom;
 use js_sys::Array;
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
-use wasm_bindgen::{JsCast, JsValue};
+use wasm_bindgen::{JsValue};
 use wasm_bindgen::prelude::*;
 
 use crate::rs::util::wasm_util::generic_of_jsval;
 
+/// A range (of text in a note).
+/// Implemented so that there also is a Range class in the shared JS code.
 #[wasm_bindgen]
 #[derive(Clone, Serialize, Deserialize)]
 pub struct Range {

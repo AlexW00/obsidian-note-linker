@@ -5,6 +5,7 @@ use crate::rs::text::text_util::get_nearest_char_boundary;
 use crate::rs::util::range;
 use serde::{Serialize, Deserialize};
 
+/// One of the two sides of a text context.
 #[wasm_bindgen]
 #[derive(Clone, Serialize, Deserialize)]
 pub struct TextContextTail {

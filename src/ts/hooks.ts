@@ -1,7 +1,7 @@
 import {
     AppContext, LinkFinderResultContext, LinkMatchContext, LinkTargetCandidateContext,
     NoteFilesContext,
-    SelectedNoteChangeOperationsContext, SelectionItemContext,
+    SelectedNoteChangeOperationsContext, ReplacementCandidateContext,
     WasmWorkerInstanceContext
 } from "./context";
 import {App, TFile} from "obsidian";
@@ -12,7 +12,7 @@ import {
     LinkTargetCandidate,
     NoteChangeOperation,
     Replacement,
-    SelectionItem
+    PreferrableItem
 } from "../../pkg";
 
 // Context hooks
@@ -44,6 +44,6 @@ export const useLinkTargetCandidate = (): LinkTargetCandidate | undefined => {
     return React.useContext(LinkTargetCandidateContext);
 }
 
-export const useSelectionItem = (): SelectionItem | undefined => {
-    return React.useContext(SelectionItemContext);
+export const useReplacementCandidate = (): PreferrableItem | undefined => {
+    return React.useContext(ReplacementCandidateContext);
 }

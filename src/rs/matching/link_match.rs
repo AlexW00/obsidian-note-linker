@@ -8,16 +8,16 @@ use crate::rs::note::note::Note;
 use crate::rs::text::text_context::TextContext;
 use crate::rs::util::range::Range;
 
-/// A text passage, that has been identified as a possible matching
+/// A text passage, that has been identified as a possible link.
 #[wasm_bindgen]
 #[derive(Clone, Serialize, Deserialize)]
 pub struct LinkMatch {
-    position: Range,
-    matched_text: String,
-    context: TextContext,
+    position: Range, // the position of the match in the text
+    matched_text: String, // the text that was matched
+    context: TextContext, // the context of the match (the text before and after the match)
 
     #[serde(rename = "linkTargetCandidates")]
-    _link_target_candidates: Vec<LinkTargetCandidate>
+    _link_target_candidates: Vec<LinkTargetCandidate> // the link target candidates for the match
 }
 
 #[wasm_bindgen]
@@ -62,10 +62,11 @@ impl LinkMatch {
         )
     }
 
+    /// Merges this LinkMatch with another LinkMatch. by combining their link target candidates.
     pub fn merge_link_target_candidates(&mut self, link_match: LinkMatch) {
         for mut candidate in link_match._link_target_candidates {
             // uncheck all candidates
-            candidate.de_select_all();
+            candidate.un_prefer_all();
             self._link_target_candidates.push(candidate);
         }
     }

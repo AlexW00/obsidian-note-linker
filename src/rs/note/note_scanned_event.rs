@@ -2,6 +2,7 @@ use wasm_bindgen::prelude::*;
 
 use crate::rs::note::note::Note;
 
+/// An event that is emitted when a Note has been scanned for links by the Link Finder.
 #[wasm_bindgen]
 pub struct NoteScannedEvent {
     note_title: String,

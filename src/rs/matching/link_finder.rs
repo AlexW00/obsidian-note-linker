@@ -10,14 +10,15 @@ use crate::rs::note::note::Note;
 
 type LinkFinder = Regex;
 
-struct LinkFinderMatch<'m> {
+/// A match of a link in a note.
+struct LinkFinderMatchingResult<'m> {
     regex_matches: Vec<RegexMatch>,
     note: &'m Note,
     target_note: &'m Note,
 }
 
-impl<'m> LinkFinderMatch<'m> {
-    fn new(note: &'m mut Note, target_note: &'m Note) -> Self {
+impl<'m> LinkFinderMatchingResult<'m> {
+    fn find_matches(note: &'m mut Note, target_note: &'m Note) -> Self {
         let regex_matches: Vec<RegexMatch> = build_link_finder(target_note)
             .captures_iter(note.get_sanitized_content())
             .filter_map(|capture_result| {
@@ -33,7 +34,7 @@ impl<'m> LinkFinderMatch<'m> {
             )
             .collect();
 
-        LinkFinderMatch {
+        LinkFinderMatchingResult {
             regex_matches,
             note,
             target_note,
@@ -41,7 +42,7 @@ impl<'m> LinkFinderMatch<'m> {
     }
 }
 
-impl<'m> Into<Vec<LinkMatch>> for LinkFinderMatch<'m> {
+impl<'m> Into<Vec<LinkMatch>> for LinkFinderMatchingResult<'m> {
     fn into(self) -> Vec<LinkMatch> {
         let note: &Note = self.note;
         let target_note: &Note = self.target_note;
@@ -55,6 +56,7 @@ impl<'m> Into<Vec<LinkMatch>> for LinkFinderMatch<'m> {
     }
 }
 
+/// Constructs a Regex string that matches any of the provided strings.
 fn concat_as_regex_string(strings: &[String]) -> String {
     strings.iter()
         .enumerate()
@@ -64,18 +66,20 @@ fn concat_as_regex_string(strings: &[String]) -> String {
         .add(")")
 }
 
-fn build_link_finder(note: &Note) -> LinkFinder {
-    let mut escaped_search_strings: Vec<String> = note.aliases_vec().iter().map(|alias| escape(alias).to_string()).collect();
-    let escaped_title = escape(&*note.title()).to_string();
+/// Constructs a LinkFinder for the provided target note.
+fn build_link_finder(target_note: &Note) -> LinkFinder {
+    let mut escaped_search_strings: Vec<String> = target_note.aliases_vec().iter().map(|alias| escape(alias).to_string()).collect();
+    let escaped_title = escape(&*target_note.title()).to_string();
     escaped_search_strings.push(escaped_title);
 
     let regex_string = concat_as_regex_string(&escaped_search_strings);
     Regex::new(&*format!(r"\b{}\b", regex_string)).unwrap()
 }
 
+/// Finds all link candidates in the provided note.
 fn find_link_matches(target_note: &Note, note_to_check: &mut Note) -> Option<Vec<LinkMatch>> {
     if !&target_note.title().eq(&note_to_check.title()) {
-        let link_finder_match = LinkFinderMatch::new(
+        let link_finder_match = LinkFinderMatchingResult::find_matches(
             note_to_check,
             target_note,
         );
@@ -85,6 +89,9 @@ fn find_link_matches(target_note: &Note, note_to_check: &mut Note) -> Option<Vec
     None
 }
 
+/// Merges the provided link match into the existing list of link matches.
+/// If the link match is already in the list, it is merged with the existing link match.
+/// If the link match is not in the list, it is added to the list.
 fn merge_link_match_into_link_matches(mut merged_link_matches: Vec<LinkMatch>, link_match: LinkMatch) -> Vec<LinkMatch> {
     let index = merged_link_matches.iter()
         .position(|m: &LinkMatch| m.position().is_equal_to(&link_match.position()));
@@ -99,6 +106,7 @@ fn merge_link_match_into_link_matches(mut merged_link_matches: Vec<LinkMatch>, l
     merged_link_matches
 }
 
+/// Complete function that finds all link candidates in the provided note.
 pub fn find_links(note_to_check: &mut Note, target_note_candidates: &[Note]) -> Option<LinkFinderResult> {
     let link_matches: Vec<LinkMatch> =
         target_note_candidates

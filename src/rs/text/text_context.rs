@@ -5,6 +5,7 @@ use crate::rs::text::text_context_tail::TextContextTail;
 use crate::rs::util::range::Range;
 use serde::{Serialize, Deserialize};
 
+/// The text before and after a match as well as the match itself.
 #[wasm_bindgen]
 #[derive(Clone, Serialize, Deserialize)]
 pub struct TextContext {

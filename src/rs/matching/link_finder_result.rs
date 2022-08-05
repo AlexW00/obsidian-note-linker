@@ -5,13 +5,14 @@ use wasm_bindgen::prelude::*;
 use crate::rs::matching::link_match::{link_match_vec_into_array, LinkMatch};
 use crate::rs::note::note::Note;
 
+/// The result of the Link Finder searching a single Note for links.
 #[wasm_bindgen]
 #[derive(Serialize, Deserialize)]
 pub struct LinkFinderResult {
-    note: Note,
+    note: Note, // the note that was searched
 
     #[serde(rename = "linkMatches")]
-    _link_matches: Vec<LinkMatch>,
+    _link_matches: Vec<LinkMatch>, // the link matches found in the note
 }
 
 #[wasm_bindgen]

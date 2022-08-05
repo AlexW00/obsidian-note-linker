@@ -5,6 +5,7 @@ use fancy_regex::Captures;
 use crate::rs::Errors::cast_error::CastError;
 use crate::rs::util::range::Range;
 
+/// Utility struct that represents a single match of a regular expression in a note.
 pub struct RegexMatch {
     pub position: Range,
     pub matched_text: String,
