@@ -8,11 +8,13 @@ import {Remote} from "comlink";
 export default class MainModal extends Modal {
 
     private root: Root;
-    private wasmComlinkWorkerInstance: any;
+    private readonly wasmComlinkWorkerInstance: any;
+    private  readonly _onClose: () => void;
 
-    constructor(app: App, instance: any) {
+    constructor(app: App, instance: any, _onClose: () => void) {
         super(app);
         this.wasmComlinkWorkerInstance = instance;
+        this._onClose = _onClose;
     }
 
 
@@ -27,4 +29,10 @@ export default class MainModal extends Modal {
             </AppContext.Provider>
         )
     }
+
+    onClose() {
+        super.onClose();
+        this._onClose();
+    }
+
 }

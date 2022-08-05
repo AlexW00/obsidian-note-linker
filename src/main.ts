@@ -15,20 +15,20 @@ export default class RustPlugin extends Plugin {
         await wasm.default(Promise.resolve(buffer));
         init_panic_hook()
 
-        // init the secondary wasm thread (for searching)
-        const WasmComlinkWorker = Comlink.wrap<typeof Wcw>(new Wcw())
-        let wasmWorkerInstance: Comlink.Remote<typeof WasmComlinkWorker>;
-
         const ribbonIconEl = this.addRibbonIcon('link', 'Note Linker', async () => {
+            // init the secondary wasm thread (for searching)
+            const wcw = new Wcw();
+            const WasmComlinkWorker = Comlink.wrap<typeof Wcw>(wcw)
+            let wasmWorkerInstance: Comlink.Remote<typeof WasmComlinkWorker>;
+
             wasmWorkerInstance = await new WasmComlinkWorker();
             await wasmWorkerInstance.init();
 
-            const linkMatchSelectionModal = new MainModal(app, wasmWorkerInstance);
+            const linkMatchSelectionModal = new MainModal(app, wasmWorkerInstance, () => {
+                wcw.terminate();
+            });
             linkMatchSelectionModal.open();
         });
-        ribbonIconEl.onclose = () => {
-            wasmWorkerInstance = null;
-        }
     }
 
 }
