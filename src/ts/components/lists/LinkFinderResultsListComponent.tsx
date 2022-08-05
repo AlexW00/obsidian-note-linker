@@ -13,11 +13,11 @@ export const LinkFinderResultsList = ({linkFinderResults, onClickReplaceButton}:
         <div className="note-matching-result-list">
             <h2>Note Link Matches</h2>
             <ul className={"hide-list-styling"}>
-                {linkFinderResults.map((noteLinkMatchResult: LinkFinderResult) =>
-                    <LinkFinderResultContext.Provider value={noteLinkMatchResult}
-                                                        key={`${noteLinkMatchResult.note.path}`}>
+                {linkFinderResults.map((linkFinderResult: LinkFinderResult) =>
+                    <LinkFinderResultContext.Provider value={linkFinderResult}
+                                                        key={`${linkFinderResult.note.path}`}>
                         <LinkMatchesListComponent
-                            noteLinkMatchResult={noteLinkMatchResult}
+                            linkFinderResult={linkFinderResult}
                         />
                     </LinkFinderResultContext.Provider>
                 )}

@@ -56,8 +56,8 @@ export const MatcherComponent = () => {
         return wasmWorkerInstance.find(noteStrings, Comlink.proxy(onLinkMatchingProgress));
     }
     const showMatchSelection = (serializedNoteLinkMatchResults: Array<string>) => {
-        const noteLinkMatchResults: Array<LinkFinderResult> = serializedNoteLinkMatchResults.map((noteLinkMatchResult: string) => LinkFinderResult.fromJSON(noteLinkMatchResult));
-        setLinkFinderResults(noteLinkMatchResults);
+        const linkFinderResults: Array<LinkFinderResult> = serializedNoteLinkMatchResults.map((linkFinderResult: string) => LinkFinderResult.fromJSON(linkFinderResult));
+        setLinkFinderResults(linkFinderResults);
         setMatchingState(MatchingState.Selecting);
     }
 

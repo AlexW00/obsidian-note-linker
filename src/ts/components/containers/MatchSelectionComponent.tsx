@@ -32,9 +32,9 @@ export const MatchSelectionComponent = ({
         return noteFiles
     });
 
-    const initNoteChangeOperations = (noteLinkMatchResults: Array<LinkFinderResult>) => {
+    const initNoteChangeOperations = (linkFinderResults: Array<LinkFinderResult>) => {
         const operations: Map<string, NoteChangeOperation> = new Map;
-        noteLinkMatchResults.forEach((result: LinkFinderResult) => {
+        linkFinderResults.forEach((result: LinkFinderResult) => {
             const path = result.note.path;
             const content = result.note.content;
             const replacements: Array<Replacement> = [];

@@ -18,6 +18,7 @@ export default class MainModal extends Modal {
 
     onOpen() {
         this.root = createRoot(this.contentEl);
+        // add class to root
         this.root.render(
             <AppContext.Provider value={this.app}>
                 <WasmWorkerInstanceContext.Provider value={this.wasmComlinkWorkerInstance}>

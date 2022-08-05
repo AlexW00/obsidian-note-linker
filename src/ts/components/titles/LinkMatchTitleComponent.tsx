@@ -1,12 +1,12 @@
 import * as React from "react";
 import {Range} from "../../../../pkg";
 
-interface noteLinkMatchResultLinkMatchTitleProps {
+interface linkFinderResultLinkMatchTitleProps {
     matchedText: string,
     position: Range
 }
 
-export const LinkMatchTitleComponent = ({matchedText, position}: noteLinkMatchResultLinkMatchTitleProps) => {
+export const LinkMatchTitleComponent = ({matchedText, position}: linkFinderResultLinkMatchTitleProps) => {
     return (
         <div className={"link-match-title"}>
             <h4>

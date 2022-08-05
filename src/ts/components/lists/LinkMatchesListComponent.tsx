@@ -4,18 +4,18 @@ import {LinkTargetCandidatesListComponent} from "./LinkTargetCandidatesListCompo
 import {LinkFinderResultTitleComponent} from "../titles/LinkFinderResultTitleComponent";
 import {LinkMatchContext} from "../../context";
 
-interface noteLinkMatchResultComponentProps {
-    noteLinkMatchResult: LinkFinderResult,
+interface linkFinderResultComponentProps {
+    linkFinderResult: LinkFinderResult,
 }
 
-export const LinkMatchesListComponent = ({noteLinkMatchResult}: noteLinkMatchResultComponentProps) => {
+export const LinkMatchesListComponent = ({linkFinderResult}: linkFinderResultComponentProps) => {
 
     return (
         <li className={"link-matches-list"}>
-            <LinkFinderResultTitleComponent noteTitle={noteLinkMatchResult.note.title}
-                                              notePath={noteLinkMatchResult.note.path}/>
+            <LinkFinderResultTitleComponent noteTitle={linkFinderResult.note.title}
+                                              notePath={linkFinderResult.note.path}/>
             <ul className={"hide-list-styling"}>
-                {noteLinkMatchResult.linkMatches.map((link_match: LinkMatch) =>
+                {linkFinderResult.linkMatches.map((link_match: LinkMatch) =>
                     <LinkMatchContext.Provider value={link_match}
                                                key={`${link_match.position.start}-${link_match.position.end}`}>
                         <LinkTargetCandidatesListComponent/>

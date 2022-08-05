@@ -1,5 +1,4 @@
 :root {
-
   --super-small-margin: 5px;
   --small-margin: 10px;
   --default-margin: 15px;
@@ -14,16 +13,19 @@
   --small-font-size: 10px;
   --enlarged-default-font-size: 15px;
 
-  --default-description-text-color: #545454;
-  --light-description-text-color: darkgray;
-
-  --card-background-color: white;
-
   --warning-background-color: rgb(255, 165, 0, 0.5);
   --success-background-color: rgb(50, 205, 50, 0.5);
   --info-background-color: rgb(100, 149, 237, 0.5);
 }
 
+/* General */
+
+button {
+  font-size: var(--enlarged-default-font-size);
+  border-radius: var(--default-round-borders);
+}
+
+/* Start component */
 
 .start-component {
   display: flex;
@@ -40,10 +42,8 @@
 
 
 .start-component > button {
-  font-size: var(--enlarged-default-font-size);
   align-self: center;
 }
-
 
 /* Note Matching Results List */
 
@@ -54,7 +54,6 @@
 
 .note-matching-result-list > button {
   margin-top: var(--default-margin);
-  font-size: var(--enlarged-default-font-size);
   align-self: center;
   width: 100%;
 }
@@ -63,7 +62,9 @@
 /* Link Matches List Component */
 
 .link-matches-list {
-  background: var(--card-background-color);
+  /*add border 2px*/
+  border: 1px solid var(--background-modifier-border);
+  background: var(--background-primary);
   border-radius: var(--default-round-borders);
   margin-top: var(--default-margin);
   padding: var(--small-padding);
@@ -130,7 +131,7 @@
 
 .replacement-context {
   font-size: var(--enlarged-default-font-size);
-  color: var(--default-description-text-color);
+  color: var(--text-faint);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -140,6 +141,11 @@
   padding-left: var(--small-padding);
   padding-right: var(--small-padding);
 }
+
+#replacement-context > .link-preview {
+  color: var(--text-muted) !important;
+ }
+
 /* Other styling */
 
 .hide-list-styling {
@@ -150,7 +156,7 @@
 
 .light-description {
   font-size: var(--small-font-size);
-  color: var(--light-description-text-color);
+  color: var(--text-muted);
   font-style: italic;
 }
 

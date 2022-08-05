@@ -101,7 +101,7 @@ export const ReplacementItemComponent = () => {
     return (
         <li className={"replacement-item"}>
             <input
-                className={"checkbox"}
+                className={"task-list-item-checkbox"}
                 type={"checkbox"}
                 checked={isSelected()}
                 onChange={() => {
