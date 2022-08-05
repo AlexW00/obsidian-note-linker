@@ -55,6 +55,7 @@ export const ReplacementItemComponent = () => {
         );
 
 
+        console.log("setting state")
         if (doAdd) addReplacement(replacement)
         else subtractReplacement()
     }

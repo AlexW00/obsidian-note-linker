@@ -1,12 +1,12 @@
 import * as React from "react";
-import {PreferrableItem} from "../../../../pkg";
+import {PreferrableItem, Replacement} from "../../../../pkg";
 import {ReplacementItemComponent} from "../list-items/ReplacementItemComponent";
 import {ReplacementCandidateContext} from "../../context";
 import {useLinkTargetCandidate} from "../../hooks";
+import {memo} from "react";
 
 
 export const ReplacementsSelectionComponent = () => {
-
     const linkTargetCandidate = useLinkTargetCandidate();
     return (
         <li className={"replacements-selection"}>
