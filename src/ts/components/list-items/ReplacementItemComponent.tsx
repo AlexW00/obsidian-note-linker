@@ -104,6 +104,7 @@ export const ReplacementItemComponent = () => {
                 className={"task-list-item-checkbox"}
                 type={"checkbox"}
                 checked={isPreferred()}
+                onChange={() => {}}
             />
             <span className={"matched-text"}>
                 "{replacementCandidate.content}"

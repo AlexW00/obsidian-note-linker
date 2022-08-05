@@ -1,6 +1,6 @@
 node_modules
 .rts2_cache_cjs
-main.*
+main.js
 *.log
 /target
 package-lock.json
