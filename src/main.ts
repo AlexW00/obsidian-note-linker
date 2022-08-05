@@ -15,7 +15,7 @@ export default class RustPlugin extends Plugin {
         await wasm.default(Promise.resolve(buffer));
         init_panic_hook()
 
-        const ribbonIconEl = this.addRibbonIcon('link', 'Note Linker', async () => {
+        this.addRibbonIcon('link', 'Note Linker', async () => {
             // init the secondary wasm thread (for searching)
             const wcw = new Wcw();
             const WasmComlinkWorker = Comlink.wrap<typeof Wcw>(wcw)

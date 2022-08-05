@@ -45,6 +45,22 @@ button {
   align-self: center;
 }
 
+/* Progress bar */
+
+.progress-bar-component {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--double-default-margin);
+}
+
+.progress-bar-component > .ascii-art-progress-bar {
+  border: 1px solid var(--text-normal);
+  padding: var(--default-padding);
+  font-size: var(--enlarged-default-font-size);
+}
+
 /* Note Matching Results List */
 
 .note-matching-result-list {

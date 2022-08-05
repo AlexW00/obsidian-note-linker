@@ -3,7 +3,6 @@ import React from "react";
 import {createRoot, Root} from 'react-dom/client';
 import {AppContext, WasmWorkerInstanceContext} from "./context";
 import {MainComponent} from "./components/containers/MainComponent";
-import {Remote} from "comlink";
 
 export default class MainModal extends Modal {
 

@@ -24,11 +24,12 @@ export const MatcherComponent = () => {
     const [matchingState, setMatchingState] = useState<MatchingState>(MatchingState.Scanning);
     const [numberOfLinkedNotes, setNumberOfLinkedNotes] = useState<number>(0);
     const [linkFinderResults, setLinkFinderResults] = useState<Array<LinkFinderResult>>([]);
-    const [linkMatchingProgress] = useState<Progress>(new Progress(JsNote.getNumberOfNotes(vault)));
+    const [linkMatchingProgress, setLinkMatchingProgress] = useState<Progress>(new Progress(JsNote.getNumberOfNotes(vault)));
 
-    const onLinkMatchingProgress = (noteScannedEvent: NoteScannedEvent) => {
-        console.log("note scan event")
-        linkMatchingProgress.increment();
+    const onLinkMatchingProgress = (serializedNoteScannedEvent: string) => {
+            const noteScannedEvent: NoteScannedEvent = NoteScannedEvent.fromJSON(serializedNoteScannedEvent);
+            const newLinkMatchingProgress = new Progress(linkMatchingProgress.max, noteScannedEvent);
+            setLinkMatchingProgress(newLinkMatchingProgress);
     }
 
     const onStartReplacing = () => {

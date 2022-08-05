@@ -6,10 +6,16 @@ interface LinkMatcherProgressComponentProps {
 }
 
 export const ProgressComponent = ({progress}: LinkMatcherProgressComponentProps) => {
-    // TODO: Better progress
     return (
-        <span>
-            Progress: {progress.current} of {progress.max}
-        </span>
+        <div className={"progress-bar-component"}>
+            <h2>🔎 Scanning notes for links...</h2>
+            <span className={"ascii-art-progress-bar"}>
+                {progress.asAsciiArt()}
+            </span>
+            <span className={"light-description"}>
+                {progress.asDescriptionText()}
+            </span>
+        </div>
+
     );
 };
