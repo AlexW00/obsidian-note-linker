@@ -78,9 +78,6 @@ export const MatchSelectionComponent = ({
             <LinkFinderResultsList linkFinderResults={linkFinderResults}
                                      onClickReplaceButton={() => onClickReplaceButton(noteChangeOperations, noteFiles)}
             />
-            <div>
-                {noteChangeOperations.size}
-            </div>
         </SelectedNoteChangeOperationsContext.Provider>
     </NoteFilesContext.Provider>)
 }

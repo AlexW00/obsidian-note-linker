@@ -11,7 +11,7 @@ interface LinkFinderResultsListProps {
 export const LinkFinderResultsList = ({linkFinderResults, onClickReplaceButton}: LinkFinderResultsListProps) => {
     if (linkFinderResults.length !== 0) return (
         <div className="note-matching-result-list">
-            <h2>Note Link Matches</h2>
+            <h1>Note Link Matches</h1>
             <ul className={"hide-list-styling"}>
                 {linkFinderResults.map((linkFinderResult: LinkFinderResult) =>
                     <LinkFinderResultContext.Provider value={linkFinderResult}

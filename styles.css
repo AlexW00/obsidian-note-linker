@@ -52,6 +52,11 @@ button {
   flex-direction: column;
 }
 
+.note-matching-result-list > h1 {
+  border-bottom: 1px solid var(--background-modifier-border);
+  align-self: center;
+}
+
 .note-matching-result-list > button {
   margin-top: var(--default-margin);
   align-self: center;

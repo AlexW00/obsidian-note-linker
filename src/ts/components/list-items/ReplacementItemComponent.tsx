@@ -99,14 +99,11 @@ export const ReplacementItemComponent = () => {
     }
 
     return (
-        <li className={"replacement-item"}>
+        <li className={"replacement-item"} onClick={() => handleSelect(selectionItem, linkTargetCandidate, !isSelected(), linkMatch)}>
             <input
                 className={"task-list-item-checkbox"}
                 type={"checkbox"}
                 checked={isSelected()}
-                onChange={() => {
-                    handleSelect(selectionItem, linkTargetCandidate, !isSelected(), linkMatch)
-                }}
             />
             <span className={"matched-text"}>
                 "{selectionItem.content}"
