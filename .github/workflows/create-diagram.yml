@@ -12,6 +12,6 @@ jobs:
       - name: Update diagram
         uses: githubocto/repo-visualizer@0.8.2
         with:
-          token: ${{ secrets.ACCESS_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           output_file: "images/diagram.svg"
           excluded_paths: "dist,node_modules,pkg,target"
