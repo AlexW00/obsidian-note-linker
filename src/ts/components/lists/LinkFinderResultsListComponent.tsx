@@ -3,6 +3,7 @@ import {LinkFinderResult, Note, NoteChangeOperation} from "../../../../pkg";
 import {LinkMatchesListComponent} from "./LinkMatchesListComponent";
 import {LinkFinderResultContext} from "../../context";
 import {useSelectedNoteChangeOperations} from "../../hooks";
+import {useCallback} from "react";
 
 interface LinkFinderResultsListProps {
     linkFinderResults: Array<LinkFinderResult>,
@@ -19,6 +20,14 @@ export const LinkFinderResultsList = ({linkFinderResults, onClickReplaceButton}:
     const findReplacements = (note: Note) => {
         return findNoteChangeOperation(note)?.replacements ?? [];
     };
+
+    const totalReplacements = useCallback(() => {
+        let total = 0;
+        noteChangeOperations.forEach((noteChangeOperation: NoteChangeOperation) => {
+            total += noteChangeOperation.replacements.length;
+        })
+        return total;
+    }, [noteChangeOperations]);
 
     if (linkFinderResults.length !== 0) return (
         <div className="note-matching-result-list">
@@ -37,7 +46,7 @@ export const LinkFinderResultsList = ({linkFinderResults, onClickReplaceButton}:
                     }
                 )}
             </ul>
-            <button onClick={onClickReplaceButton}>🔗 Link selected</button>
+            <button onClick={onClickReplaceButton}>🔗 Link {totalReplacements()} notes</button>
         </div>
     );
     else return (
