@@ -10,6 +10,10 @@ The plugin checks each note in the vault for references to other note names (or 
 If a reference is found, it gets added to a list. This list is then displayed to the user, who can select which notes to
 link.
 
+#### Disclaimer:
+
+The current version has only been tested by myself, on a vault with ~1000 notes. No bugs are currently known. However, I advise you to backup your vault before applying any changes using this plugin, since the plugin has not been tested by enough people. 
+
 ### ⬇️ Installation
 
 This plugin is not in the [official community plugin list](https://obsidian.md/plugins) yet, so it can't be installed via the
