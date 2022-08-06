@@ -1,9 +1,8 @@
 import * as React from "react";
-import {LinkFinderResult, Note, NoteChangeOperation, Range, Replacement} from "../../../../pkg";
+import {LinkFinderResult, Note, NoteChangeOperation} from "../../../../pkg";
 import {LinkMatchesListComponent} from "./LinkMatchesListComponent";
 import {LinkFinderResultContext} from "../../context";
 import {useSelectedNoteChangeOperations} from "../../hooks";
-import {useMemo} from "react";
 
 interface LinkFinderResultsListProps {
     linkFinderResults: Array<LinkFinderResult>,
@@ -26,12 +25,11 @@ export const LinkFinderResultsList = ({linkFinderResults, onClickReplaceButton}:
             <h1>Note Link Matches</h1>
             <ul className={"hide-list-styling"}>
                 {linkFinderResults.map((linkFinderResult: LinkFinderResult) => {
-                    const selectedReplacements = findReplacements(linkFinderResult.note);
+                        const selectedReplacements = findReplacements(linkFinderResult.note);
                         return (<LinkFinderResultContext.Provider value={linkFinderResult}
-                                                          key={`${linkFinderResult.note.path}`}>
+                                                                  key={`${linkFinderResult.note.path}`}>
                             <LinkMatchesListComponent
                                 selectedReplacements={selectedReplacements}
-                                linkFinderResult={linkFinderResult}
                                 noteChangeOperations={noteChangeOperations}
                                 setNoteChangeOperations={setNoteChangeOperations}
                             />

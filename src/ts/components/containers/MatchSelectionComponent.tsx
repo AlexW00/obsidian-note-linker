@@ -12,6 +12,7 @@ import {
     PreferrableItem
 } from "../../../../pkg";
 import {useApp} from "../../hooks";
+import {LoadingComponent} from "../other/LoadingComponent";
 
 interface MatchSelectionComponentProps {
     linkFinderResults: Array<LinkFinderResult>;
@@ -77,7 +78,7 @@ export const MatchSelectionComponent = ({
         <SelectedNoteChangeOperationsContext.Provider value={{noteChangeOperations, setNoteChangeOperations}}>
             {noteChangeOperations !== undefined ? <LinkFinderResultsList linkFinderResults={linkFinderResults}
                                     onClickReplaceButton={() => onClickReplaceButton(noteChangeOperations, noteFiles)}
-            /> : <div/>}
+            /> : <LoadingComponent loadingText={"Building results list..."}/>}
         </SelectedNoteChangeOperationsContext.Provider>
     </NoteFilesContext.Provider>)
 }

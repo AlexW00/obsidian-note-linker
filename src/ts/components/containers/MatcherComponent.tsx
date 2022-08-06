@@ -8,6 +8,7 @@ import {ProgressComponent} from "../other/ProgressComponent";
 import {MatchSelectionComponent} from "./MatchSelectionComponent";
 import {TFile} from "obsidian";
 import {useApp, useWasmWorkerInstance} from "../../hooks";
+import {LoadingComponent} from "../other/LoadingComponent";
 
 enum MatchingState {
     Scanning,
@@ -75,7 +76,8 @@ export const MatcherComponent = () => {
     }, [wasmWorkerInstance]);
 
 
-    if (matchingState == MatchingState.Scanning) return <ProgressComponent progress={linkMatchingProgress}/>
+    //if (matchingState == MatchingState.Scanning) return <ProgressComponent progress={linkMatchingProgress}/>
+    if (matchingState == MatchingState.Scanning) return <LoadingComponent loadingText={"Building results list..."}/>
     else if (matchingState == MatchingState.Selecting) return <MatchSelectionComponent
         linkFinderResults={linkFinderResults}
         onClickReplaceButton={handleReplaceButtonClicked}

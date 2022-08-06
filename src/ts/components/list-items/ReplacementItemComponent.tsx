@@ -1,18 +1,20 @@
 import * as React from "react";
-import {useCallback, useContext} from "react";
+import {useCallback} from "react";
 import {LinkMatch, LinkTargetCandidate, PreferrableItem, Replacement} from "../../../../pkg";
 import {generateMockupMdLink} from "../../util";
-import {
-    useApp,
-    useLinkFinderResult,
-    useLinkMatch,
-    useLinkTargetCandidate,
-    useNoteFiles,
-} from "../../hooks";
+import {useApp, useLinkFinderResult, useLinkMatch, useLinkTargetCandidate, useNoteFiles,} from "../../hooks";
 
-interface ReplacementItemComponentProps {selectedReplacement: Replacement, setSelectedReplacement:  React.Dispatch<React.SetStateAction<Replacement>>, replacementCandidate: PreferrableItem}
+interface ReplacementItemComponentProps {
+    selectedReplacement: Replacement,
+    setSelectedReplacement: React.Dispatch<React.SetStateAction<Replacement>>,
+    replacementCandidate: PreferrableItem
+}
 
-export const ReplacementItemComponent = React.memo(({selectedReplacement, setSelectedReplacement, replacementCandidate}: ReplacementItemComponentProps) => {
+export const ReplacementItemComponent = React.memo(({
+                                                        selectedReplacement,
+                                                        setSelectedReplacement,
+                                                        replacementCandidate
+                                                    }: ReplacementItemComponentProps) => {
     const {fileManager} = useApp();
     const parentNote = useLinkFinderResult().note;
     const linkMatch = useLinkMatch();
@@ -51,19 +53,19 @@ export const ReplacementItemComponent = React.memo(({selectedReplacement, setSel
             candidate.path
         );
 
-
-        console.log("setting state")
         if (doAdd) addReplacement(replacement)
         else subtractReplacement()
     }
 
     return (
-        <li className={"replacement-item"} onClick={() => handleSelect(replacementCandidate, linkTargetCandidate, !isSelected(), linkMatch)}>
+        <li className={"replacement-item"}
+            onClick={() => handleSelect(replacementCandidate, linkTargetCandidate, !isSelected(), linkMatch)}>
             <input
                 className={"task-list-item-checkbox"}
                 type={"checkbox"}
                 checked={isSelected()}
-                onChange={() => {}}
+                onChange={() => {
+                }}
             />
             <span className={"matched-text"}>
                 "{replacementCandidate.content}"
@@ -82,6 +84,6 @@ export const ReplacementItemComponent = React.memo(({selectedReplacement, setSel
             </div>
         </li>
     );
-}, (prevProps: ReplacementItemComponentProps, nextProps: ReplacementItemComponentProps) => {
-    return prevProps.selectedReplacement == nextProps.selectedReplacement
-});
+}, (prevProps: ReplacementItemComponentProps, nextProps: ReplacementItemComponentProps) =>
+    prevProps.selectedReplacement == nextProps.selectedReplacement
+);
