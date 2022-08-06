@@ -1,10 +1,22 @@
-# Obsidian Plugin: Rust Boilerplate
-Boilerplate needed to write obsidian plugins in rust!
+## Obsidian Note Linker
 
-# Installation
-1. Get cargo. I recommend using [rustup](https://rustup.rs/)
-2. Install wasm-pack. `cargo install wasm-pack`
-3. Build main.js. `yarn build`
+A plugin to automatically create new links between notes in Obsidian.
 
-# Commands
-- __Example__: Sums two numbers in rust then sends a notification with the result
+!usage-gif
+
+### 🤨 How does it work?
+
+The plugin checks each note in the vault for references to other note names (or their aliases). 
+If a reference is found, it gets added to a list. This list is then displayed to the user, who can select which notes to link.
+
+### ⬇️ Installation
+
+### 👨‍💻 Development
+
+#### Roadmap
+
+#### Code structure
+
+### 📃 Credits
+
+Created based on the Obsidian Rust Plugin template by [trashhalo](https://github.com/trashhalo/obsidian-rust-plugin)
