@@ -1,5 +1,5 @@
 import {Plugin} from "obsidian";
-import rustPlugin from "../pkg/obsidian_rust_plugin_bg.wasm";
+import rustPlugin from "../pkg/obisidian_note_linker_bg.wasm";
 import * as wasm from "../pkg";
 import MainModal from "./ts/MainModal";
 import {init_panic_hook} from "../pkg/";

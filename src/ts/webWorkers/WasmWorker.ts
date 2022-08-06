@@ -1,5 +1,5 @@
 import * as Comlink from "comlink";
-import rustPlugin from "../../../pkg/obsidian_rust_plugin_bg.wasm";
+import rustPlugin from "../../../pkg/obisidian_note_linker_bg.wasm";
 import * as wasm from "../../../pkg";
 import {find, init_panic_hook, Note, LinkFinderResult} from "../../../pkg";
 

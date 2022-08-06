@@ -1,9 +1,9 @@
 {
-  "id": "rust-plugin",
-  "name": "Rust Plugin",
+  "id": "obisidian-note-linker",
+  "name": "Note Linker",
   "version": "0.1.0",
-  "description": "Prototype plugin written in rust",
-  "author": "Stephen Solka",
-  "authorUrl": "https://github.com/trashhalo",
-  "isDesktopOnly": false
+  "description": "Automatically find and link notes in Obsidian",
+  "author": "Alexander Weichart",
+  "authorUrl": "https://github.com/AlexW00",
+  "isDesktopOnly": true
 }

@@ -1,7 +1,7 @@
 {
-  "name": "obsidian-extract-url",
+  "name": "obisidian-note-linker",
   "version": "0.1.0",
-  "description": "Extract url converting content into markdown",
+  "description": "Automatically find and link notes in Obsidian",
   "main": "main.js",
   "scripts": {
     "build": "wasm-pack build --target web && rollup --config rollup.config.js"
