@@ -6,7 +6,7 @@ A plugin to automatically create new links between notes in Obsidian.
 
 ### 🤨 How does it work?
 
-The plugin checks each note in the vault for references to other note names (or their aliases). 
+The plugin checks each note in the vault for references to other note names (or their aliases).
 If a reference is found, it gets added to a list. This list is then displayed to the user, who can select which notes to link.
 
 ### ⬇️ Installation
@@ -16,6 +16,13 @@ If a reference is found, it gets added to a list. This list is then displayed to
 #### Roadmap
 
 #### Code structure
+<details>
+  <summary>
+  Code diagram
+  </summary>
+  <img src="images/diagram.svg" />
+</details>
+
 
 ### 📃 Credits
 

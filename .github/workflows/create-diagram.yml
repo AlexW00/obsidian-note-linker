@@ -14,4 +14,5 @@ jobs:
         with:
           token: ${{ secrets.OBSIDIAN_NOTE_LINKER_TOKEN }}
           output_file: "images/diagram.svg"
-          excluded_paths: "dist,node_modules,pkg,target"
+          root_path: "src/"
+          file_colors: '{"ts": "blue","rs": "orange"}'
