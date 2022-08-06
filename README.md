@@ -21,7 +21,7 @@ built-in plugin manager. However, there are other ways to install it:
                 Install the <a href="https://obsidian.md/plugins?id=plugins-galore">Plugin Galore</a> Obsidian plugin, which allows loading unofficial plugins.
             </li>
             <li>
-            Follow the instructions on the <a href="https://github.com/plugins-galore/obsidian-plugins-galore">Plugins Galore GitHub</a> to install Note Linker.
+            Follow the instructions on the <a href="https://github.com/plugins-galore/obsidian-plugins-galore#adding-a-plugin">Plugins Galore GitHub</a> to install Note Linker.
             </li>
         </ol>
     </details>
@@ -52,37 +52,9 @@ built-in plugin manager. However, there are other ways to install it:
 
 ### 👨‍💻 Development
 
-The plugin is written in Rust (compiled to WebAssembly) and TypeScript.
-
-#### Project structure
-
-##### Rust
-
-The Rust part of the project handles the business logic such as scanning notes via regex or applying changes to notes.
-It is written to be independent of Obsidian, meaning the plugin could be ported over to other note-taking apps with minimal changes.
-
-##### Typescript
-
-The TypeScript part of the project is used create the UI using React. Also, it serves as an accesses point to the Obsidian plugin API to retrieve notes, metadata, etc.
-
-#### Contributing
-
-Contributions are welcome, but please make sure they are understandable and no bloat
-
-#### Roadmap
-
-#### Near future
-
-- [ ] become an official community plugin
-- [ ] await user feedback on the reliability of the plugin to move out of beta
-
-#### Future (ideas)
-
-- [ ] caching of scanned notes to improve performance on re scans
-- [ ] scanning options (e.g. ignore notes, custom regex, etc.)
-- [ ] multithreading (depends on how WASM develops over time)
-- [ ] NLP based approach (e.g. "link to notes with similar content")
+The plugin is written in Rust (compiled to WebAssembly) and TypeScript. 
+For more information please, check the [dev docs](docs/dev-docs.md).
 
 ### 📃 Credits
 
-Created based on the Obsidian Rust Plugin template by [trashhalo](https://github.com/trashhalo/obsidian-rust-plugin)
+Created based on the Obsidian Rust Plugin template by [trashhalo](https://github.com/trashhalo/obsidian-rust-plugin).
