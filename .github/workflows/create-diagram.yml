@@ -7,7 +7,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@master
       - name: Update diagram
-        uses: githubocto/repo-visualizer@0.7.1
+        uses: githubocto/repo-visualizer@0.8.2
         with:
-          output_file: "diagram.svg"
+          token: ${{ secrets.ACCESS_TOKEN }}
+          output_file: "images/diagram.svg"
           excluded_paths: "dist,node_modules,pkg,target"
