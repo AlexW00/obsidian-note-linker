@@ -76,8 +76,7 @@ export const MatcherComponent = () => {
     }, [wasmWorkerInstance]);
 
 
-    //if (matchingState == MatchingState.Scanning) return <ProgressComponent progress={linkMatchingProgress}/>
-    if (matchingState == MatchingState.Scanning) return <LoadingComponent loadingText={"Building results list..."}/>
+    if (matchingState == MatchingState.Scanning) return <ProgressComponent progress={linkMatchingProgress}/>
     else if (matchingState == MatchingState.Selecting) return <MatchSelectionComponent
         linkFinderResults={linkFinderResults}
         onClickReplaceButton={handleReplaceButtonClicked}

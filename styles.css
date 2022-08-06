@@ -25,6 +25,16 @@ button {
   border-radius: var(--default-round-borders);
 }
 
+.loading-component {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.multiline {
+  white-space: pre-wrap;
+}
+
 /* Start component */
 
 .start-component {

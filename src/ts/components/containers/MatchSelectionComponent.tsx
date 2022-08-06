@@ -78,7 +78,7 @@ export const MatchSelectionComponent = ({
         <SelectedNoteChangeOperationsContext.Provider value={{noteChangeOperations, setNoteChangeOperations}}>
             {noteChangeOperations !== undefined ? <LinkFinderResultsList linkFinderResults={linkFinderResults}
                                     onClickReplaceButton={() => onClickReplaceButton(noteChangeOperations, noteFiles)}
-            /> : <LoadingComponent loadingText={"Building results list..."}/>}
+            /> : <LoadingComponent loadingText={"🏗️ Building results list..."}/>}
         </SelectedNoteChangeOperationsContext.Provider>
     </NoteFilesContext.Provider>)
 }
