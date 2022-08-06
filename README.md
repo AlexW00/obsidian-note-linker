@@ -25,7 +25,6 @@ built-in plugin manager. However, there are other ways to install it:
             </li>
         </ol>
     </details>
-<br>
 <details>
     <summary>Manual installation (easy)</summary>
         <ol>
