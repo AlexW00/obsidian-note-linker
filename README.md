@@ -2,7 +2,7 @@
 
 A plugin to automatically create new links between notes in Obsidian.
 
-!usage-gif
+https://user-images.githubusercontent.com/55558407/183263429-07f6bae6-ddd5-4dd6-82c0-9786adad54ee.mp4
 
 ### 🤨 How does it work?
 
