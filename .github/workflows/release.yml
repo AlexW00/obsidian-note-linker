@@ -50,7 +50,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.OBSIDIAN_NOTE_LINKER_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./${{ env.PLUGIN_NAME }}.zip
+          asset_path: ./${{ env.PLUGIN_NAME }}-${{ steps.get_version.outputs.VERSION }}.zip
           asset_name: ${{ env.PLUGIN_NAME }}-${{ steps.get_version.outputs.VERSION }}.zip
           asset_content_type: application/zip
       - name: Upload main.js
