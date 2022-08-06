@@ -1,43 +1,36 @@
 import * as React from "react";
-import {useMemo} from "react";
-import {LinkTargetCandidate, NoteChangeOperation, Replacement} from "../../../../pkg";
+import {Dispatch, SetStateAction} from "react";
+import {LinkMatch, LinkTargetCandidate, Note, NoteChangeOperation, Replacement} from "../../../../pkg";
 import {LinkMatchTitleComponent} from "../titles/LinkMatchTitleComponent";
 import {ReplacementsSelectionComponent} from "./ReplacementsSelectionComponent";
-import {LinkTargetCandidateContext, ReplacementContext} from "../../context";
-import {useLinkFinderResult, useLinkMatch, useSelectedNoteChangeOperations} from "../../hooks";
+import {LinkTargetCandidateContext} from "../../context";
 
+interface  LinkTargetCandidatesListComponentProps {
+    _replacement: Replacement,
+    noteChangeOperation: NoteChangeOperation,
+    noteChangeOperations: Map<string, NoteChangeOperation>,
+    setNoteChangeOperations: Dispatch<SetStateAction<Map<string, NoteChangeOperation>>>,
+    linkMatch: LinkMatch,
+    parentNote: Note
+}
 
-export const LinkTargetCandidatesListComponent = () => {
-
-    const linkMatch = useLinkMatch();
-    const position = linkMatch.position;
-
-    const parentNote = useLinkFinderResult().note;
-    const {noteChangeOperations, setNoteChangeOperations} = useSelectedNoteChangeOperations();
-
-    const noteChangeOperation: NoteChangeOperation = useMemo(() => noteChangeOperations.get(parentNote.path),
-        [noteChangeOperations]);
-
-    const _replacement: Replacement = useMemo(() => {
-        return noteChangeOperation ? noteChangeOperation.replacements.find((r: Replacement) => r.position.is_equal_to(position)) : undefined
-    }, [noteChangeOperation, position]);
+export const LinkTargetCandidatesListComponent = React.memo(({_replacement, noteChangeOperation, noteChangeOperations, setNoteChangeOperations, linkMatch, parentNote} : LinkTargetCandidatesListComponentProps) => {
 
     const [replacement, setReplacement] = React.useState<Replacement>(_replacement);
-
     const createNoteChangeOperation = () => {
         return new NoteChangeOperation(parentNote.path, parentNote.content, [replacement]);
     }
 
     const removeReplacement = () => {
         console.log("removeReplacement");
-        noteChangeOperation.replacements = noteChangeOperation.replacements.filter((r: Replacement) => !(r.position.is_equal_to(position)));
+        noteChangeOperation.replacements = noteChangeOperation.replacements.filter((r: Replacement) => !(r.position.is_equal_to(linkMatch.position)));
         saveNoteChangeOperation(noteChangeOperation);
     }
 
     const addReplacement = (replacement: Replacement) => {
         console.log("add replacement");
         const _noteChangeOperation = noteChangeOperation !== undefined ? noteChangeOperation : createNoteChangeOperation();
-        _noteChangeOperation.replacements = _noteChangeOperation.replacements.filter((r: Replacement) => !r.position.is_equal_to(position));
+        _noteChangeOperation.replacements = _noteChangeOperation.replacements.filter((r: Replacement) => !r.position.is_equal_to(linkMatch.position));
         _noteChangeOperation.replacements.push(replacement);
         saveNoteChangeOperation(_noteChangeOperation);
     }
@@ -55,20 +48,18 @@ export const LinkTargetCandidatesListComponent = () => {
         else addReplacement(replacement);
     }, [replacement]);
 
-    return useMemo(
-        () =>
-            <div className={"link-target-candidates-list"}>
+    return <div className={"link-target-candidates-list"}>
                 <LinkMatchTitleComponent matchedText={linkMatch.matchedText} position={linkMatch.position}/>
                 <ul className={"hide-list-styling"}>
                     {linkMatch.linkTargetCandidates.map((linkTargetCandidate: LinkTargetCandidate) =>
                         <LinkTargetCandidateContext.Provider value={linkTargetCandidate}
                                                              key={`${linkTargetCandidate.path}`}>
-                            <ReplacementContext.Provider value={{replacement, setReplacement}}>
-                                <ReplacementsSelectionComponent />
-                            </ReplacementContext.Provider>
+                                <ReplacementsSelectionComponent selectedReplacement={replacement} setSelectedReplacement={setReplacement}/>
                         </LinkTargetCandidateContext.Provider>
                     )}
                 </ul>
             </div>
-        , [replacement]);
-};
+        ;
+}, (prevProps: LinkTargetCandidatesListComponentProps, nextProps: LinkTargetCandidatesListComponentProps) => {
+    return prevProps._replacement == nextProps._replacement
+});

@@ -8,35 +8,32 @@ import {
     useLinkMatch,
     useLinkTargetCandidate,
     useNoteFiles,
-    useReplacementCandidate
 } from "../../hooks";
-import {ReplacementContext} from "../../context";
 
+interface ReplacementItemComponentProps {selectedReplacement: Replacement, setSelectedReplacement:  React.Dispatch<React.SetStateAction<Replacement>>, replacementCandidate: PreferrableItem}
 
-export const ReplacementItemComponent = () => {
+export const ReplacementItemComponent = React.memo(({selectedReplacement, setSelectedReplacement, replacementCandidate}: ReplacementItemComponentProps) => {
     const {fileManager} = useApp();
     const parentNote = useLinkFinderResult().note;
     const linkMatch = useLinkMatch();
     const linkTargetCandidate = useLinkTargetCandidate();
-    const replacementCandidate = useReplacementCandidate();
     const noteFiles = useNoteFiles();
 
-    const {replacement, setReplacement} = useContext(ReplacementContext);
 
     const isSelected = useCallback(() => {
-        if (replacement === undefined) return false;
-        return replacement.position.is_equal_to(linkMatch.position) &&
-            replacement.targetNotePath == linkTargetCandidate.path &&
-            replacement.originalSubstitute == replacementCandidate.content
-    }, [replacement]);
+        if (selectedReplacement === undefined) return false;
+        return selectedReplacement.position.is_equal_to(linkMatch.position) &&
+            selectedReplacement.targetNotePath == linkTargetCandidate.path &&
+            selectedReplacement.originalSubstitute == replacementCandidate.content
+    }, [selectedReplacement]);
 
 
     const subtractReplacement = () => {
-        setReplacement(undefined);
+        setSelectedReplacement(undefined);
     }
 
     const addReplacement = (noteChangeOperationToAdd: Replacement) => {
-        setReplacement(noteChangeOperationToAdd);
+        setSelectedReplacement(noteChangeOperationToAdd);
     }
 
     const handleSelect = (replacementCandidate: PreferrableItem, candidate: LinkTargetCandidate, doAdd: boolean, linkMatch: LinkMatch) => {
@@ -85,4 +82,6 @@ export const ReplacementItemComponent = () => {
             </div>
         </li>
     );
-};
+}, (prevProps: ReplacementItemComponentProps, nextProps: ReplacementItemComponentProps) => {
+    return prevProps.selectedReplacement == nextProps.selectedReplacement
+});
