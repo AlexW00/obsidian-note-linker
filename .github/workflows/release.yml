@@ -26,7 +26,7 @@ jobs:
       - name: Build
         id: build
         run: |
-          npm install --global rollup
+          npm install
           npm run build
       - name: Create Release
         id: create_release
