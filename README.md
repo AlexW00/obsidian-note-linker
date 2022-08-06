@@ -11,7 +11,6 @@ If a reference is found, it gets added to a list. This list is then displayed to
 
 ### ⬇️ Installation
 
-
 ### 👨‍💻 Development
 
 #### Roadmap
