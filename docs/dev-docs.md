@@ -19,7 +19,7 @@ Contributions are welcome, but please make sure they are understandable and no b
 
 ### Near future
 
-- [ ] become an official community plugin
+- [x] become an official community plugin
 - [ ] await user feedback on the reliability of the plugin to move out of beta
 
 ### Future (ideas)
