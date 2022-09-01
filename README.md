@@ -2,7 +2,8 @@
 
 A plugin to automatically create new links between notes in Obsidian.
 
-https://user-images.githubusercontent.com/55558407/183263429-07f6bae6-ddd5-4dd6-82c0-9786adad54ee.mp4
+![ezgif com-gif-maker(4)](https://user-images.githubusercontent.com/55558407/187985324-c13860b0-42e0-41d8-9498-8df936948dfd.gif)
+
 
 ### 🤨 How does it work?
 
@@ -12,47 +13,11 @@ link.
 
 #### Disclaimer:
 
-The current version has only been tested by myself, on a vault with ~1000 notes. No bugs are currently known. However, I advise you to backup your vault before applying any changes using this plugin, since the plugin has not been tested by enough people. 
+The current version has only been tested by myself, and a few beta testers. No bugs are currently known. However, I advise you to backup your vault before applying any changes using this plugin, since the plugin has not been tested by enough people. 
 
 ### ⬇️ Installation
 
-This plugin is not in the [official community plugin list](https://obsidian.md/plugins) yet, so it can't be installed via the
-built-in plugin manager. However, there are other ways to install it:
-<details>
-    <summary>Install via Plugins Galore (super easy)</summary>
-        <ol>
-            <li>
-                Install the <a href="https://obsidian.md/plugins?id=plugins-galore">Plugin Galore</a> Obsidian plugin, which allows loading unofficial plugins.
-            </li>
-            <li>
-            Follow the instructions on the <a href="https://github.com/plugins-galore/obsidian-plugins-galore#adding-a-plugin">Plugins Galore GitHub</a> to install Note Linker.
-            </li>
-        </ol>
-    </details>
-<details>
-    <summary>Manual installation (easy)</summary>
-        <ol>
-            <li>
-                Download the plugin (zip file) from <a href="https://github.com/AlexW00/obsidian-note-linker/releases/latest"> here</a>.
-            </li>
-            <li>
-                <span>
-                Extract the contents of the zip file into your Obsidian plugins folder. <br>
-                    <ul>
-                        <li>
-                        The folder is located at <code>MyVault/.obsidian/plugins</code>.
-                        </li>
-                        <li>
-                        It can also be found by opening <code>Obsidian > settings > community plugins > installed plugins > small folder icon on the right side </code>.
-                        </li>
-                    </ul> 
-                </span>            
-            </li>
-            <li>
-            Enable the plugin by going to <code>Obsidian > settings > community plugins > installed plugins</code> and activating the toggle under "Note Linker" (you may need to re-open Obsidian to see the toggle).
-            </li>
-        </ol>
-</details>
+You can install this plugin by downloading it from the Obsidian Plugin store, or via [this direct link](https://obsidian.md/plugins?id=obisidian-note-linker).
 
 ### 👨‍💻 Development
 
