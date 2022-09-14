@@ -12,7 +12,7 @@ use crate::rs::note::note_scanned_event::NoteScannedEvent;
 mod rs;
 
 #[wasm_bindgen]
-pub fn find(context: JsValue, notes: Array, callback: Function) -> Array {
+pub fn find_in_vault(context: JsValue, notes: Array, callback: Function) -> Array {
     let notes: Vec<Note> = notes.iter()
         .filter_map(|note: JsValue| Note::try_from(note).ok())
         .collect();
@@ -27,6 +27,31 @@ pub fn find(context: JsValue, notes: Array, callback: Function) -> Array {
             res.push(r);
         }
     });
+
+    let array: Array = Array::new();
+    for r in res {
+        let js: JsValue = r.into();
+        array.push(&js);
+    }
+    array
+}
+
+
+#[wasm_bindgen]
+pub fn find_in_note(context: JsValue, active_note: Note, notes: Array, callback: Function) -> Array {
+    let notes: Vec<Note> = notes.iter()
+        .filter_map(|note: JsValue| Note::try_from(note).ok())
+        .collect();
+    let mut note = active_note.clone();
+
+    let mut res: Vec<LinkFinderResult> = vec![];
+
+    let _ = call_callback(&callback, &context, build_args(&note, 0));
+
+    let link_finder_result_option = link_finder::find_links(&mut note, &notes);
+    if let Some(r) = link_finder_result_option {
+        res.push(r);
+    }
 
     let array: Array = Array::new();
     for r in res {
