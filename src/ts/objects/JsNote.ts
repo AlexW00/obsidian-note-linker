@@ -39,7 +39,7 @@ export default class JsNote extends Note {
 		const aliases =
 			parseFrontMatterAliases(cache.getFileCache(file).frontmatter) ?? [];
 		const ignoreRanges =
-			IgnoreRange.getIgnoreRangesFromCache(cache.getFileCache(file), {
+			IgnoreRange.getIgnoreRangesFromCache(content, cache.getFileCache(file), {
 				doIgnoreInternalLinks: true,
 				doIgnoreCodeBlocks: true,
 			}) ?? [];
