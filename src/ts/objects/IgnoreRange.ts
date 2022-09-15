@@ -18,8 +18,6 @@ class IgnoreRangeBuilder {
 	}
 
 	public build(): IgnoreRange[] {
-		console.log(this._cache);
-		console.log(this._content);
 		return this._ignoreRanges;
 	}
 
