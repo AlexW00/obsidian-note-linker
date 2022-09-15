@@ -1,4 +1,10 @@
-import { CachedMetadata, TFile } from "obsidian";
+import {
+	CachedMetadata,
+	CacheItem,
+	HeadingCache,
+	LinkCache,
+	TFile,
+} from "obsidian";
 import { Range } from "../../../pkg";
 
 class IgnoreRangeBuilder {
@@ -12,6 +18,8 @@ class IgnoreRangeBuilder {
 	}
 
 	public build(): IgnoreRange[] {
+		console.log(this._cache);
+		console.log(this._content);
 		return this._ignoreRanges;
 	}
 
@@ -32,13 +40,11 @@ class IgnoreRangeBuilder {
 		return this;
 	}
 
-	// adds internal links to the ignore ranges
-	// internal links are of the form [[link text]] or [[#link text]]
-	public addInternalLinks(): IgnoreRangeBuilder {
-		(this._cache.links ? this._cache.links : []).forEach((link) => {
+	private addCacheItem(cacheItem: CacheItem[]) {
+		(cacheItem ? cacheItem : []).forEach((item) => {
 			const ignoreRange = new IgnoreRange(
-				link.position.start.offset,
-				link.position.end.offset
+				item.position.start.offset,
+				item.position.end.offset
 			);
 			this._ignoreRanges.push(ignoreRange);
 			this._content =
@@ -49,16 +55,22 @@ class IgnoreRangeBuilder {
 		return this;
 	}
 
+	// adds internal links to the ignore ranges
+	// internal links are of the form [[link text]] or [[#link text]]
+	public addInternalLinks(): IgnoreRangeBuilder {
+		return this.addCacheItem(this._cache.links);
+	}
+
+	// adds all headings to the ignore ranges
+	// headings are of the form # Heading
+	public addHeadings(): IgnoreRangeBuilder {
+		return this.addCacheItem(this._cache.headings);
+	}
+
 	// adds code blocks to the ignore ranges
 	// code blocks are of the form ```code```
 	public addCodeSections(): IgnoreRangeBuilder {
 		return this.addCacheSections("code");
-	}
-
-	// adds html sections to the ignore ranges
-	// html sections are of the form <tag>...</tag>
-	public addHtmlSections(): IgnoreRangeBuilder {
-		return this.addCacheSections("html");
 	}
 
 	// utility function to add ignore ranges from a regex
@@ -67,6 +79,7 @@ class IgnoreRangeBuilder {
 			const start = args[args.length - 2];
 			const end = start + match.length;
 			this._ignoreRanges.push(new IgnoreRange(start, end));
+			//console.log(`found match ${match} at ${start} to ${end}`);
 			return " ".repeat(match.length);
 		});
 		return this;
@@ -85,6 +98,12 @@ class IgnoreRangeBuilder {
 		const regex = /\[([^\[]+)\](\(.*\))/g;
 		return this.addIgnoreRangesWithRegex(regex);
 	}
+
+	// adds all html like text sections to the ignore ranges
+	public addHtml(): IgnoreRangeBuilder {
+		const regex = /<[^>]+>([^>]+<[^>]+>)?/g;
+		return this.addIgnoreRangesWithRegex(regex);
+	}
 }
 
 export default class IgnoreRange extends Range {
@@ -97,9 +116,12 @@ export default class IgnoreRange extends Range {
 		cache: CachedMetadata
 	): IgnoreRange[] {
 		const ignoreRanges: IgnoreRange[] = new IgnoreRangeBuilder(content, cache)
+			// from cache
 			.addInternalLinks()
+			.addHeadings()
 			.addCodeSections()
-			.addHtmlSections()
+			// from regex
+			.addHtml()
 			.addMdLinks()
 			.addWebLinks()
 			.build();
