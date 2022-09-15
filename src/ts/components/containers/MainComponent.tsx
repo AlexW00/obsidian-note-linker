@@ -8,10 +8,12 @@ export enum MatchingMode {
 	Note,
 }
 
-export const MainComponent = () => {
-	const [matchingMode, setMatchingMode] = useState<MatchingMode>(
-		MatchingMode.None
-	);
+export interface MainComponentProps {
+	_matchingMode: MatchingMode;
+}
+
+export const MainComponent = ({ _matchingMode }: MainComponentProps) => {
+	const [matchingMode, setMatchingMode] = useState<MatchingMode>(_matchingMode);
 
 	const onClickScan = (type: MatchingMode) => {
 		setMatchingMode(type);

@@ -7,6 +7,7 @@ import * as Comlink from "comlink";
 
 // @ts-ignore
 import Wcw from "web-worker:./ts/webWorkers/WasmWorker.ts";
+import { MatchingMode } from "./ts/components/containers/MainComponent";
 
 export default class RustPlugin extends Plugin {
 	async onload() {
@@ -17,15 +18,25 @@ export default class RustPlugin extends Plugin {
 		await wasm.default(Promise.resolve(buffer));
 		init_panic_hook();
 
-		this.addRibbonIcon("link", "Note Linker", this.openModal);
+		this.addRibbonIcon("link", "Note Linker", () => this.openModal());
 		this.addCommand({
 			id: "open-note-linker",
-			name: "Open Note Linker",
+			name: "Open",
 			callback: this.openModal,
+		});
+		this.addCommand({
+			id: "open-note-linker-vault",
+			name: "Search Vault",
+			callback: () => this.openModal(MatchingMode.Vault),
+		});
+		this.addCommand({
+			id: "open-note-linker-note",
+			name: "Search Note",
+			callback: () => this.openModal(MatchingMode.Note),
 		});
 	}
 
-	openModal = async () => {
+	openModal = async (_matchingModal?: MatchingMode) => {
 		// init the secondary wasm thread (for searching)
 		const wcw = new Wcw();
 		const WasmComlinkWorker = Comlink.wrap<typeof Wcw>(wcw);
@@ -39,7 +50,8 @@ export default class RustPlugin extends Plugin {
 			wasmWorkerInstance,
 			() => {
 				wcw.terminate();
-			}
+			},
+			_matchingModal
 		);
 		linkMatchSelectionModal.open();
 	};
