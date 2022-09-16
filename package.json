@@ -5,7 +5,7 @@
 	"main": "main.js",
 	"scripts": {
 		"build": "wasm-pack build --target web && rollup --config rollup.config.js",
-		"build-copy": "npm run build && ./copy_to_vault.sh"
+		"build-copy": "npm run build && ./copy_to_vault.sh ~/Desktop/YouTube/"
 	},
 	"keywords": [],
 	"author": "",

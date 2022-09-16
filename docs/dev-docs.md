@@ -15,6 +15,14 @@ The TypeScript part of the project is used create the UI using React. Also, it s
 
 Contributions are welcome, but please make sure they are understandable and no bloat
 
+#### Building
+
+- Build the project by running `npm run build` in the root directory
+- To easily copy the build results into your vault, run `npm run build-copy` in the root directory
+  - NOTE: Don't forget to:
+    - change the vault path in `package.json` to your vault path!
+    - make the copy script executable by running `chmod +x ./copy_to_vault.sh`
+
 ### 🗺️ Roadmap
 
 ### Near future
