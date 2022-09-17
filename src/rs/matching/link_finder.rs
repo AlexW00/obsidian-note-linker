@@ -3,6 +3,7 @@ use std::ops::Add;
 
 use fancy_regex::{escape, Regex};
 
+use crate::rs::util::wasm_util::log;
 use crate::{LinkFinderResult};
 use crate::rs::matching::link_match::LinkMatch;
 use crate::rs::matching::regex_match::RegexMatch;
@@ -19,8 +20,11 @@ struct LinkFinderMatchingResult<'m> {
 
 impl<'m> LinkFinderMatchingResult<'m> {
     fn find_matches(note: &'m mut Note, target_note: &'m Note) -> Self {
+        // build the regex
         let regex_matches: Vec<RegexMatch> = build_link_finder(target_note)
+            // find all matches
             .captures_iter(note.get_sanitized_content())
+            // map the results to a vector of RegexMatch
             .filter_map(|capture_result| {
                 match capture_result {
                     Ok(captures) => {
@@ -42,6 +46,7 @@ impl<'m> LinkFinderMatchingResult<'m> {
     }
 }
 
+/// Creates a vec of LinkMatch from a LinkFinderMatchingResult.
 impl<'m> Into<Vec<LinkMatch>> for LinkFinderMatchingResult<'m> {
     fn into(self) -> Vec<LinkMatch> {
         let note: &Note = self.note;
@@ -60,10 +65,10 @@ impl<'m> Into<Vec<LinkMatch>> for LinkFinderMatchingResult<'m> {
 fn concat_as_regex_string(strings: &[String]) -> String {
     strings.iter()
         .enumerate()
-        .fold("(".to_string(), |prev, (index, current)| {
-            return if index == 0 { format!("{}{}", prev, current) } else { format!("{}|{}", prev, current) };
+        .fold("".to_string(), |prev, (index, current)| {
+            return if index == 0 { format!("(\\b{}\\b)", current) } else { format!("{}|(\\b{}\\b)", prev, current) };
         })
-        .add(")")
+        .add("")
 }
 
 /// Constructs a LinkFinder for the provided target note.
@@ -73,7 +78,9 @@ fn build_link_finder(target_note: &Note) -> LinkFinder {
     escaped_search_strings.push(escaped_title);
 
     let regex_string = concat_as_regex_string(&escaped_search_strings);
-    Regex::new(&*format!(r"\b{}\b", regex_string)).unwrap()
+    //log(&format!("Regex string: {}", regex_string));
+    
+    Regex::new(&*format!(r"{}", regex_string)).unwrap()
 }
 
 /// Finds all link candidates in the provided note.
