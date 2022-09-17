@@ -16,6 +16,7 @@ import { LoadingComponent } from "../other/LoadingComponent";
 import { MatchingMode } from "./MainComponent";
 
 enum MatchingState {
+	Initializing,
 	Scanning,
 	Selecting,
 	Replacing,
@@ -32,7 +33,7 @@ export const MatcherComponent = ({
 	const wasmWorkerInstance = useWasmWorkerInstance();
 
 	const [matchingState, setMatchingState] = useState<MatchingState>(
-		MatchingState.Scanning
+		MatchingState.Initializing
 	);
 	const [numberOfLinkedNotes, setNumberOfLinkedNotes] = useState<number>(0);
 	const [linkFinderResults, setLinkFinderResults] = useState<
@@ -77,6 +78,7 @@ export const MatcherComponent = ({
 	};
 
 	const getLinkFinderResults = async (jsNotes: JsNote[]) => {
+		setMatchingState(MatchingState.Scanning);
 		const noteStrings: Array<string> = jsNotes.map((jsNote: JsNote) =>
 			jsNote.toJSON()
 		);
@@ -128,7 +130,9 @@ export const MatcherComponent = ({
 			.catch(showError);
 	}, [wasmWorkerInstance]);
 
-	if (matchingState == MatchingState.Scanning)
+	if (matchingState == MatchingState.Initializing) {
+		return <div>🏗️ Retrieving notes...</div>;
+	} else if (matchingState == MatchingState.Scanning)
 		return <ProgressComponent progress={linkMatchingProgress} />;
 	else if (matchingState == MatchingState.Selecting)
 		return (
