@@ -13,12 +13,14 @@ export const StartComponent = ({ onClickScan }: StartComponentProps) => {
 				Note: Please backup your vault before using this plugin. This plugin is
 				in beta stage and has therefore not been tested sufficiently.
 			</span>
-			<button onClick={() => onClickScan(MatchingMode.Vault)}>
-				📘 Scan Vault
-			</button>
-			<button onClick={() => onClickScan(MatchingMode.Note)}>
-				📄 Scan active Note
-			</button>
+			<div className="button-container">
+				<button onClick={() => onClickScan(MatchingMode.Vault)}>
+					📘 Scan Vault
+				</button>
+				<button onClick={() => onClickScan(MatchingMode.Note)}>
+					📄 Scan Note
+				</button>
+			</div>
 		</div>
 	);
 };

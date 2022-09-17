@@ -1,212 +1,214 @@
 :root {
-  --super-small-margin: 5px;
-  --small-margin: 10px;
-  --default-margin: 15px;
-  --double-default-margin: 30px;
+	--super-small-margin: 5px;
+	--small-margin: 10px;
+	--default-margin: 15px;
+	--double-default-margin: 30px;
 
-  --default-padding: 10px;
-  --small-padding: 5px;
+	--default-padding: 10px;
+	--small-padding: 5px;
 
-  --default-round-borders: 10px;
-  --small-round-borders: 7px;
+	--default-round-borders: 10px;
+	--small-round-borders: 7px;
 
-  --small-font-size: 10px;
-  --enlarged-default-font-size: 15px;
+	--small-font-size: 10px;
+	--enlarged-default-font-size: 15px;
 
-  --warning-background-color: rgb(255, 165, 0, 0.5);
-  --success-background-color: rgb(50, 205, 50, 0.5);
-  --info-background-color: rgb(100, 149, 237, 0.5);
+	--warning-background-color: rgb(255, 165, 0, 0.5);
+	--success-background-color: rgb(50, 205, 50, 0.5);
+	--info-background-color: rgb(100, 149, 237, 0.5);
 }
 
 /* General */
 
 button {
-  font-size: var(--enlarged-default-font-size);
-  border-radius: var(--default-round-borders);
+	font-size: var(--enlarged-default-font-size);
+	border-radius: var(--default-round-borders);
 }
 
 .loading-component {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 }
 
 .multiline {
-  white-space: pre-wrap;
+	white-space: pre-wrap;
 }
 
 /* Start component */
 
 .start-component {
-  display: flex;
-  flex-direction: column;
+	display: flex;
+	flex-direction: column;
 }
 
 .start-component > h1 {
-  margin-bottom: var(--double-default-margin);
+	margin-bottom: var(--double-default-margin);
 }
 
 .start-component > span {
-  margin-bottom: var(--double-default-margin);
+	margin-bottom: var(--double-default-margin);
 }
 
-
 .start-component > button {
-  align-self: center;
+	align-self: center;
+}
+
+.start-component > .button-container {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	margin-top: 0;
 }
 
 /* Progress bar */
 
 .progress-bar-component {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--double-default-margin);
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: var(--double-default-margin);
 }
 
 .progress-bar-component > .ascii-art-progress-bar {
-  border: 1px solid var(--text-normal);
-  padding: var(--default-padding);
-  font-size: var(--enlarged-default-font-size);
+	border: 1px solid var(--text-normal);
+	padding: var(--default-padding);
+	font-size: var(--enlarged-default-font-size);
 }
 
 /* Note Matching Results List */
 
 .note-matching-result-list {
-  display: flex;
-  flex-direction: column;
+	display: flex;
+	flex-direction: column;
 }
 
 .note-matching-result-list > h1 {
-  border-bottom: 1px solid var(--background-modifier-border);
-  align-self: center;
+	border-bottom: 1px solid var(--background-modifier-border);
+	align-self: center;
 }
 
 .note-matching-result-list > button {
-  margin-top: var(--default-margin);
-  align-self: center;
-  width: 100%;
+	margin-top: var(--default-margin);
+	align-self: center;
+	width: 100%;
 }
-
 
 /* Link Matches List Component */
 
 .link-matches-list {
-  /*add border 2px*/
-  border: 1px solid var(--background-modifier-border);
-  background: var(--background-primary);
-  border-radius: var(--default-round-borders);
-  margin-top: var(--default-margin);
-  padding: var(--small-padding);
+	/*add border 2px*/
+	border: 1px solid var(--background-modifier-border);
+	background: var(--background-primary);
+	border-radius: var(--default-round-borders);
+	margin-top: var(--default-margin);
+	padding: var(--small-padding);
 }
 
 /* Note Matching Result Title*/
 
 .note-matching-result-title {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  margin-top: var(--small-margin);
-  margin-bottom: var(--small-margin);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	margin-top: var(--small-margin);
+	margin-bottom: var(--small-margin);
 }
 
 .note-matching-result-title > h3 {
-  margin: 0;
+	margin: 0;
 }
-
 
 /* Link Match Title */
 
 .link-match-title {
-  display: flex;
-  flex-direction: row;
+	display: flex;
+	flex-direction: row;
 }
 
 .link-match-title > h4 {
-  margin: 0;
-  padding-right: var(--small-padding);
+	margin: 0;
+	padding-right: var(--small-padding);
 }
 
 /* Link Target Candidates List */
 
 .link-target-candidates-list {
-  padding: var(--default-padding);
+	padding: var(--default-padding);
 }
 
 .link-target-candidates-list > ul {
-  padding-left: var(--default-padding);
+	padding-left: var(--default-padding);
 }
 
 /* Replacements Selection */
 
 .replacements-selection {
-  margin-top: var(--super-small-margin);
+	margin-top: var(--super-small-margin);
 }
 
 .replacements-selection > ul {
-  padding-left: var(--default-padding);
+	padding-left: var(--default-padding);
 }
 
 /* Replacement Item */
 
 .replacement-item {
-  display: flex;
-  flex-direction: row;
+	display: flex;
+	flex-direction: row;
 }
 
 .replacement-item > .matched-text {
-  white-space: nowrap;
+	white-space: nowrap;
 }
 
 .replacement-context {
-  font-size: var(--enlarged-default-font-size);
-  color: var(--text-faint);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+	font-size: var(--enlarged-default-font-size);
+	color: var(--text-faint);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .replacement-context > .arrow-icon {
-  padding-left: var(--small-padding);
-  padding-right: var(--small-padding);
+	padding-left: var(--small-padding);
+	padding-right: var(--small-padding);
 }
 
 #replacement-context > .link-preview {
-  color: var(--text-muted) !important;
- }
+	color: var(--text-muted) !important;
+}
 
 /* Other styling */
 
 .hide-list-styling {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+	list-style: none;
+	margin: 0;
+	padding: 0;
 }
 
 .light-description {
-  font-size: var(--small-font-size);
-  color: var(--text-muted);
-  font-style: italic;
+	font-size: var(--small-font-size);
+	color: var(--text-muted);
+	font-style: italic;
 }
 
-
-
 .warning-toast {
-  background: var(--warning-background-color);
-  border-radius: var(--small-round-borders);
-  padding: var(--small-padding)
+	background: var(--warning-background-color);
+	border-radius: var(--small-round-borders);
+	padding: var(--small-padding);
 }
 
 .success-toast {
-  background: var(--success-background-color);
-  border-radius: var(--small-round-borders);
-  padding: var(--small-padding)
+	background: var(--success-background-color);
+	border-radius: var(--small-round-borders);
+	padding: var(--small-padding);
 }
 
 .info-toast {
-  background: var(--info-background-color);
-  border-radius: var(--small-round-borders);
-  padding: var(--small-padding)
+	background: var(--info-background-color);
+	border-radius: var(--small-round-borders);
+	padding: var(--small-padding);
 }
