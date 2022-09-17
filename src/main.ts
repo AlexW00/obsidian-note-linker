@@ -26,12 +26,12 @@ export default class RustPlugin extends Plugin {
 		});
 		this.addCommand({
 			id: "open-note-linker-vault",
-			name: "Search Vault",
+			name: "Scan Vault",
 			callback: () => this.openModal(MatchingMode.Vault),
 		});
 		this.addCommand({
 			id: "open-note-linker-note",
-			name: "Search Note",
+			name: "Scan Note",
 			callback: () => this.openModal(MatchingMode.Note),
 		});
 	}

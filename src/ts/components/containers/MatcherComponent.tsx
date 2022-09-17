@@ -12,7 +12,6 @@ import { ProgressComponent } from "../other/ProgressComponent";
 import { MatchSelectionComponent } from "./MatchSelectionComponent";
 import { Notice, TFile } from "obsidian";
 import { useApp, useWasmWorkerInstance } from "../../hooks";
-import { LoadingComponent } from "../other/LoadingComponent";
 import { MatchingMode } from "./MainComponent";
 
 enum MatchingState {
