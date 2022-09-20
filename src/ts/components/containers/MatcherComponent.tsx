@@ -70,12 +70,14 @@ export const MatcherComponent = ({
 	) => {
 		onStartReplacing();
 		const operations: Array<Promise<void>> = [];
+		let totalNum = 0;
 		noteChangeOperations.forEach((op: NoteChangeOperation) => {
+			totalNum += op.replacements.length;
 			op.applyReplacements();
 			const noteFile = noteFiles.get(op.path);
 			operations.push(vault.modify(noteFile, op.content));
 		});
-		Promise.all(operations).then(() => onFinishReplacing(operations.length));
+		Promise.all(operations).then(() => onFinishReplacing(totalNum));
 	};
 
 	const getLinkFinderResults = async (jsNotes: JsNote[]) => {
@@ -147,7 +149,7 @@ export const MatcherComponent = ({
 	else if (matchingState == MatchingState.Finished)
 		return (
 			<div className={"success-toast"}>
-				🎉 Successfully linked {numberOfLinkedNotes} notes!
+				🎉 Successfully created {numberOfLinkedNotes} new links!
 			</div>
 		);
 	else
