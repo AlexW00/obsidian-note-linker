@@ -39,7 +39,9 @@ export const MatcherComponent = ({
 		Array<LinkFinderResult>
 	>([]);
 	const [linkMatchingProgress, setLinkMatchingProgress] = useState<Progress>(
-		new Progress(JsNote.getNumberOfNotes(vault))
+		new Progress(
+			matchingMode == MatchingMode.Vault ? JsNote.getNumberOfNotes(vault) : 1
+		)
 	);
 
 	const onLinkMatchingProgress = (serializedNoteScannedEvent: string) => {

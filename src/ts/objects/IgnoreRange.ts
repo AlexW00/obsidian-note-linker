@@ -11,14 +11,22 @@ class IgnoreRangeBuilder {
 	private readonly _ignoreRanges: IgnoreRange[] = [];
 	private readonly _cache: CachedMetadata;
 	private _content: string;
+	private _name: string;
 
-	constructor(content: string, cache: CachedMetadata) {
+	constructor(content: string, cache: CachedMetadata, name: string) {
 		this._content = content;
 		this._cache = cache;
+		this._name = name;
 	}
 
 	public build(): IgnoreRange[] {
-		return this._ignoreRanges;
+		if (
+			this._name ==
+			"How to Build a Universe That Doesn’t Fall Apart Two Days Later - German Cut.md"
+		) {
+			console.log("🎇".length, [..."🎇"].length);
+		}
+		return this._ignoreRanges.sort((a, b) => a.start - b.start);
 	}
 
 	private addCacheSections(type: string): IgnoreRangeBuilder {
@@ -29,7 +37,8 @@ class IgnoreRangeBuilder {
 					section.position.start.offset,
 					section.position.end.offset
 				);
-				this._ignoreRanges.push(ignoreRange);
+				orderedPush(this._ignoreRanges, ignoreRange);
+
 				this._content =
 					this._content.substring(0, ignoreRange.start) +
 					" ".repeat(ignoreRange.end - ignoreRange.start) +
@@ -44,11 +53,20 @@ class IgnoreRangeBuilder {
 				item.position.start.offset,
 				item.position.end.offset
 			);
-			this._ignoreRanges.push(ignoreRange);
+			orderedPush(this._ignoreRanges, ignoreRange);
 			this._content =
 				this._content.substring(0, ignoreRange.start) +
 				" ".repeat(ignoreRange.end - ignoreRange.start) +
 				this._content.substring(ignoreRange.end);
+
+			if (
+				this._name ==
+				"How to Build a Universe That Doesn’t Fall Apart Two Days Later - German Cut.md"
+			) {
+				console.log(
+					`found cached match at ${ignoreRange.start} to ${ignoreRange.end}`
+				);
+			}
 		});
 		return this;
 	}
@@ -57,6 +75,12 @@ class IgnoreRangeBuilder {
 	// internal links are of the form [[link text]] or [[#link text]]
 	public addInternalLinks(): IgnoreRangeBuilder {
 		return this.addCacheItem(this._cache.links);
+	}
+
+	// also, do a regex search, because the cache doesn't seem to be complete
+	private addRegexInternalLinks(): IgnoreRangeBuilder {
+		const regex = /\[\[([^\]]+)\]\]/g;
+		return this.addIgnoreRangesWithRegex(regex);
 	}
 
 	// adds all headings to the ignore ranges
@@ -76,8 +100,14 @@ class IgnoreRangeBuilder {
 		this._content = this._content.replace(regex, (match, ...args) => {
 			const start = args[args.length - 2];
 			const end = start + match.length;
-			this._ignoreRanges.push(new IgnoreRange(start, end));
-			//console.log(`found match ${match} at ${start} to ${end}`);
+			// push after the element with the same or lower start index
+			orderedPush(this._ignoreRanges, new IgnoreRange(start, end));
+			if (
+				this._name ==
+				"How to Build a Universe That Doesn’t Fall Apart Two Days Later - German Cut.md"
+			) {
+				console.log(`found match ${match} at ${start} to ${end}`);
+			}
 			return " ".repeat(match.length);
 		});
 		return this;
@@ -111,9 +141,14 @@ export default class IgnoreRange extends Range {
 
 	static getIgnoreRangesFromCache(
 		content: string,
-		cache: CachedMetadata
+		cache: CachedMetadata,
+		name: string
 	): IgnoreRange[] {
-		const ignoreRanges: IgnoreRange[] = new IgnoreRangeBuilder(content, cache)
+		const ignoreRanges: IgnoreRange[] = new IgnoreRangeBuilder(
+			content,
+			cache,
+			name
+		)
 			// from cache
 			.addInternalLinks()
 			.addHeadings()
@@ -125,5 +160,16 @@ export default class IgnoreRange extends Range {
 			.build();
 
 		return ignoreRanges;
+	}
+}
+
+function orderedPush(ignoreRanges: IgnoreRange[], ignoreRange: IgnoreRange) {
+	const index = ignoreRanges.findIndex(
+		(_ignoreRange) => _ignoreRange.start >= ignoreRange.start
+	);
+	if (index === -1) {
+		ignoreRanges.push(ignoreRange);
+	} else {
+		ignoreRanges.splice(index - 1, 0, ignoreRange);
 	}
 }
