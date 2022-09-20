@@ -106,6 +106,11 @@ class IgnoreRangeBuilder {
 		const regex = /<[^>]+>([^>]+<[^>]+>)?/g;
 		return this.addIgnoreRangesWithRegex(regex);
 	}
+
+	public addMdMetadata(): IgnoreRangeBuilder {
+		const regex = /---(.|\n)*---/g;
+		return this.addIgnoreRangesWithRegex(regex);
+	}
 }
 
 export default class IgnoreRange extends Range {
@@ -128,6 +133,7 @@ export default class IgnoreRange extends Range {
 			.addHeadings()
 			.addCodeSections()
 			// from regex
+			.addMdMetadata()
 			.addHtml()
 			.addMdLinks()
 			.addWebLinks()
