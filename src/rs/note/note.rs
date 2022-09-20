@@ -4,7 +4,6 @@ use std::convert::TryFrom;
 
 use js_sys::Array;
 use serde::{Deserialize, Serialize};
-use unicode_segmentation::{Graphemes, UnicodeSegmentation};
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsValue;
 
@@ -46,7 +45,7 @@ impl Note {
     ) -> Note {
         let ignore_vec = array_to_range_vec(ignore.clone());
         Note {
-            title: title.clone(),
+            title: title,
             path,
             content: content.clone(),
             aliases: aliases.clone(),
@@ -54,7 +53,7 @@ impl Note {
 
             _aliases: array_to_string_vec(aliases.clone()),
             _ignore: ignore_vec.clone(),
-            _sanitized_content: Note::sanitize_content(content, ignore_vec, title), // no need to clone anymore
+            _sanitized_content: Note::sanitize_content(content, ignore_vec), // no need to clone anymore
         }
     }
 
@@ -100,11 +99,18 @@ impl Note {
 
     /// Cleans up the note content by:
     /// - removing all parts of the content that are in the ignore list
-    fn sanitize_content(mut content: String, ignore_vec: Vec<Range>, title: String) -> String {
+    fn sanitize_content(mut content: String, ignore_vec: Vec<Range>) -> String {
         let mut _offset: usize = 0;
-        let mut v = ignore_vec.clone();
-        v.sort_by(|a, b| a.start().cmp(&b.start()));
-        for ignore in v {
+        let mut _last_start: usize = 9999999;
+        // the ignore ranges are sorted
+        for ignore in ignore_vec {
+            if _last_start == ignore.start() {
+                // skip this range
+                continue;
+            } else {
+                _last_start = ignore.start();
+            }
+
             let offset = _offset;
             let range: std::ops::Range<usize> = ignore.clone().into();
             let split_content: Vec<u16> = content.encode_utf16().collect();
@@ -159,21 +165,7 @@ impl Note {
     pub fn get_sanitized_content(&mut self) -> &String {
         if self._sanitized_content.is_empty() {
             self._sanitized_content =
-                Note::sanitize_content(self.content.clone(), self._ignore.clone(), self.title());
-
-            if (self.title()
-                == "How to Build a Universe That Doesn’t Fall Apart Two Days Later - German Cut")
-            {
-                log(format!("sanitized content: {}", self._sanitized_content).as_str());
-                let emoji = UnicodeSegmentation::graphemes("🎇", true);
-                let count = emoji.clone().count();
-                let e16 = "a".encode_utf16().collect::<Vec<u16>>();
-                let concat = emoji
-                    .map(|e| format!("{}-{}", e, e.len()))
-                    .collect::<Vec<String>>()
-                    .concat();
-                log(&format!("{}-{} ({})", count, concat, e16.len()));
-            }
+                Note::sanitize_content(self.content.clone(), self._ignore.clone());
         }
         &self._sanitized_content
     }
