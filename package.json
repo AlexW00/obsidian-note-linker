@@ -4,7 +4,8 @@
 	"description": "Automatically find and link notes in Obsidian",
 	"main": "main.js",
 	"scripts": {
-		"build": "wasm-pack build --target web && rollup --config rollup.config.js"
+		"build": "wasm-pack build --target web && rollup --config rollup.config.js",
+		"build:copy": "npm run build && ./copy_to_vault.sh ~/Desktop/Obs"
 	},
 	"keywords": [],
 	"author": "",
