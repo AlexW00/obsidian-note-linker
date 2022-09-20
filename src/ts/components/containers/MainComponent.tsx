@@ -1,19 +1,25 @@
-import React, {useState} from "react";
-import {StartComponent} from "./StartComponent";
-import {MatcherComponent} from "./MatcherComponent";
+import React, { useState } from "react";
+import { StartComponent } from "./StartComponent";
+import { MatcherComponent } from "./MatcherComponent";
 
-enum MainComponentStates {
-    Start,
-    Matching
+export enum MatchingMode {
+	None,
+	Vault,
+	Note,
 }
 
-export const MainComponent = () => {
-    const [mainComponentState, setMainComponentState] = useState<MainComponentStates>(MainComponentStates.Start);
-
-    const onClickScan = () => {
-        setMainComponentState(MainComponentStates.Matching)
-    }
-
-    if (mainComponentState == MainComponentStates.Start) return <StartComponent onClickScan={onClickScan}/>
-    else return <MatcherComponent/>
+export interface MainComponentProps {
+	_matchingMode: MatchingMode;
 }
+
+export const MainComponent = ({ _matchingMode }: MainComponentProps) => {
+	const [matchingMode, setMatchingMode] = useState<MatchingMode>(_matchingMode);
+
+	const onClickScan = (type: MatchingMode) => {
+		setMatchingMode(type);
+	};
+
+	if (matchingMode == MatchingMode.None)
+		return <StartComponent onClickScan={onClickScan} />;
+	else return <MatcherComponent matchingMode={matchingMode} />;
+};

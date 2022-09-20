@@ -4,6 +4,7 @@ use fancy_regex::Captures;
 
 use crate::rs::Errors::cast_error::CastError;
 use crate::rs::util::range::Range;
+use crate::rs::util::wasm_util::log;
 
 /// Utility struct that represents a single match of a regular expression in a note.
 pub struct RegexMatch {
@@ -18,11 +19,16 @@ impl<'c> TryFrom<Captures<'c>> for RegexMatch {
 
     fn try_from(captures: Captures) -> Result<Self, CastError> {
         let valid = captures.iter()
+            // get index of capture group
             .enumerate()
-            .find_map(|(i, c)| c.map(|c_| (c_, i)));
+            // filter out all capture groups that didn't match
+            .filter_map(|(i, c)| c.map(|c_| (c_, i)))
+            // pick the last match
+            .last();
 
         match valid {
             Some((m, capture_index)) => {
+                //log(&format!("Found match {} at index {}", m.as_str().to_string(), capture_index ));
                 Ok(
                     RegexMatch {
                         position: Range::new(m.start(), m.end()),

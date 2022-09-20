@@ -3,8 +3,8 @@ use std::convert::TryFrom;
 use js_sys::Array;
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
-use wasm_bindgen::{JsValue};
 use wasm_bindgen::prelude::*;
+use wasm_bindgen::JsValue;
 
 use crate::rs::util::wasm_util::generic_of_jsval;
 
@@ -21,17 +21,18 @@ pub struct Range {
 impl Range {
     #[wasm_bindgen(constructor)]
     pub fn new(start: usize, end: usize) -> Range {
-        Range {
-            start,
-            end,
-        }
+        Range { start, end }
     }
 
     #[wasm_bindgen(getter)]
-    pub fn start(&self) -> usize { self.start }
+    pub fn start(&self) -> usize {
+        self.start
+    }
 
     #[wasm_bindgen(getter)]
-    pub fn end(&self) -> usize { self.end }
+    pub fn end(&self) -> usize {
+        self.end
+    }
 
     #[wasm_bindgen(method)]
     pub fn is_equal_to(&self, range: &Range) -> bool {
@@ -88,8 +89,8 @@ pub fn range_from_js_value(js: JsValue) -> Option<Range> {
 }
 
 pub fn array_to_range_vec(range_array: Array) -> Vec<Range> {
-    range_array.iter()
-        .filter_map(|js_val_range: JsValue|
-            generic_of_jsval(js_val_range, "Range").ok())
+    range_array
+        .iter()
+        .filter_map(|js_val_range: JsValue| generic_of_jsval(js_val_range, "Range").ok())
         .collect()
 }

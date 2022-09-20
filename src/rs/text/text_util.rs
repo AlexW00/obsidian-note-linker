@@ -1,7 +1,7 @@
 /// Creates a string with n times character c.
-pub fn create_string_with_n_characters(n: &usize, c: char) -> String {
+pub fn create_string_with_n_characters(n: usize, c: char) -> String {
     let mut s = String::new();
-    for _ in 0..*n {
+    for _ in 0..n {
         s.push(c);
     }
     s

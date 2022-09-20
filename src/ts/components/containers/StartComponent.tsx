@@ -1,17 +1,26 @@
 import * as React from "react";
+import { MatchingMode } from "./MainComponent";
 
 interface StartComponentProps {
-    onClickScan: () => void;
+	onClickScan: (type: MatchingMode) => void;
 }
 
-export const StartComponent = ({onClickScan}: StartComponentProps) => {
-    return (
-        <div className={"start-component"}>
-            <h1>🔗 Obsidian Note Linker</h1>
-            <span className={"warning-toast"}>
-                Note: Please backup your vault before using this plugin. This plugin is in beta stage and has therefore not been tested sufficiently.
-            </span>
-            <button onClick={onClickScan}>🔎 Scan Vault</button>
-        </div>
-    )
-}
+export const StartComponent = ({ onClickScan }: StartComponentProps) => {
+	return (
+		<div className={"start-component"}>
+			<h1>🔗 Obsidian Note Linker</h1>
+			<span className={"warning-toast"}>
+				Note: Please backup your vault before using this plugin. This plugin is
+				in beta stage and has therefore not been tested sufficiently.
+			</span>
+			<div className="button-container">
+				<button onClick={() => onClickScan(MatchingMode.Vault)}>
+					📘 Scan Vault
+				</button>
+				<button onClick={() => onClickScan(MatchingMode.Note)}>
+					📄 Scan Note
+				</button>
+			</div>
+		</div>
+	);
+};

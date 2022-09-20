@@ -10,3 +10,4 @@ Cargo.lock
 .vscode-test
 .vscode-launch.json
 .vscode-tasks.json
+copy_to_vault.sh
