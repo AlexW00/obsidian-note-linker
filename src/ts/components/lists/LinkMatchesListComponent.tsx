@@ -14,7 +14,7 @@ interface LinkMatchesListComponentProps {
 	>;
 }
 
-export const LinkMatchesListComponent = React.memo(
+export const LinkMatchesListComponent = (
 	({
 		selectedReplacements,
 		noteChangeOperations,
@@ -57,9 +57,5 @@ export const LinkMatchesListComponent = React.memo(
 				</ul>
 			</li>
 		);
-	},
-	(
-		prevProps: LinkMatchesListComponentProps,
-		nextProps: LinkMatchesListComponentProps
-	) => prevProps.selectedReplacements == nextProps.selectedReplacements
+	}
 );

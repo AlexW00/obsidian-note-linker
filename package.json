@@ -1,11 +1,11 @@
 {
 	"name": "obisidian-note-linker",
-	"version": "1.1.1",
+	"version": "1.1.2",
 	"description": "Automatically find and link notes in Obsidian",
 	"main": "main.js",
 	"scripts": {
 		"build": "wasm-pack build --target web && rollup --config rollup.config.js",
-		"build:copy": "npm run build && ./copy_to_vault.sh ~/Desktop/Obs"
+		"build:copy": "npm run build && ./copy_to_vault.sh /home/aw/Dropbox/Documents/Other/Obsidian/YouTube"
 	},
 	"keywords": [],
 	"author": "",

@@ -1,6 +1,6 @@
 [package]
 name = "obisidian-note-linker"
-version = "1.1.1"
+version = "1.1.2"
 authors = ["Alexander Weichart"]
 edition = "2018"
 
@@ -8,7 +8,7 @@ edition = "2018"
 crate-type = ["cdylib"]
 
 [dependencies]
-wasm-bindgen = {version = "0.2.80", features = ["serde-serialize"]}
+wasm-bindgen = { version = "0.2.80", features = ["serde-serialize"] }
 js-sys = "0.3.57"
 fancy-regex = "0.10.0"
 unicode-segmentation = "1.9.0"

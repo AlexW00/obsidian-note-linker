@@ -19,7 +19,7 @@ interface LinkTargetCandidatesListComponentProps {
 	>;
 }
 
-export const LinkTargetCandidatesListComponent = React.memo(
+export const LinkTargetCandidatesListComponent = 
 	({
 		_selectedReplacement,
 		noteChangeOperation,
@@ -98,11 +98,4 @@ export const LinkTargetCandidatesListComponent = React.memo(
 				</ul>
 			</div>
 		);
-	},
-	(
-		prevProps: LinkTargetCandidatesListComponentProps,
-		nextProps: LinkTargetCandidatesListComponentProps
-	) => {
-		return prevProps._selectedReplacement == nextProps._selectedReplacement;
-	}
-);
+	};

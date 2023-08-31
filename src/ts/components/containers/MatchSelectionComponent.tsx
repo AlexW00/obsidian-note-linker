@@ -1,4 +1,4 @@
-import {NoteFilesContext, SelectedNoteChangeOperationsContext} from "../../context";
+import {NoteFilesContext} from "../../context";
 import {LinkFinderResultsList} from "../lists/LinkFinderResultsListComponent";
 import * as React from "react";
 import {useEffect, useState} from "react";
@@ -75,10 +75,8 @@ export const MatchSelectionComponent = ({
     useEffect(() => initNoteChangeOperations(linkFinderResults), [linkFinderResults]);
 
     return (<NoteFilesContext.Provider value={noteFiles}>
-        <SelectedNoteChangeOperationsContext.Provider value={{noteChangeOperations, setNoteChangeOperations}}>
-            {noteChangeOperations !== undefined ? <LinkFinderResultsList linkFinderResults={linkFinderResults}
+            {noteChangeOperations !== undefined ? <LinkFinderResultsList linkFinderResults={linkFinderResults} noteChangeOperations={noteChangeOperations} setNoteChangeOperations={setNoteChangeOperations}
                                     onClickReplaceButton={() => onClickReplaceButton(noteChangeOperations, noteFiles)}
             /> : <LoadingComponent loadingText={"🏗️ Building results list..."}/>}
-        </SelectedNoteChangeOperationsContext.Provider>
     </NoteFilesContext.Provider>)
 }

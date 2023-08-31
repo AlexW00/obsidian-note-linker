@@ -10,7 +10,7 @@ interface ReplacementItemComponentProps {
     replacementCandidate: PreferrableItem
 }
 
-export const ReplacementItemComponent = React.memo(({
+export const ReplacementItemComponent = ({
                                                         selectedReplacement,
                                                         setSelectedReplacement,
                                                         replacementCandidate
@@ -84,6 +84,4 @@ export const ReplacementItemComponent = React.memo(({
             </div>
         </li>
     );
-}, (prevProps: ReplacementItemComponentProps, nextProps: ReplacementItemComponentProps) =>
-    prevProps.selectedReplacement == nextProps.selectedReplacement
-);
+};

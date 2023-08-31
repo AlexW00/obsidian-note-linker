@@ -2,21 +2,23 @@ import * as React from "react";
 import { LinkFinderResult, Note, NoteChangeOperation } from "../../../../pkg";
 import { LinkMatchesListComponent } from "./LinkMatchesListComponent";
 import { LinkFinderResultContext } from "../../context";
-import { useSelectedNoteChangeOperations } from "../../hooks";
 import { useCallback } from "react";
 
 interface LinkFinderResultsListProps {
 	linkFinderResults: Array<LinkFinderResult>;
 	onClickReplaceButton: () => void;
+	noteChangeOperations: Map<string, NoteChangeOperation>;
+	setNoteChangeOperations: React.Dispatch<
+		React.SetStateAction<Map<string, NoteChangeOperation>>
+	>;
 }
 
 export const LinkFinderResultsList = ({
 	linkFinderResults,
 	onClickReplaceButton,
+	noteChangeOperations,
+	setNoteChangeOperations,
 }: LinkFinderResultsListProps) => {
-	const { noteChangeOperations, setNoteChangeOperations } =
-		useSelectedNoteChangeOperations();
-
 	const findNoteChangeOperation = (
 		note: Note
 	): NoteChangeOperation | undefined => {
