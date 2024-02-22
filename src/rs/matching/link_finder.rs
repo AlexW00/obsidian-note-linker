@@ -80,7 +80,7 @@ fn build_link_finder(target_note: &Note) -> LinkFinder {
     let regex_string = concat_as_regex_string(&escaped_search_strings);
     //log(&format!("Regex string: {}", regex_string));
     
-    Regex::new(&*format!(r"{}", regex_string)).unwrap()
+    Regex::new(&*format!(r"(?i){}", regex_string)).unwrap()
 }
 
 /// Finds all link candidates in the provided note.
