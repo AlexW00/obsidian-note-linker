@@ -217,4 +217,5 @@ button {
 	display: flex;
 	flex-direction: row;
 	justify-content: center;
+	margin-top: var(--default-margin);
 }
