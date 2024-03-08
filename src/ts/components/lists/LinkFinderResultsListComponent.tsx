@@ -1,8 +1,7 @@
 import * as React from "react";
 import { LinkFinderResult, Note, NoteChangeOperation } from "../../../../pkg";
-import { LinkMatchesListComponent } from "./LinkMatchesListComponent";
 import { LinkFinderResultContext } from "../../context";
-import { useCallback } from "react";
+import { LinkMatchesListComponent } from "./LinkMatchesListComponent";
 
 interface LinkFinderResultsListProps {
 	linkFinderResults: Array<LinkFinderResult>;
@@ -19,6 +18,16 @@ export const LinkFinderResultsList = ({
 	noteChangeOperations,
 	setNoteChangeOperations,
 }: LinkFinderResultsListProps) => {
+	const [currentPage, setCurrentPage] = React.useState(0);
+	const itemsPerPage = 30;
+
+	const totalPages = Math.ceil(linkFinderResults.length / itemsPerPage);
+
+	const currentItems = linkFinderResults.slice(
+		currentPage * itemsPerPage,
+		(currentPage + 1) * itemsPerPage
+	);
+
 	const findNoteChangeOperation = (
 		note: Note
 	): NoteChangeOperation | undefined => {
@@ -29,7 +38,7 @@ export const LinkFinderResultsList = ({
 		return findNoteChangeOperation(note)?.replacements ?? [];
 	};
 
-	const totalReplacements = useCallback(() => {
+	const totalReplacements = React.useCallback(() => {
 		let total = 0;
 		noteChangeOperations?.forEach(
 			(noteChangeOperation: NoteChangeOperation) => {
@@ -39,12 +48,20 @@ export const LinkFinderResultsList = ({
 		return total;
 	}, [noteChangeOperations]);
 
+	const handlePrevPage = () => {
+		setCurrentPage((prevPage) => Math.max(prevPage - 1, 0));
+	};
+
+	const handleNextPage = () => {
+		setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages - 1));
+	};
+
 	if (linkFinderResults.length !== 0)
 		return (
 			<div className="note-matching-result-list">
 				<h1>Note Link Matches</h1>
 				<ul className={"hide-list-styling"}>
-					{linkFinderResults.map((linkFinderResult: LinkFinderResult) => {
+					{currentItems.map((linkFinderResult: LinkFinderResult) => {
 						const selectedReplacements = findReplacements(
 							linkFinderResult.note
 						);
@@ -62,6 +79,20 @@ export const LinkFinderResultsList = ({
 						);
 					})}
 				</ul>
+				<div className="pagination-controls">
+					<button onClick={handlePrevPage} disabled={currentPage === 0}>
+						Previous
+					</button>
+					<span>
+						Page {currentPage + 1} of {totalPages}
+					</span>
+					<button
+						onClick={handleNextPage}
+						disabled={currentPage === totalPages - 1}
+					>
+						Next
+					</button>
+				</div>
 				<button onClick={onClickReplaceButton}>
 					🔗 Link {totalReplacements()} notes
 				</button>

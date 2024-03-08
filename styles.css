@@ -212,3 +212,9 @@ button {
 	border-radius: var(--small-round-borders);
 	padding: var(--small-padding);
 }
+
+.pagination-controls {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+}
