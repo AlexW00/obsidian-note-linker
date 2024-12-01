@@ -39,14 +39,14 @@ impl LinkTargetCandidate {
 impl LinkTargetCandidate {
     pub fn new(title: String, path: String, aliases: &[String], selected_index: usize) -> Self {
         let mut _replacement_candidates: Vec<PreferrableItem> = vec![];
-        let replacement_candidate_title = PreferrableItem::new(title.clone(), selected_index == 0);
+        let replacement_candidate_title = PreferrableItem::new(title.clone(), true);
         _replacement_candidates.push(replacement_candidate_title);
 
         aliases.iter().enumerate().for_each(|(index, alias)| {
             let replacement_candidate_alias = PreferrableItem::new(
                 alias.clone(),
                 // add one because the index starts with the title at 0
-                index + 1 == selected_index,
+                true,
             );
             _replacement_candidates.push(replacement_candidate_alias);
         });
