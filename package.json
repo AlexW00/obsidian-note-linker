@@ -1,6 +1,6 @@
 {
 	"name": "obisidian-note-linker",
-	"version": "1.2.4",
+	"version": "1.2.6",
 	"description": "Automatically find and link notes in Obsidian",
 	"main": "main.js",
 	"scripts": {

@@ -1,6 +1,6 @@
 [package]
 name = "obisidian-note-linker"
-version = "1.2.4"
+version = "1.2.6"
 authors = ["Alexander Weichart"]
 edition = "2018"
 
