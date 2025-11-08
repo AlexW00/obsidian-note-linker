@@ -108,7 +108,7 @@ class IgnoreRangeBuilder {
 	}
 
 	public addMdMetadata(): IgnoreRangeBuilder {
-		const regex = /---(.|\n)*---/g;
+		const regex = /^---[\s\S]*?---/;
 		return this.addIgnoreRangesWithRegex(regex);
 	}
 }
