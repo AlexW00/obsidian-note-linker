@@ -1,5 +1,6 @@
 import { MetadataCache, parseFrontMatterAliases, TFile, Vault } from "obsidian";
 import IgnoreRange from "./IgnoreRange";
+import { ExistingLinkCountMap } from "./IgnoreRange";
 import { Note } from "../../../pkg";
 import { getImpliedNodeFormatForFile } from "typescript";
 
@@ -9,9 +10,11 @@ export default class JsNote extends Note {
 		path: string,
 		content: string,
 		aliases: string[] = [],
-		ignore: IgnoreRange[] = []
+		ignore: IgnoreRange[] = [],
+		existingLinkCounts: ExistingLinkCountMap = {}
 	) {
 		super(title, path, content, aliases, ignore);
+		this.setExistingLinkCounts(existingLinkCounts);
 	}
 
 	static getNumberOfNotes(vault: Vault): number {
@@ -38,13 +41,13 @@ export default class JsNote extends Note {
 		const content = await vault.cachedRead(file);
 		const aliases =
 			parseFrontMatterAliases(cache.getFileCache(file).frontmatter) ?? [];
-		const ignoreRanges =
+		const { ignoreRanges, linkCountMap } = 
 			IgnoreRange.getIgnoreRangesFromCache(
 				content,
 				cache.getFileCache(file),
 				file.name
-			) ?? [];
-		let jsNote: JsNote = new JsNote(name, path, content, aliases, ignoreRanges);
+			);
+		let jsNote: JsNote = new JsNote(name, path, content, aliases, ignoreRanges, linkCountMap);
 		return jsNote;
 	}
 }

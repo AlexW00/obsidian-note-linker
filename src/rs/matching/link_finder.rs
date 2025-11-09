@@ -1,3 +1,4 @@
+use std::collections::HashSet;
 use std::convert::TryFrom;
 use std::ops::Add;
 
@@ -85,13 +86,27 @@ fn build_link_finder(target_note: &Note) -> LinkFinder {
 }
 
 /// Finds all link candidates in the provided note.
-fn find_link_matches(target_note: &Note, note_to_check: &mut Note) -> Option<Vec<LinkMatch>> {
+fn find_link_matches(target_note: &Note, note_to_check: &mut Note,
+                     max_links_per_note: usize, count_existing_links: bool, 
+) -> Option<Vec<LinkMatch>> {
     if !&target_note.title().eq(&note_to_check.title()) {
         let link_finder_match = LinkFinderMatchingResult::find_matches(
             note_to_check,
             target_note,
         );
-        let link_matches: Vec<LinkMatch> = link_finder_match.into();
+        let mut link_matches: Vec<LinkMatch> = link_finder_match.into();
+        if max_links_per_note != usize::MAX {
+            if count_existing_links {
+                let existing_links = count_existing_links_for_note(note_to_check, target_note);
+                if existing_links >= max_links_per_note {
+                    link_matches.clear();
+                } else {
+                    link_matches.truncate(max_links_per_note - existing_links);
+                }
+            } else {
+                link_matches.truncate(max_links_per_note);
+            }
+        }
         return Some(link_matches);
     }
     None
@@ -115,11 +130,15 @@ fn merge_link_match_into_link_matches(mut merged_link_matches: Vec<LinkMatch>, l
 }
 
 /// Complete function that finds all link candidates in the provided note.
-pub fn find_links(note_to_check: &mut Note, target_note_candidates: &[Note]) -> Option<LinkFinderResult> {
+pub fn find_links(note_to_check: &mut Note, target_note_candidates: &[Note], 
+                  max_links_per_note: usize, count_existing_links: bool,
+) -> Option<LinkFinderResult> {
     let link_matches: Vec<LinkMatch> =
         target_note_candidates
             .iter()
-            .filter_map(|target_note: &Note, | find_link_matches(target_note, note_to_check))
+            .filter_map(|target_note: &Note, | {
+                find_link_matches(target_note, note_to_check, max_links_per_note, count_existing_links)
+            })
             .flatten()
             .fold(Vec::new(), merge_link_match_into_link_matches);
 
@@ -131,4 +150,78 @@ pub fn find_links(note_to_check: &mut Note, target_note_candidates: &[Note]) -> 
     }
 
     None
+}
+
+fn count_existing_links_for_note(note_to_check: &Note, target_note: &Note) -> usize {
+    let counts = note_to_check.existing_link_counts_map();
+    if counts.is_empty() {
+        return 0;
+    }
+
+    existing_link_targets(target_note)
+        .into_iter()
+        .filter_map(|target| counts.get(&target))
+        .sum()
+}
+
+fn existing_link_targets(target_note: &Note) -> HashSet<String> {
+    let mut targets: HashSet<String> = HashSet::new();
+    if let Some(normalized) = normalize_existing_link_key(&target_note.title()) {
+        targets.insert(normalized);
+    }
+    if let Some(normalized) = normalize_existing_link_key(&target_note.path()) {
+        targets.insert(normalized);
+    }
+    if let Some(stripped) = strip_md_extension(&target_note.path()) {
+        if let Some(normalized) = normalize_existing_link_key(&stripped) {
+            targets.insert(normalized);
+        }
+    }
+    for alias in target_note.aliases_vec() {
+        if let Some(normalized) = normalize_existing_link_key(alias) {
+            targets.insert(normalized);
+        }
+    }
+
+    targets
+        .into_iter()
+        .filter(|value| !value.trim().is_empty())
+        .collect()
+}
+
+fn strip_md_extension(path: &str) -> Option<String> {
+    if path.ends_with(".md") {
+        return Some(path[..path.len() - 3].to_string());
+    }
+    None
+}
+
+fn normalize_existing_link_key(value: &str) -> Option<String> {
+    let trimmed = value.trim();
+    if trimmed.is_empty() {
+        return None;
+    }
+
+    let anchor_index = trimmed.find('#');
+    let without_anchor = match anchor_index {
+        Some(index) => &trimmed[..index],
+        None => trimmed,
+    };
+
+    let lowered = without_anchor.trim().to_lowercase();
+    if lowered.is_empty() {
+        return None;
+    }
+
+    let normalized = if lowered.ends_with(".md") {
+        lowered[..lowered.len() - 3].to_string()
+    } else {
+        lowered
+    };
+
+    if normalized.is_empty() {
+        None
+    } else {
+        Some(normalized)
+    }
 }
