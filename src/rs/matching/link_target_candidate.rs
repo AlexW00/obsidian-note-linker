@@ -38,19 +38,15 @@ impl LinkTargetCandidate {
 
 impl LinkTargetCandidate {
     pub fn new(title: String, path: String, aliases: &[String], matched_text: &str) -> Self {
-        let mut preferred_set = false;
-        let matched_lower = matched_text.to_lowercase();
+        let mut preferred_set = title == matched_text;
 
         let mut _replacement_candidates: Vec<PreferrableItem> = vec![];
-        let replacement_candidate_title = PreferrableItem::new(
-            title.clone(),
-            title.to_lowercase() == matched_lower,
-        );
-        preferred_set = replacement_candidate_title.is_preferred;
+        let replacement_candidate_title =
+            PreferrableItem::new(title.clone(), preferred_set);
         _replacement_candidates.push(replacement_candidate_title);
 
         aliases.iter().for_each(|alias| {
-            let is_preferred = !preferred_set && alias.to_lowercase() == matched_lower;
+            let is_preferred = !preferred_set && alias == matched_text;
             if is_preferred {
                 preferred_set = true;
             }
