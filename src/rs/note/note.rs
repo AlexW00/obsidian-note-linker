@@ -9,10 +9,10 @@ use serde_wasm_bindgen::from_value;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsValue;
 
+use crate::rs::links::normalize_existing_link_key;
 use crate::rs::text::text_util::create_string_with_n_characters;
 use crate::rs::util::range::{array_to_range_vec, Range};
 use crate::rs::util::wasm_util::generic_of_jsval;
-use crate::rs::util::wasm_util::log;
 
 /// A single note.
 #[wasm_bindgen]
@@ -33,10 +33,8 @@ pub struct Note {
     _ignore: Vec<Range>,
     #[serde(skip)]
     _sanitized_content: String,
-    #[serde(skip)]
+
     existing_link_counts: HashMap<String, usize>,
-    #[serde(rename = "existing_link_counts", default)]
-    _existing_link_counts: HashMap<String, usize>,
 }
 
 #[wasm_bindgen]
@@ -61,7 +59,6 @@ impl Note {
             _ignore: ignore_vec.clone(),
             _sanitized_content: Note::sanitize_content(content, ignore_vec), // no need to clone anymore
             existing_link_counts: HashMap::new(),
-            _existing_link_counts: HashMap::new(),
         }
     }
 
@@ -88,14 +85,13 @@ impl Note {
 
     #[wasm_bindgen(method, js_name = "existingLinkCounts")]
     pub fn existing_link_counts(&self) -> JsValue {
-        serde_wasm_bindgen::to_value(&self._existing_link_counts).unwrap_or(JsValue::NULL)
+        serde_wasm_bindgen::to_value(&self.existing_link_counts).unwrap_or(JsValue::NULL)
     }
 
     #[wasm_bindgen(method, js_name = "setExistingLinkCounts")]
     pub fn set_existing_link_counts(&mut self, counts: JsValue) {
         let parsed = parse_existing_link_counts(counts);
-        self.existing_link_counts = parsed.clone();
-        self._existing_link_counts = parsed;
+        self.existing_link_counts = parsed;
     }
 
     #[wasm_bindgen(method, js_name = "toJSON")]
@@ -105,9 +101,7 @@ impl Note {
 
     #[wasm_bindgen(method, js_name = "fromJSON")]
     pub fn from_json_string(json_string: &str) -> Self {
-        let mut note: Note = serde_json::from_str(json_string).unwrap();
-        note.existing_link_counts = note._existing_link_counts.clone();
-        note
+        serde_json::from_str(json_string).unwrap()
     }
 }
 
@@ -223,39 +217,8 @@ fn parse_existing_link_counts(value: JsValue) -> HashMap<String, usize> {
     let counts: HashMap<String, usize> = from_value(value).unwrap_or_default();
     counts
         .into_iter()
-        .filter_map(|(key, count)| match normalize_existing_link_key(&key) {
-            Some(normalized) => Some((normalized, count)),
-            None => None,
+        .filter_map(|(key, count)| {
+            normalize_existing_link_key(&key).map(|normalized| (normalized, count))
         })
         .collect()
-}
-
-fn normalize_existing_link_key(value: &str) -> Option<String> {
-    let trimmed = value.trim();
-    if trimmed.is_empty() {
-        return None;
-    }
-
-    let anchor_index = trimmed.find('#');
-    let without_anchor = match anchor_index {
-        Some(index) => &trimmed[..index],
-        None => trimmed,
-    };
-
-    let lowered = without_anchor.trim().to_lowercase();
-    if lowered.is_empty() {
-        return None;
-    }
-
-    let normalized = if lowered.ends_with(".md") {
-        lowered[..lowered.len() - 3].to_string()
-    } else {
-        lowered
-    };
-
-    if normalized.is_empty() {
-        None
-    } else {
-        Some(normalized)
-    }
 }

@@ -14,6 +14,8 @@ const normalizeLinkTarget = (link?: string | null): string | null => {
                 return null;
         }
 
+		console.log("Debug:", link); //todo: remove
+
         const trimmed = link.trim();
         if (!trimmed.length) {
                 return null;

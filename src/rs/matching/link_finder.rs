@@ -4,6 +4,7 @@ use std::ops::Add;
 
 use fancy_regex::{escape, Regex};
 
+use crate::rs::links::normalize_existing_link_key;
 use crate::rs::util::wasm_util::log;
 use crate::{LinkFinderResult};
 use crate::rs::matching::link_match::LinkMatch;
@@ -20,24 +21,47 @@ struct LinkFinderMatchingResult<'m> {
 }
 
 impl<'m> LinkFinderMatchingResult<'m> {
-    fn find_matches(note: &'m mut Note, target_note: &'m Note) -> Self {
+    fn find_matches(note: &'m mut Note, target_note: &'m Note, limit: Option<usize>) -> Self {
         // build the regex
-        let regex_matches: Vec<RegexMatch> = build_link_finder(target_note)
-            // find all matches
-            .captures_iter(note.get_sanitized_content())
-            // map the results to a vector of RegexMatch
-            .filter_map(|capture_result| {
-                match capture_result {
-                    Ok(captures) => {
-                        RegexMatch::try_from(captures).ok()
+        let regex_matches: Vec<RegexMatch> = match limit {
+            None => {
+                build_link_finder(target_note)
+                    // find all matches
+                    .captures_iter(note.get_sanitized_content())
+                    // map the results to a vector of RegexMatch
+                    .filter_map(|capture_result| {
+                        match capture_result {
+                            Ok(captures) => {
+                                RegexMatch::try_from(captures).ok()
+                            }
+                            _ => {
+                                None
+                            }
+                        }
                     }
-                    _ => {
-                        None
+                    )
+                    .collect()
+            }
+            Some(limit) => {
+                let mut regex_matches = Vec::with_capacity(limit);
+                let link_finder = build_link_finder(target_note);
+                let sanitized = note.get_sanitized_content();
+                let mut capture_iter = link_finder.captures_iter(sanitized);
+
+                while regex_matches.len() < limit {
+                    match capture_iter.next() {
+                        Some(Ok(captures)) => {
+                            if let Ok(regex_match) = RegexMatch::try_from(captures) {
+                                regex_matches.push(regex_match);
+                            }
+                        }
+                        Some(Err(_)) => continue,  
+                        None => break,
                     }
                 }
+                regex_matches
             }
-            )
-            .collect();
+        };
 
         LinkFinderMatchingResult {
             regex_matches,
@@ -87,24 +111,36 @@ fn build_link_finder(target_note: &Note) -> LinkFinder {
 
 /// Finds all link candidates in the provided note.
 fn find_link_matches(target_note: &Note, note_to_check: &mut Note,
-                     max_links_per_note: usize, count_existing_links: bool, 
+                     max_links_per_note: usize, count_existing_links: bool,
 ) -> Option<Vec<LinkMatch>> {
     if !&target_note.title().eq(&note_to_check.title()) {
+        let limit: Option<usize> = if max_links_per_note == usize::MAX {
+            None
+        } else if count_existing_links {
+            let existing_links = count_existing_links_for_note(&*note_to_check, target_note);
+            if existing_links >= max_links_per_note {
+                return Some(Vec::new());
+            }
+            let remaining = max_links_per_note - existing_links;
+            if remaining == 0 {
+                return Some(Vec::new());
+            }
+            Some(remaining)
+        } else if max_links_per_note == 0 {
+            return Some(Vec::new());
+        } else {
+            Some(max_links_per_note)
+        };
+
         let link_finder_match = LinkFinderMatchingResult::find_matches(
             note_to_check,
             target_note,
+            limit,
         );
         let mut link_matches: Vec<LinkMatch> = link_finder_match.into();
-        if max_links_per_note != usize::MAX {
-            if count_existing_links {
-                let existing_links = count_existing_links_for_note(note_to_check, target_note);
-                if existing_links >= max_links_per_note {
-                    link_matches.clear();
-                } else {
-                    link_matches.truncate(max_links_per_note - existing_links);
-                }
-            } else {
-                link_matches.truncate(max_links_per_note);
+        if let Some(limit) = limit {
+            if link_matches.len() > limit {
+                link_matches.truncate(limit);
             }
         }
         return Some(link_matches);
@@ -194,34 +230,4 @@ fn strip_md_extension(path: &str) -> Option<String> {
         return Some(path[..path.len() - 3].to_string());
     }
     None
-}
-
-fn normalize_existing_link_key(value: &str) -> Option<String> {
-    let trimmed = value.trim();
-    if trimmed.is_empty() {
-        return None;
-    }
-
-    let anchor_index = trimmed.find('#');
-    let without_anchor = match anchor_index {
-        Some(index) => &trimmed[..index],
-        None => trimmed,
-    };
-
-    let lowered = without_anchor.trim().to_lowercase();
-    if lowered.is_empty() {
-        return None;
-    }
-
-    let normalized = if lowered.ends_with(".md") {
-        lowered[..lowered.len() - 3].to_string()
-    } else {
-        lowered
-    };
-
-    if normalized.is_empty() {
-        None
-    } else {
-        Some(normalized)
-    }
 }
