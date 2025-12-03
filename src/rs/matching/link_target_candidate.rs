@@ -37,19 +37,33 @@ impl LinkTargetCandidate {
 }
 
 impl LinkTargetCandidate {
-    pub fn new(title: String, path: String, aliases: &[String], selected_index: usize) -> Self {
+    pub fn new(title: String, path: String, aliases: &[String], matched_text: &str) -> Self {
+        let mut preferred_set = false;
+        let matched_lower = matched_text.to_lowercase();
+
         let mut _replacement_candidates: Vec<PreferrableItem> = vec![];
-        let replacement_candidate_title = PreferrableItem::new(title.clone(), true);
+        let replacement_candidate_title = PreferrableItem::new(
+            title.clone(),
+            title.to_lowercase() == matched_lower,
+        );
+        preferred_set = replacement_candidate_title.is_preferred;
         _replacement_candidates.push(replacement_candidate_title);
 
-        aliases.iter().enumerate().for_each(|(index, alias)| {
-            let replacement_candidate_alias = PreferrableItem::new(
-                alias.clone(),
-                // add one because the index starts with the title at 0
-                true,
-            );
+        aliases.iter().for_each(|alias| {
+            let is_preferred = !preferred_set && alias.to_lowercase() == matched_lower;
+            if is_preferred {
+                preferred_set = true;
+            }
+
+            let replacement_candidate_alias = PreferrableItem::new(alias.clone(), is_preferred);
             _replacement_candidates.push(replacement_candidate_alias);
         });
+
+        if !preferred_set {
+            if let Some(first_candidate) = _replacement_candidates.get_mut(0) {
+                first_candidate.is_preferred = true;
+            }
+        }
 
         LinkTargetCandidate {
             title,

@@ -77,6 +77,9 @@ fn build_link_finder(target_note: &Note) -> LinkFinder {
     let escaped_title = escape(&*target_note.title()).to_string();
     escaped_search_strings.push(escaped_title);
 
+    // Sort by length (desc) to prioritize longer matches when alternatives overlap
+    escaped_search_strings.sort_by(|a, b| b.len().cmp(&a.len()));
+    
     let regex_string = concat_as_regex_string(&escaped_search_strings);
     //log(&format!("Regex string: {}", regex_string));
     
