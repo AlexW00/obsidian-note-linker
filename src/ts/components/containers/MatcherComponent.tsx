@@ -15,7 +15,10 @@ import { useApp, useWasmWorkerInstance } from "../../hooks";
 import { MatchingMode } from "./MainComponent";
 import { NoteLinkerSettings } from "../../../settings";
 
-const WASM_UNLIMITED_LINK_LIMIT = 4294967295;
+// Use a sentinel that maps to Rust's `usize::MAX` so the matcher can treat it as an
+// unlimited cap across architectures. The value overflows to `u32::MAX` on the
+// wasm target while remaining well above any practical limit on native builds.
+const UNLIMITED_LINK_LIMIT = Number.MAX_SAFE_INTEGER;
 
 enum MatchingState {
 	Initializing,
@@ -92,7 +95,7 @@ export const MatcherComponent = ({ matchingMode, settings }: MatcherComponentPro
         const limitEnabled = settings.limitMatchesPerNote;
         const maxLinksPerNote = limitEnabled
                 ? Math.max(1, Math.floor(settings.maxLinksPerNote))
-                : WASM_UNLIMITED_LINK_LIMIT;
+                : UNLIMITED_LINK_LIMIT;
         const countExistingLinks =
                 limitEnabled && settings.countExistingLinksTowardLimit;
 

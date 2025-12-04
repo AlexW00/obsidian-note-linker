@@ -1,11 +1,8 @@
-use std::collections::HashSet;
 use std::convert::TryFrom;
 use std::ops::Add;
 
 use fancy_regex::{escape, Regex};
 
-use crate::rs::links::normalize_existing_link_key;
-use crate::rs::util::wasm_util::log;
 use crate::{LinkFinderResult};
 use crate::rs::matching::link_match::LinkMatch;
 use crate::rs::matching::regex_match::RegexMatch;
@@ -114,7 +111,9 @@ fn find_link_matches(target_note: &Note, note_to_check: &mut Note,
                      max_links_per_note: usize, count_existing_links: bool,
 ) -> Option<Vec<LinkMatch>> {
     if !&target_note.title().eq(&note_to_check.title()) {
-        let limit: Option<usize> = if max_links_per_note == usize::MAX {
+        // Treat any "unlimited" sentinel (including values that overflow from the wasm
+        // target) as meaning no cap on matches.
+        let limit: Option<usize> = if max_links_per_note >= u32::MAX as usize {
             None
         } else if count_existing_links {
             let existing_links = count_existing_links_for_note(&*note_to_check, target_note);
@@ -193,41 +192,10 @@ fn count_existing_links_for_note(note_to_check: &Note, target_note: &Note) -> us
     if counts.is_empty() {
         return 0;
     }
-
-    existing_link_targets(target_note)
-        .into_iter()
-        .filter_map(|target| counts.get(&target))
+    
+    target_note
+        .normalized_link_keys()
+        .iter()
+        .filter_map(|target| counts.get(target))
         .sum()
-}
-
-fn existing_link_targets(target_note: &Note) -> HashSet<String> {
-    let mut targets: HashSet<String> = HashSet::new();
-    if let Some(normalized) = normalize_existing_link_key(&target_note.title()) {
-        targets.insert(normalized);
-    }
-    if let Some(normalized) = normalize_existing_link_key(&target_note.path()) {
-        targets.insert(normalized);
-    }
-    if let Some(stripped) = strip_md_extension(&target_note.path()) {
-        if let Some(normalized) = normalize_existing_link_key(&stripped) {
-            targets.insert(normalized);
-        }
-    }
-    for alias in target_note.aliases_vec() {
-        if let Some(normalized) = normalize_existing_link_key(alias) {
-            targets.insert(normalized);
-        }
-    }
-
-    targets
-        .into_iter()
-        .filter(|value| !value.trim().is_empty())
-        .collect()
-}
-
-fn strip_md_extension(path: &str) -> Option<String> {
-    if path.ends_with(".md") {
-        return Some(path[..path.len() - 3].to_string());
-    }
-    None
 }

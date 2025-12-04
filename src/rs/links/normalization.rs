@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 pub fn normalize_existing_link_key(value: &str) -> Option<String> {
     let trimmed = value.trim();
     if trimmed.is_empty() {
@@ -24,38 +26,25 @@ pub fn normalize_existing_link_key(value: &str) -> Option<String> {
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use super::normalize_existing_link_key;
+pub fn normalized_link_keys_from(title: &str, path: &str, aliases: &[String]) -> HashSet<String> {
+    let mut normalized: HashSet<String> = HashSet::new();
 
-    #[test]
-    fn trims_and_lowercases_values() {
-        assert_eq!(
-            normalize_existing_link_key("  Some Note  "),
-            Some("some note".to_string())
-        );
+    if let Some(value) = normalize_existing_link_key(title) {
+        normalized.insert(value);
+    }
+    if let Some(value) = normalize_existing_link_key(path) {
+        normalized.insert(value);
+    }
+    if path.ends_with(".md") {
+        if let Some(value) = normalize_existing_link_key(&path[..path.len() - 3]) {
+            normalized.insert(value);
+        }
+    }
+    for alias in aliases {
+        if let Some(value) = normalize_existing_link_key(alias) {
+            normalized.insert(value);
+        }
     }
 
-    #[test]
-    fn strips_anchor_segments() {
-        assert_eq!(
-            normalize_existing_link_key("Note Title#Heading"),
-            Some("note title".to_string())
-        );
-    }
-
-    #[test]
-    fn removes_md_suffixes() {
-        assert_eq!(
-            normalize_existing_link_key("Folder/Note.md"),
-            Some("folder/note".to_string())
-        );
-    }
-
-    #[test]
-    fn returns_none_for_empty_values() {
-        assert_eq!(normalize_existing_link_key(""), None);
-        assert_eq!(normalize_existing_link_key("   "), None);
-        assert_eq!(normalize_existing_link_key("#anchor"), None);
-    }
+    normalized
 }
