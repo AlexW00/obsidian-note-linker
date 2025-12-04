@@ -13,6 +13,12 @@ import { MatchSelectionComponent } from "./MatchSelectionComponent";
 import { Notice, TFile } from "obsidian";
 import { useApp, useWasmWorkerInstance } from "../../hooks";
 import { MatchingMode } from "./MainComponent";
+import { NoteLinkerSettings } from "../../../settings";
+
+// Use a sentinel that maps to Rust's `usize::MAX` so the matcher can treat it as an
+// unlimited cap across architectures. The value overflows to `u32::MAX` on the
+// wasm target while remaining well above any practical limit on native builds.
+const UNLIMITED_LINK_LIMIT = Number.MAX_SAFE_INTEGER;
 
 enum MatchingState {
 	Initializing,
@@ -23,11 +29,12 @@ enum MatchingState {
 	Error,
 }
 
-export const MatcherComponent = ({
-	matchingMode,
-}: {
-	matchingMode: MatchingMode;
-}) => {
+interface MatcherComponentProps {
+        matchingMode: MatchingMode;
+        settings: NoteLinkerSettings;
+}
+
+export const MatcherComponent = ({ matchingMode, settings }: MatcherComponentProps) => {
 	const { vault, metadataCache } = useApp();
 	const wasmWorkerInstance = useWasmWorkerInstance();
 
@@ -85,10 +92,19 @@ export const MatcherComponent = ({
 		const noteStrings: Array<string> = jsNotes.map((jsNote: JsNote) =>
 			jsNote.toJSON()
 		);
+        const limitEnabled = settings.limitMatchesPerNote;
+        const maxLinksPerNote = limitEnabled
+                ? Math.max(1, Math.floor(settings.maxLinksPerNote))
+                : UNLIMITED_LINK_LIMIT;
+        const countExistingLinks =
+                limitEnabled && settings.countExistingLinksTowardLimit;
+
 		if (matchingMode == MatchingMode.Vault) {
 			// Search entire vault
 			return wasmWorkerInstance.findInVault(
 				noteStrings,
+				maxLinksPerNote,
+				countExistingLinks,
 				Comlink.proxy(onLinkMatchingProgress)
 			);
 		} else {
@@ -102,6 +118,8 @@ export const MatcherComponent = ({
 				return wasmWorkerInstance.findInNote(
 					activeNoteString,
 					noteStrings,
+					maxLinksPerNote,
+					countExistingLinks,
 					Comlink.proxy(onLinkMatchingProgress)
 				);
 			} else {
@@ -131,7 +149,12 @@ export const MatcherComponent = ({
 			.then(getLinkFinderResults)
 			.then(showMatchSelection)
 			.catch(showError);
-	}, [wasmWorkerInstance]);
+	}, [
+        wasmWorkerInstance,
+        settings.limitMatchesPerNote,
+        settings.maxLinksPerNote,
+        settings.countExistingLinksTowardLimit,
+    ]);
 
 	if (matchingState == MatchingState.Initializing) {
 		return <div>🏗️ Retrieving notes...</div>;

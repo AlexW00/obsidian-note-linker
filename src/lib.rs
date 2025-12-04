@@ -12,7 +12,9 @@ use crate::rs::note::note_scanned_event::NoteScannedEvent;
 mod rs;
 
 #[wasm_bindgen]
-pub fn find_in_vault(context: JsValue, notes: Array, callback: Function) -> Array {
+pub fn find_in_vault(context: JsValue, notes: Array, callback: Function, 
+                     max_links_per_note: usize, count_existing_links: bool,
+) -> Array {
     let notes: Vec<Note> = notes.iter()
         .filter_map(|note: JsValue| Note::try_from(note).ok())
         .collect();
@@ -22,7 +24,8 @@ pub fn find_in_vault(context: JsValue, notes: Array, callback: Function) -> Arra
     notes.clone().iter_mut().enumerate().for_each(|(index, note)| {
         let _ = call_callback(&callback, &context, build_args(note, index));
 
-        let link_finder_result_option = link_finder::find_links(note, &notes);
+        let link_finder_result_option =
+            link_finder::find_links(note, &notes, max_links_per_note, count_existing_links);
         if let Some(r) = link_finder_result_option {
             res.push(r);
         }
@@ -38,7 +41,9 @@ pub fn find_in_vault(context: JsValue, notes: Array, callback: Function) -> Arra
 
 
 #[wasm_bindgen]
-pub fn find_in_note(context: JsValue, active_note: Note, notes: Array, callback: Function) -> Array {
+pub fn find_in_note(context: JsValue, active_note: Note, notes: Array, callback: Function,
+                    max_links_per_note: usize, count_existing_links: bool,
+) -> Array {
     let notes: Vec<Note> = notes.iter()
         .filter_map(|note: JsValue| Note::try_from(note).ok())
         .collect();
@@ -48,7 +53,8 @@ pub fn find_in_note(context: JsValue, active_note: Note, notes: Array, callback:
 
     let _ = call_callback(&callback, &context, build_args(&note, 0));
 
-    let link_finder_result_option = link_finder::find_links(&mut note, &notes);
+    let link_finder_result_option =
+        link_finder::find_links(&mut note, &notes, max_links_per_note, count_existing_links);
     if let Some(r) = link_finder_result_option {
         res.push(r);
     }
