@@ -1,4 +1,5 @@
 use js_sys::Array;
+use std::collections::HashSet;
 use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::*;
 
@@ -37,19 +38,48 @@ impl LinkTargetCandidate {
 }
 
 impl LinkTargetCandidate {
-    pub fn new(title: String, path: String, aliases: &[String], selected_index: usize) -> Self {
+    pub fn new(title: String, path: String, aliases: &[String], matched_text: &str) -> Self {
+        let mut seen_candidates: HashSet<String> = HashSet::new();
         let mut _replacement_candidates: Vec<PreferrableItem> = vec![];
-        let replacement_candidate_title = PreferrableItem::new(title.clone(), true);
-        _replacement_candidates.push(replacement_candidate_title);
 
-        aliases.iter().enumerate().for_each(|(index, alias)| {
-            let replacement_candidate_alias = PreferrableItem::new(
-                alias.clone(),
-                // add one because the index starts with the title at 0
-                true,
-            );
+        let mut case_sensitive_match_index: Option<usize> = None;
+        let mut case_insensitive_match_index: Option<usize> = None;
+
+        seen_candidates.insert(title.clone());
+        _replacement_candidates.push(PreferrableItem::new(title.clone(), false));
+        if title == matched_text {
+            case_sensitive_match_index = Some(0);
+        } else if title.eq_ignore_ascii_case(matched_text) {
+            case_insensitive_match_index = Some(0);
+        }
+
+        aliases.iter().for_each(|alias| {
+            if seen_candidates.contains(alias) {
+                return;
+            }
+
+            let candidate_index = _replacement_candidates.len();
+
+            if alias == matched_text && case_sensitive_match_index.is_none() {
+                case_sensitive_match_index = Some(candidate_index);
+            } else if alias.eq_ignore_ascii_case(matched_text)
+                && case_insensitive_match_index.is_none()
+            {
+                case_insensitive_match_index = Some(candidate_index);
+            }
+
+            seen_candidates.insert(alias.clone());
+            let replacement_candidate_alias = PreferrableItem::new(alias.clone(), false);
             _replacement_candidates.push(replacement_candidate_alias);
         });
+
+        let preferred_index = case_sensitive_match_index
+            .or(case_insensitive_match_index)
+            .unwrap_or(0);
+
+        if let Some(preferred_candidate) = _replacement_candidates.get_mut(preferred_index) {
+            preferred_candidate.is_preferred = true;
+        }
 
         LinkTargetCandidate {
             title,

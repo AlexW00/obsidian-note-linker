@@ -77,6 +77,9 @@ fn build_link_finder(target_note: &Note) -> LinkFinder {
     let escaped_title = escape(&*target_note.title()).to_string();
     escaped_search_strings.push(escaped_title);
 
+    // Sort by length (desc) to prioritize longer matches when alternatives overlap
+    escaped_search_strings.sort_by(|a, b| b.len().cmp(&a.len()));
+    
     let regex_string = concat_as_regex_string(&escaped_search_strings);
     //log(&format!("Regex string: {}", regex_string));
     
@@ -101,14 +104,23 @@ fn find_link_matches(target_note: &Note, note_to_check: &mut Note) -> Option<Vec
 /// If the link match is already in the list, it is merged with the existing link match.
 /// If the link match is not in the list, it is added to the list.
 fn merge_link_match_into_link_matches(mut merged_link_matches: Vec<LinkMatch>, link_match: LinkMatch) -> Vec<LinkMatch> {
+    // Find an existing match that starts at the same character position
     let index = merged_link_matches.iter()
-        .position(|m: &LinkMatch| m.position().is_equal_to(&link_match.position()));
+        .position(|m: &LinkMatch| m.position().start() == link_match.position().start());
 
     if let Some(index) = index {
-        // merge it into the existing match, if the position is the same
-        merged_link_matches[index].merge_link_target_candidates(link_match);
+        // For same-start matches, prefer the one that covers more characters
+        if link_match.position().end() > merged_link_matches[index].position().end() {
+            // New match is longer: make it the primary span and pull in old candidates
+            let mut new_link_match = link_match;
+            new_link_match.merge_link_target_candidates(merged_link_matches[index].clone());
+            merged_link_matches[index] = new_link_match;
+        } else {
+            // Existing match is longer or equal: keep its span, just add new candidates
+            merged_link_matches[index].merge_link_target_candidates(link_match);
+        }
     } else {
-        // otherwise push a new match
+        // No same-start match yet: add as a new entry
         merged_link_matches.push(link_match);
     }
     merged_link_matches
