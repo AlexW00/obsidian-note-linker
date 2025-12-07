@@ -52,7 +52,7 @@ impl LinkMatch {
           target_note.title(),
           target_note.path(),
           target_note.aliases_vec(),
-            regex_match.capture_index
+            &regex_match.matched_text
         )];
         Self::new(
             regex_match.position.clone(),
