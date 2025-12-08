@@ -19,6 +19,8 @@ class WasmWorker {
 
 	public findInVault(
 		serializedNotes: Array<string>,
+		maxLinksPerNote: number,
+		countExistingLinks: boolean,
 		callback: Function
 	): Array<string> {
 		const notes: Array<Note> = serializedNotes.map((noteString) =>
@@ -27,7 +29,9 @@ class WasmWorker {
 		const noteMatchingResults: Array<LinkFinderResult> = find_in_vault(
 			this,
 			notes,
-			callback
+			callback,
+			maxLinksPerNote,
+			countExistingLinks
 		);
 		return noteMatchingResults.map((noteMatchingResult) =>
 			noteMatchingResult.toJSON()
@@ -37,6 +41,8 @@ class WasmWorker {
 	public findInNote(
 		serializedNote: string,
 		searializedNotes: Array<string>,
+		maxLinksPerNote: number,
+		countExistingLinks: boolean,
 		callback: Function
 	): Array<string> {
 		const note: Note = Note.fromJSON(serializedNote);
@@ -47,7 +53,9 @@ class WasmWorker {
 			this,
 			note,
 			notes,
-			callback
+			callback,
+			maxLinksPerNote,
+			countExistingLinks
 		);
 		return noteMatchingResults.map((noteMatchingResult) =>
 			noteMatchingResult.toJSON()

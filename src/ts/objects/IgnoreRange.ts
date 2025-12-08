@@ -7,11 +7,39 @@ import {
 } from "obsidian";
 import { Range } from "../../../pkg";
 
+export type ExistingLinkCountMap = Record<string, number>;
+
+const normalizeLinkTarget = (link?: string | null): string | null => {
+        if (!link) {
+                return null;
+        }
+
+        const trimmed = link.trim();
+        if (!trimmed.length) {
+                return null;
+        }
+
+        const anchorIndex = trimmed.indexOf("#");
+        const withoutAnchor = anchorIndex === -1 ? trimmed : trimmed.slice(0, anchorIndex);
+        const base = withoutAnchor.trim();
+        if (!base.length) {
+                return null;
+        }
+
+        const lowerCased = base.toLowerCase();
+        if (lowerCased.endsWith(".md")) {
+                return lowerCased.slice(0, -3);
+        }
+
+	return lowerCased;
+};
+
 class IgnoreRangeBuilder {
 	private readonly _ignoreRanges: IgnoreRange[] = [];
 	private readonly _cache: CachedMetadata;
 	private _content: string;
 	private _name: string;
+	private readonly _linkCountMap: Map<string, number> = new Map();
 
 	constructor(content: string, cache: CachedMetadata, name: string) {
 		this._content = content;
@@ -19,8 +47,18 @@ class IgnoreRangeBuilder {
 		this._name = name;
 	}
 
-	public build(): IgnoreRange[] {
-		return this._ignoreRanges.sort((a, b) => a.start - b.start);
+	public build(): { ignoreRanges: IgnoreRange[]; linkCountMap: ExistingLinkCountMap } {
+		this._ignoreRanges.sort((a, b) => a.start - b.start);
+
+		const linkCountMap: ExistingLinkCountMap = {};
+		this._linkCountMap.forEach((value, key) => {
+			linkCountMap[key] = value;
+		});
+
+		return {
+			ignoreRanges: this._ignoreRanges,
+			linkCountMap,
+		};
 	}
 
 	// Adds an ignore range from the cache for a specific section type
@@ -43,25 +81,39 @@ class IgnoreRangeBuilder {
 	}
 
 	// adds an ignroe range from the cache for an array of cache items
-	private addCacheItem(cacheItem: CacheItem[]) {
-		(cacheItem ? cacheItem : []).forEach((item) => {
-			const ignoreRange = new IgnoreRange(
-				item.position.start.offset,
-				item.position.end.offset
-			);
-			this._ignoreRanges.push(ignoreRange);
+	private addCacheItem<TItem extends CacheItem>(
+                cacheItem: TItem[] | undefined,
+                onItem?: (item: TItem) => void
+	) {
+                (cacheItem ? cacheItem : []).forEach((item) => {
+                        const ignoreRange = new IgnoreRange(
+                                item.position.start.offset,
+                                item.position.end.offset
+                        );
+                        this._ignoreRanges.push(ignoreRange);
 			this._content =
 				this._content.substring(0, ignoreRange.start) +
 				" ".repeat(ignoreRange.end - ignoreRange.start) +
 				this._content.substring(ignoreRange.end);
-		});
-		return this;
-	}
+                        if (onItem) {
+                                onItem(item);
+                        }
+                });
+                return this;
+        }
 
 	// adds internal links to the ignore ranges
 	// internal links are of the form [[link text]] or [[#link text]]
 	public addInternalLinks(): IgnoreRangeBuilder {
-		return this.addCacheItem(this._cache.links);
+		return this.addCacheItem<LinkCache>(this._cache.links, (item) => {
+			const normalized = normalizeLinkTarget(item.link);
+			if (!normalized) {
+				return;
+			}
+
+			const current = this._linkCountMap.get(normalized) ?? 0;
+			this._linkCountMap.set(normalized, current + 1);
+		});
 	}
 
 	// adds all headings to the ignore ranges
@@ -125,10 +177,14 @@ export default class IgnoreRange extends Range {
 
 	static getIgnoreRangesFromCache(
 		content: string,
-		cache: CachedMetadata,
+		cache: CachedMetadata | null | undefined,
 		name: string
-	): IgnoreRange[] {
-		const ignoreRanges: IgnoreRange[] = new IgnoreRangeBuilder(
+	): { ignoreRanges: IgnoreRange[]; linkCountMap: ExistingLinkCountMap } {
+		if (!cache) {
+			return { ignoreRanges: [], linkCountMap: {} };
+		}
+
+		const builder = new IgnoreRangeBuilder(
 			content,
 			cache,
 			name
@@ -142,9 +198,8 @@ export default class IgnoreRange extends Range {
 			.addMdMetadata()
 			.addHtml()
 			.addMdLinks()
-			.addWebLinks()
-			.build();
+			.addWebLinks();
 
-		return ignoreRanges;
+		return builder.build();
 	}
 }

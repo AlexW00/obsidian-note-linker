@@ -1,16 +1,18 @@
 extern crate unicode_segmentation;
 
 use std::convert::TryFrom;
+use std::collections::{HashMap, HashSet};
 
 use js_sys::Array;
 use serde::{Deserialize, Serialize};
+use serde_wasm_bindgen::from_value;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsValue;
 
+use crate::rs::links::{normalize_existing_link_key, normalized_link_keys_from};
 use crate::rs::text::text_util::create_string_with_n_characters;
 use crate::rs::util::range::{array_to_range_vec, Range};
 use crate::rs::util::wasm_util::generic_of_jsval;
-use crate::rs::util::wasm_util::log;
 
 /// A single note.
 #[wasm_bindgen]
@@ -31,6 +33,11 @@ pub struct Note {
     _ignore: Vec<Range>,
     #[serde(skip)]
     _sanitized_content: String,
+
+    #[serde(skip)]
+    normalized_link_keys: HashSet<String>,
+
+    existing_link_counts: HashMap<String, usize>,
 }
 
 #[wasm_bindgen]
@@ -44,6 +51,8 @@ impl Note {
         ignore: Array,
     ) -> Note {
         let ignore_vec = array_to_range_vec(ignore.clone());
+        let aliases_vec = array_to_string_vec(aliases.clone());
+        let normalized_link_keys = normalized_link_keys_from(&title, &path, &aliases_vec);
         Note {
             title: title,
             path,
@@ -51,9 +60,11 @@ impl Note {
             aliases: aliases.clone(),
             ignore,
 
-            _aliases: array_to_string_vec(aliases.clone()),
+            _aliases: aliases_vec.clone(),
             _ignore: ignore_vec.clone(),
             _sanitized_content: Note::sanitize_content(content, ignore_vec), // no need to clone anymore
+            normalized_link_keys,
+            existing_link_counts: HashMap::new(),
         }
     }
 
@@ -78,6 +89,17 @@ impl Note {
         self.ignore.clone()
     }
 
+    #[wasm_bindgen(method, js_name = "existingLinkCounts")]
+    pub fn existing_link_counts(&self) -> JsValue {
+        serde_wasm_bindgen::to_value(&self.existing_link_counts).unwrap_or(JsValue::NULL)
+    }
+
+    #[wasm_bindgen(method, js_name = "setExistingLinkCounts")]
+    pub fn set_existing_link_counts(&mut self, counts: JsValue) {
+        let parsed = parse_existing_link_counts(counts);
+        self.existing_link_counts = parsed;
+    }
+
     #[wasm_bindgen(method, js_name = "toJSON")]
     pub fn to_json_string(&self) -> String {
         serde_json::to_string(self).unwrap()
@@ -85,7 +107,10 @@ impl Note {
 
     #[wasm_bindgen(method, js_name = "fromJSON")]
     pub fn from_json_string(json_string: &str) -> Self {
-        serde_json::from_str(json_string).unwrap()
+        let mut note: Note = serde_json::from_str(json_string).unwrap();
+        note.normalized_link_keys =
+            normalized_link_keys_from(&note.title, &note.path, &note._aliases);
+        note
     }
 }
 
@@ -95,6 +120,12 @@ impl Note {
     }
     pub fn ignore_vec(&self) -> &Vec<Range> {
         &self._ignore
+    }
+    pub fn existing_link_counts_map(&self) -> &HashMap<String, usize> {
+        &self.existing_link_counts
+    }
+    pub fn normalized_link_keys(&self) -> &HashSet<String> {
+        &self.normalized_link_keys
     }
 
     /// Cleans up the note content by:
@@ -169,6 +200,7 @@ impl Note {
         }
         &self._sanitized_content
     }
+
 }
 
 impl TryFrom<JsValue> for Note {
@@ -187,5 +219,19 @@ pub fn array_to_string_vec(array: Array) -> Vec<String> {
     array
         .iter()
         .filter_map(|a: JsValue| a.as_string())
+        .collect()
+}
+
+fn parse_existing_link_counts(value: JsValue) -> HashMap<String, usize> {
+    if value.is_undefined() || value.is_null() {
+        return HashMap::new();
+    }
+
+    let counts: HashMap<String, usize> = from_value(value).unwrap_or_default();
+    counts
+        .into_iter()
+        .filter_map(|(key, count)| {
+            normalize_existing_link_key(&key).map(|normalized| (normalized, count))
+        })
         .collect()
 }

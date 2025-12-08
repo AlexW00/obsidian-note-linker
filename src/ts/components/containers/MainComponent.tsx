@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { StartComponent } from "./StartComponent";
 import { MatcherComponent } from "./MatcherComponent";
+import { NoteLinkerSettings } from "../../../settings";
 
 export enum MatchingMode {
 	None,
@@ -10,9 +11,10 @@ export enum MatchingMode {
 
 export interface MainComponentProps {
 	_matchingMode: MatchingMode;
+	settings: NoteLinkerSettings;
 }
 
-export const MainComponent = ({ _matchingMode }: MainComponentProps) => {
+export const MainComponent = ({ _matchingMode, settings }: MainComponentProps) => {
 	const [matchingMode, setMatchingMode] = useState<MatchingMode>(_matchingMode);
 
 	const onClickScan = (type: MatchingMode) => {
@@ -21,5 +23,5 @@ export const MainComponent = ({ _matchingMode }: MainComponentProps) => {
 
 	if (matchingMode == MatchingMode.None)
 		return <StartComponent onClickScan={onClickScan} />;
-	else return <MatcherComponent matchingMode={matchingMode} />;
+	else return <MatcherComponent matchingMode={matchingMode} settings={settings} />;
 };
