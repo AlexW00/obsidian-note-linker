@@ -122,6 +122,11 @@ class IgnoreRangeBuilder {
 		return this.addCacheItem(this._cache.headings);
 	}
 
+	// adds embedded links to the ignore ranges (e.g. ![[Note]])
+	public addEmbeds(): IgnoreRangeBuilder {
+		return this.addCacheItem(this._cache.embeds);
+	}
+
 	// adds code blocks to the ignore ranges
 	// code blocks are of the form ```code```
 	public addCodeSections(): IgnoreRangeBuilder {
@@ -187,6 +192,7 @@ export default class IgnoreRange extends Range {
 			// from cache
 			.addInternalLinks()
 			.addHeadings()
+			.addEmbeds()
 			.addCodeSections()
 			// from regex
 			.addMdMetadata()
